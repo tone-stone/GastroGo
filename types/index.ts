@@ -1,0 +1,119 @@
+export type UserRole = 'owner' | 'manager' | 'cashier' | 'waiter' | 'kitchen';
+
+export type KitchenItemStatus = 'pending' | 'ready';
+
+export type TableStatus = 'free' | 'occupied' | 'bill_requested' | 'reserved';
+
+export type OrderStatus = 'open' | 'sent_to_kitchen' | 'ready' | 'paid' | 'cancelled';
+
+export type PaymentMethod = 'cash' | 'card' | 'transfer';
+
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Restaurant {
+  id: string;
+  organization_id: string;
+  name: string;
+  address?: string;
+  phone?: string;
+}
+
+export interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+  avatar_url?: string;
+}
+
+export interface RestaurantMember {
+  restaurant_id: string;
+  user_id: string;
+  role: UserRole;
+}
+
+export interface Table {
+  id: string;
+  restaurant_id: string;
+  number: number;
+  name: string;
+  capacity: number;
+  status: TableStatus;
+  zone?: string;
+  assigned_waiter_id?: string;
+}
+
+export interface StaffMember {
+  id: string;
+  restaurant_id: string;
+  name: string;
+  role: UserRole;
+  color: string;
+}
+
+export interface MenuCategory {
+  id: string;
+  restaurant_id: string;
+  name: string;
+  sort_order: number;
+}
+
+export interface MenuItem {
+  id: string;
+  restaurant_id: string;
+  category_id: string;
+  name: string;
+  description?: string;
+  price: number;
+  is_available: boolean;
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  menu_item_id: string;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  notes?: string;
+  kitchen_status?: KitchenItemStatus;
+  ready_at?: string;
+}
+
+export interface Order {
+  id: string;
+  restaurant_id: string;
+  table_id: string;
+  waiter_id?: string;
+  status: OrderStatus;
+  subtotal: number;
+  tax: number;
+  tip: number;
+  total: number;
+  payment_method?: PaymentMethod;
+  items: OrderItem[];
+  created_at: string;
+  kitchen_sent_at?: string;
+  closed_at?: string;
+}
+
+export interface Session {
+  user: Profile | null;
+  restaurants: Restaurant[];
+  activeRestaurantId: string | null;
+  role: UserRole;
+  staffMemberId: string | null;
+}
+
+export interface AppUser {
+  id: string;
+  restaurant_id: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  is_active: boolean;
+  created_at: string;
+}
