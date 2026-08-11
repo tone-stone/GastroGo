@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { formatCurrency } from '@/lib/demo-data';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, kitchenAccent, palette, radius, shadows } from '@/constants/theme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import type { Order, PaymentMethod } from '@/types';
@@ -307,8 +307,8 @@ export function PosCashRegister({
   );
 }
 
-const LCD_BG = '#1A2420';
-const LCD_TEXT = '#7DFFAF';
+const LCD_BG = palette.olive;
+const LCD_TEXT = palette.sand;
 
 const styles = StyleSheet.create({
   register: {
@@ -371,16 +371,16 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 8,
     borderWidth: 3,
-    borderColor: '#2A3530',
+    borderColor: '#434832',
     ...shadows.sm,
   },
   displayRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-  displayLabel: { fontSize: 11, fontWeight: '700', color: 'rgba(125,255,175,0.6)', letterSpacing: 1 },
+  displayLabel: { fontSize: 11, fontWeight: '700', color: 'rgba(220,201,176,0.65)', letterSpacing: 1 },
   displayMain: { fontSize: 32, fontWeight: '800', color: LCD_TEXT, fontVariant: ['tabular-nums'] },
-  displayDivider: { height: 1, backgroundColor: 'rgba(125,255,175,0.15)' },
+  displayDivider: { height: 1, backgroundColor: 'rgba(220,201,176,0.2)' },
   displaySub: { fontSize: 22, fontWeight: '700', color: LCD_TEXT, fontVariant: ['tabular-nums'] },
-  displayChange: { fontSize: 22, fontWeight: '700', color: 'rgba(125,255,175,0.5)', fontVariant: ['tabular-nums'] },
-  displayChangeActive: { color: '#FFD166' },
+  displayChange: { fontSize: 22, fontWeight: '700', color: 'rgba(220,201,176,0.55)', fontVariant: ['tabular-nums'] },
+  displayChangeActive: { color: palette.tan },
   tipRow: { flexDirection: 'row', gap: 8 },
   tipBtn: {
     flex: 1,

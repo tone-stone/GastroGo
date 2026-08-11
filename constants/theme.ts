@@ -1,48 +1,57 @@
+/** Paleta base — café natural / oliva */
+export const palette = {
+  sand: '#DCC9B0',
+  tan: '#A7805A',
+  coffee: '#81634A',
+  sage: '#AEA781',
+  olive: '#555842',
+} as const;
+
 export const colors = {
-  // Verde — color principal
-  primary: '#3D6B4F',
-  primaryDark: '#2D5040',
-  primaryLight: '#52B788',
-  primaryMuted: '#EDF5F0',
+  // Oliva — color principal
+  primary: palette.olive,
+  primaryDark: '#434832',
+  primaryLight: palette.sage,
+  primaryMuted: '#E8E6DC',
 
   // Café — secundario / texto
-  coffee: '#5C4A3A',
-  coffeeDark: '#3E2E23',
-  coffeeLight: '#8B7355',
-  coffeeMuted: '#F5F0EB',
+  coffee: palette.coffee,
+  coffeeDark: '#5A4635',
+  coffeeLight: palette.tan,
+  coffeeMuted: '#F0E8DC',
 
-  // Dorado — acentos
-  gold: '#C4A052',
-  goldLight: '#E8D5A3',
-  goldMuted: '#FBF6E9',
+  // Arena / tan — acentos cálidos
+  gold: palette.tan,
+  goldLight: palette.sand,
+  goldMuted: '#F5EDE3',
 
   // Superficies
-  background: '#FAFAF8',
-  backgroundWarm: '#F7F4EF',
-  surface: '#FFFFFF',
-  surfaceAlt: '#F5F0EB',
-  surfaceElevated: '#FFFFFF',
+  background: '#FAF6F0',
+  backgroundWarm: palette.sand,
+  surface: '#FFFCF8',
+  surfaceAlt: '#F0E8DC',
+  surfaceElevated: '#FFFCF8',
 
   // Texto
-  text: '#2C2419',
-  textSecondary: '#6B5D52',
-  textMuted: '#9A8B7E',
+  text: '#3A3428',
+  textSecondary: palette.coffee,
+  textMuted: '#9A8570',
 
   // Bordes
-  border: '#E8E2DA',
-  borderLight: '#F2EDE6',
+  border: '#D4C4AE',
+  borderLight: '#E8DFD3',
 
   // Estados
-  success: '#40916C',
-  successBg: '#EDF5F0',
-  warning: '#C4A052',
-  warningBg: '#FBF6E9',
-  danger: '#B5493F',
-  dangerBg: '#FDF0EE',
-  info: '#5C7A6B',
-  infoBg: '#EEF3F0',
+  success: palette.olive,
+  successBg: '#E8E6DC',
+  warning: palette.tan,
+  warningBg: '#F5EDE3',
+  danger: '#A65D4A',
+  dangerBg: '#F8EBE8',
+  info: palette.coffee,
+  infoBg: '#EDE8DF',
 
-  overlay: 'rgba(44, 36, 25, 0.45)',
+  overlay: 'rgba(58, 52, 40, 0.45)',
 } as const;
 
 export const spacing = {
@@ -81,23 +90,23 @@ export const typography = {
 
 export const shadows = {
   sm: {
-    shadowColor: '#3E2E23',
+    shadowColor: palette.coffee,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.06,
     shadowRadius: 3,
     elevation: 1,
   },
   md: {
-    shadowColor: '#3E2E23',
+    shadowColor: palette.coffee,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#3D6B4F',
+    shadowColor: palette.olive,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.14,
     shadowRadius: 24,
     elevation: 8,
   },
@@ -105,9 +114,9 @@ export const shadows = {
 
 export const headerStyle = {
   backgroundColor: colors.surface,
-  shadowColor: '#3E2E23',
+  shadowColor: palette.coffee,
   shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.05,
+  shadowOpacity: 0.06,
   shadowRadius: 4,
   elevation: 2,
   borderBottomWidth: 1,
@@ -115,4 +124,7 @@ export const headerStyle = {
 } as const;
 
 /** Gradiente de marca para login y hero */
-export const brandGradient = [colors.primary, colors.coffeeDark] as const;
+export const brandGradient = [palette.olive, palette.coffee] as const;
+
+/** Acento para módulo cocina */
+export const kitchenAccent = palette.tan;

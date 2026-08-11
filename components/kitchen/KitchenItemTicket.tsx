@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, kitchenAccent, radius, shadows } from '@/constants/theme';
 import { formatOrderTime } from '@/lib/demo-data';
 import { showKitchenReadyAlert } from '@/lib/notify';
 import { usePosStore } from '@/stores/posStore';
@@ -55,7 +55,7 @@ export function KitchenItemTicket({ order, item, table, waiter, onItemReady }: K
 
       <View style={styles.metaGrid}>
         <View style={styles.metaItem}>
-          <Ionicons name="grid-outline" size={14} color={KITCHEN_ACCENT} />
+          <Ionicons name="grid-outline" size={14} color={kitchenAccent} />
           <View>
             <Text style={styles.metaLabel}>Mesa</Text>
             <Text style={styles.metaValue}>
@@ -64,14 +64,14 @@ export function KitchenItemTicket({ order, item, table, waiter, onItemReady }: K
           </View>
         </View>
         <View style={styles.metaItem}>
-          <Ionicons name="person-outline" size={14} color={KITCHEN_ACCENT} />
+          <Ionicons name="person-outline" size={14} color={kitchenAccent} />
           <View>
             <Text style={styles.metaLabel}>Mesero</Text>
             <Text style={styles.metaValue}>{waiter?.name ?? 'Sin asignar'}</Text>
           </View>
         </View>
         <View style={styles.metaItem}>
-          <Ionicons name="time-outline" size={14} color={KITCHEN_ACCENT} />
+          <Ionicons name="time-outline" size={14} color={kitchenAccent} />
           <View>
             <Text style={styles.metaLabel}>Pedido</Text>
             <Text style={styles.metaValue}>{formatOrderTime(orderTime)}</Text>
@@ -91,8 +91,6 @@ export function KitchenItemTicket({ order, item, table, waiter, onItemReady }: K
   );
 }
 
-const KITCHEN_ACCENT = '#C45C26';
-
 const styles = StyleSheet.create({
   ticket: {
     backgroundColor: colors.surface,
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
     gap: 12,
     borderWidth: 1.5,
     borderLeftWidth: 4,
-    borderLeftColor: KITCHEN_ACCENT,
+    borderLeftColor: kitchenAccent,
     borderColor: colors.borderLight,
     ...shadows.md,
   },
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     minWidth: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: KITCHEN_ACCENT,
+    backgroundColor: kitchenAccent,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 8,

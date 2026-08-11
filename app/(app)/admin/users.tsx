@@ -28,22 +28,26 @@ export default function AdminUsersScreen() {
 
   const restaurantUsers = users.filter((u) => u.restaurant_id === activeRestaurantId);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!fullName.trim() || !email.trim() || !activeRestaurantId) return;
     if (restaurantUsers.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())) {
       Alert.alert('Error', 'Ya existe un usuario con ese correo');
       return;
     }
-    createUser({
-      restaurant_id: activeRestaurantId,
-      full_name: fullName.trim(),
-      email: email.trim().toLowerCase(),
-      role,
-    });
-    setFullName('');
-    setEmail('');
-    setRole('waiter');
-    setShowForm(false);
+    try {
+      await createUser({
+        restaurant_id: activeRestaurantId,
+        full_name: fullName.trim(),
+        email: email.trim().toLowerCase(),
+        role,
+      });
+      setFullName('');
+      setEmail('');
+      setRole('waiter');
+      setShowForm(false);
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'No se pudo crear el usuario');
+    }
   };
 
   const confirmDelete = (id: string, name: string) => {

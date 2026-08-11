@@ -29,18 +29,25 @@ Presiona `w` para web, o escanea el QR con Expo Go.
 
 En login usa **cualquier correo y contraseña** — el modo demo carga datos de ejemplo.
 
-## Conectar Supabase
+## Conectar Supabase (backend CRUD)
 
 1. Crea un proyecto en [supabase.com](https://supabase.com)
-2. Ejecuta el SQL en `supabase/migrations/001_initial_schema.sql`
-3. Copia `.env.example` → `.env` y agrega tus credenciales:
-
-```env
-EXPO_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-```
-
+2. Ejecuta en el SQL Editor:
+   - `supabase/migrations/001_initial_schema.sql`
+   - `supabase/migrations/002_crud_extensions.sql`
+3. Copia `.env.example` → `.env` y agrega tus credenciales
 4. Reinicia Expo: `npm start`
+
+### Capa de datos
+
+| Capa | Ubicación |
+|------|-----------|
+| Repositorios CRUD | `lib/repositories/` |
+| Tipos de BD | `types/database.ts` |
+| Mappers dominio ↔ BD | `lib/api/mappers.ts` |
+| Carga de restaurante | `lib/data/restaurant-data.ts` |
+
+Entidades con CRUD: mesas, categorías, menú, meseros, usuarios, órdenes (+ ítems).
 
 ## Scripts
 

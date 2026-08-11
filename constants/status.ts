@@ -9,14 +9,14 @@ export const tableStatusConfig: Record<
     label: 'Libre',
     bg: colors.successBg,
     color: colors.success,
-    border: '#B7DCC8',
+    border: '#C5C9B8',
     dot: colors.success,
   },
   occupied: {
     label: 'Ocupada',
     bg: colors.infoBg,
     color: colors.info,
-    border: '#C5D4CC',
+    border: '#D4C4AE',
     dot: colors.info,
   },
   bill_requested: {
@@ -30,7 +30,7 @@ export const tableStatusConfig: Record<
     label: 'Reservada',
     bg: colors.coffeeMuted,
     color: colors.coffee,
-    border: '#D4C4B0',
+    border: '#DCC9B0',
     dot: colors.coffeeLight,
   },
 };

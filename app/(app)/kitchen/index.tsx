@@ -8,7 +8,7 @@ import { useSignOut } from '@/components/navigation/NavButtons';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, kitchenAccent, radius, shadows } from '@/constants/theme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import type { Order, OrderItem } from '@/types';
@@ -136,8 +136,6 @@ export default function KitchenDashboardScreen() {
   );
 }
 
-const KITCHEN_ACCENT = '#C45C26';
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: radius.lg,
-    backgroundColor: KITCHEN_ACCENT,
+    backgroundColor: kitchenAccent,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -177,15 +175,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 16,
     padding: 16,
-    backgroundColor: `${KITCHEN_ACCENT}12`,
+    backgroundColor: `${kitchenAccent}12`,
     borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: `${KITCHEN_ACCENT}30`,
+    borderColor: `${kitchenAccent}30`,
   },
   stat: { flex: 1, alignItems: 'center', gap: 2 },
-  statNum: { fontSize: 22, fontWeight: '800', color: KITCHEN_ACCENT },
+  statNum: { fontSize: 22, fontWeight: '800', color: kitchenAccent },
   statLabel: { fontSize: 11, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase' },
-  statDivider: { width: 1, height: 32, backgroundColor: `${KITCHEN_ACCENT}30` },
+  statDivider: { width: 1, height: 32, backgroundColor: `${kitchenAccent}30` },
   filters: {
     flexDirection: 'row',
     gap: 8,
@@ -200,8 +198,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  filterChipActive: { backgroundColor: `${KITCHEN_ACCENT}18`, borderColor: KITCHEN_ACCENT },
+  filterChipActive: { backgroundColor: `${kitchenAccent}18`, borderColor: kitchenAccent },
   filterText: { fontSize: 13, fontWeight: '600', color: colors.textSecondary },
-  filterTextActive: { color: KITCHEN_ACCENT, fontWeight: '700' },
+  filterTextActive: { color: kitchenAccent, fontWeight: '700' },
   list: { paddingHorizontal: 16, paddingBottom: 24, gap: 12 },
 });

@@ -20,6 +20,6 @@ export function canManageUsers(role: UserRole): boolean {
   return role === 'owner' || role === 'manager';
 }
 
-export const STAFF_COLORS = ['#3D6B4F', '#5C4A3A', '#40916C', '#C4A052', '#8B7355', '#2D5040'];
+export const STAFF_COLORS = ['#555842', '#81634A', '#A7805A', '#AEA781', '#DCC9B0', '#5A4635'];
 
 export const TABLE_ZONES = ['Terraza', 'Interior', 'Barra', 'VIP', 'General'];

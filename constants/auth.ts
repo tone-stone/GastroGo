@@ -38,8 +38,8 @@ export const LOGIN_MODES: {
 ];
 
 export function getLoginModeAccent(mode: LoginMode): string {
-  if (mode === 'admin') return '#5C4A3A';
-  if (mode === 'kitchen') return '#C45C26';
-  if (mode === 'waiter') return '#3D6B4F';
-  return '#2D5040';
+  if (mode === 'admin') return '#81634A';
+  if (mode === 'kitchen') return '#A7805A';
+  if (mode === 'waiter') return '#555842';
+  return '#555842';
 }

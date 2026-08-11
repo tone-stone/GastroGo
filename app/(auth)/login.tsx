@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LOGIN_MODES, getLoginModeAccent, type LoginMode } from '@/constants/auth';
-import { colors, radius, shadows, typography, brandGradient } from '@/constants/theme';
+import { colors, kitchenAccent, radius, shadows, typography, brandGradient } from '@/constants/theme';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { useSessionStore } from '@/stores/sessionStore';
 
@@ -336,5 +336,5 @@ const styles = StyleSheet.create({
   demoHeader: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   demoTitle: { fontSize: 14, fontWeight: '700', color: colors.primary },
   demoText: { fontSize: 13, color: colors.textSecondary, lineHeight: 19 },
-  kitchenBtn: { backgroundColor: '#C45C26' },
+  kitchenBtn: { backgroundColor: kitchenAccent },
 });

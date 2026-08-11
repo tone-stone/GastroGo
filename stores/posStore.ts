@@ -2,13 +2,17 @@ import { create } from 'zustand';
 
 import {
   COUNTER_TABLE_ID,
-  demoCategories,
-  demoMenuItems,
-  demoOrders,
-  demoStaff,
-  demoTables,
   isCounterTable,
 } from '@/lib/demo-data';
+import { demoState } from '@/lib/data/demo-state';
+import { fetchRestaurantSnapshot, persistOrder, persistTable } from '@/lib/data/restaurant-data';
+import {
+  getMenuCategoriesRepository,
+  getMenuItemsRepository,
+  getStaffRepository,
+  getTablesRepository,
+} from '@/lib/repositories';
+import { isSupabaseConfigured } from '@/lib/supabase';
 import type { MenuCategory, MenuItem, Order, OrderItem, StaffMember, Table, TableStatus } from '@/types';
 
 interface PosState {
@@ -39,7 +43,7 @@ interface PosState {
   assignTable: (tableId: string, waiterId: string | null, status?: TableStatus) => void;
   startTableService: (tableId: string, waiterId: string, restaurantId: string) => Order;
   getMyTables: (waiterId: string) => Table[];
-  loadRestaurantData: (restaurantId: string) => void;
+  loadRestaurantData: (restaurantId: string) => Promise<void>;
   createTable: (data: {
     restaurant_id: string;
     number: number;
@@ -74,21 +78,44 @@ function normalizeNotes(notes?: string): string | undefined {
   return trimmed || undefined;
 }
 
+function syncOrderPersistence(get: () => PosState, orderId: string) {
+  const order = get().orders.find((o) => o.id === orderId);
+  if (!order) return;
+  if (!isSupabaseConfigured) {
+    const idx = demoState.orders.findIndex((o) => o.id === orderId);
+    if (idx >= 0) demoState.orders[idx] = order;
+    else demoState.orders.push(order);
+  } else {
+    persistOrder(order);
+  }
+}
+
+function syncTablePersistence(table: Table) {
+  if (!isSupabaseConfigured) {
+    const idx = demoState.tables.findIndex((t) => t.id === table.id);
+    if (idx >= 0) demoState.tables[idx] = table;
+  } else {
+    persistTable(table);
+  }
+}
+
 export const usePosStore = create<PosState>((set, get) => ({
-  tables: demoTables,
-  categories: demoCategories,
-  menuItems: demoMenuItems,
-  orders: demoOrders,
-  staff: demoStaff,
+  tables: demoState.tables,
+  categories: demoState.categories,
+  menuItems: demoState.menuItems,
+  orders: demoState.orders,
+  staff: demoState.staff,
   activeSaleOrderId: null,
 
-  loadRestaurantData: (_restaurantId) => {
+  loadRestaurantData: async (restaurantId) => {
+    const snapshot = await fetchRestaurantSnapshot(restaurantId);
     set({
-      tables: demoTables,
-      categories: demoCategories,
-      menuItems: demoMenuItems,
-      orders: demoOrders,
-      staff: demoStaff,
+      tables: snapshot.tables,
+      categories: snapshot.categories,
+      menuItems: snapshot.menuItems,
+      orders: snapshot.orders,
+      staff: snapshot.staff,
+      activeSaleOrderId: null,
     });
   },
 
@@ -138,6 +165,9 @@ export const usePosStore = create<PosState>((set, get) => ({
       activeSaleOrderId: order.id,
     }));
 
+    if (!isSupabaseConfigured) demoState.orders.push(order);
+    else persistOrder(order);
+
     return order;
   },
 
@@ -151,6 +181,7 @@ export const usePosStore = create<PosState>((set, get) => ({
       activeSaleOrderId:
         state.activeSaleOrderId === orderId ? null : state.activeSaleOrderId,
     }));
+    syncOrderPersistence(get, orderId);
   },
 
   getMenuByCategory: (categoryId) =>
@@ -188,6 +219,11 @@ export const usePosStore = create<PosState>((set, get) => ({
         ),
       };
     });
+    const table = get().tables.find((t) => t.id === tableId);
+    if (table) syncTablePersistence(table);
+    get()
+      .orders.filter((o) => o.table_id === tableId && o.status !== 'paid' && o.status !== 'cancelled')
+      .forEach((o) => syncOrderPersistence(get, o.id));
   },
 
   startTableService: (tableId, waiterId, restaurantId) => {
@@ -235,6 +271,11 @@ export const usePosStore = create<PosState>((set, get) => ({
           ),
     }));
 
+    if (!isSupabaseConfigured) demoState.orders.push(order);
+    else persistOrder(order);
+    const updatedTable = get().tables.find((t) => t.id === tableId);
+    if (updatedTable && !counter) syncTablePersistence(updatedTable);
+
     return order;
   },
 
@@ -267,6 +308,7 @@ export const usePosStore = create<PosState>((set, get) => ({
         return recalculateOrder({ ...order, items });
       }),
     }));
+    syncOrderPersistence(get, orderId);
   },
 
   updateItemNotes: (orderId, itemId, notes) => {
@@ -280,6 +322,7 @@ export const usePosStore = create<PosState>((set, get) => ({
         return { ...order, items };
       }),
     }));
+    syncOrderPersistence(get, orderId);
   },
 
   removeItemFromOrder: (orderId, itemId) => {
@@ -290,6 +333,7 @@ export const usePosStore = create<PosState>((set, get) => ({
         return recalculateOrder({ ...order, items });
       }),
     }));
+    syncOrderPersistence(get, orderId);
   },
 
   updateItemQuantity: (orderId, itemId, quantity) => {
@@ -304,6 +348,7 @@ export const usePosStore = create<PosState>((set, get) => ({
         return recalculateOrder({ ...order, items });
       }),
     }));
+    syncOrderPersistence(get, orderId);
   },
 
   sendToKitchen: (orderId) => {
@@ -324,6 +369,7 @@ export const usePosStore = create<PosState>((set, get) => ({
           : o
       ),
     }));
+    syncOrderPersistence(get, orderId);
   },
 
   markKitchenItemReady: (orderId, itemId) => {
@@ -355,6 +401,7 @@ export const usePosStore = create<PosState>((set, get) => ({
     }));
 
     const tableName = table?.name ?? `Mesa ${table?.number ?? '?'}`;
+    syncOrderPersistence(get, orderId);
     return { tableName, itemName: itemBefore.name, quantity: itemBefore.quantity };
   },
 
@@ -369,6 +416,8 @@ export const usePosStore = create<PosState>((set, get) => ({
         t.id === tableId ? { ...t, status: 'bill_requested' as TableStatus } : t
       ),
     }));
+    const table = get().tables.find((t) => t.id === tableId);
+    if (table) syncTablePersistence(table);
   },
 
   payOrder: (orderId, tip, paymentMethod) => {
@@ -385,20 +434,27 @@ export const usePosStore = create<PosState>((set, get) => ({
       });
 
       const counter = isCounterTable(order.table_id);
+      const tables = counter
+        ? state.tables
+        : state.tables.map((t) =>
+            t.id === order.table_id
+              ? { ...t, status: 'free' as TableStatus, assigned_waiter_id: undefined }
+              : t,
+          );
 
       return {
         orders: state.orders.map((o) => (o.id === orderId ? paidOrder : o)),
-        tables: counter
-          ? state.tables
-          : state.tables.map((t) =>
-              t.id === order.table_id
-                ? { ...t, status: 'free' as TableStatus, assigned_waiter_id: undefined }
-                : t,
-            ),
+        tables,
         activeSaleOrderId:
           state.activeSaleOrderId === orderId ? null : state.activeSaleOrderId,
       };
     });
+    syncOrderPersistence(get, orderId);
+    const table = get().tables.find((t) => {
+      const order = get().orders.find((o) => o.id === orderId);
+      return order && t.id === order.table_id;
+    });
+    if (table) syncTablePersistence(table);
   },
 
   createTable: (data) => {
@@ -412,6 +468,23 @@ export const usePosStore = create<PosState>((set, get) => ({
       zone: data.zone ?? 'General',
     };
     set((state) => ({ tables: [...state.tables, table] }));
+    if (isSupabaseConfigured) {
+      void getTablesRepository()
+        .create({
+          restaurant_id: data.restaurant_id,
+          number: data.number,
+          name: table.name,
+          capacity: data.capacity,
+          zone: data.zone,
+        })
+        .then((created) => {
+          set((state) => ({
+            tables: state.tables.map((t) => (t.id === table.id ? created : t)),
+          }));
+        });
+    } else {
+      demoState.tables.push(table);
+    }
     return table;
   },
 
@@ -427,6 +500,14 @@ export const usePosStore = create<PosState>((set, get) => ({
           : t
       ),
     }));
+    const table = get().tables.find((t) => t.id === id);
+    if (table) {
+      if (isSupabaseConfigured) void getTablesRepository().update(id, data);
+      else {
+        const idx = demoState.tables.findIndex((t) => t.id === id);
+        if (idx >= 0) demoState.tables[idx] = table;
+      }
+    }
   },
 
   deleteTable: (id) => {
@@ -435,11 +516,22 @@ export const usePosStore = create<PosState>((set, get) => ({
     );
     if (hasActiveOrder) return;
     set((state) => ({ tables: state.tables.filter((t) => t.id !== id) }));
+    if (isSupabaseConfigured) void getTablesRepository().remove(id);
+    else demoState.tables = demoState.tables.filter((t) => t.id !== id);
   },
 
   createStaff: (data) => {
     const member: StaffMember = { id: generateId('w'), ...data };
     set((state) => ({ staff: [...state.staff, member] }));
+    if (isSupabaseConfigured) {
+      void getStaffRepository().create(data).then((created) => {
+        set((state) => ({
+          staff: state.staff.map((s) => (s.id === member.id ? created : s)),
+        }));
+      });
+    } else {
+      demoState.staff.push(member);
+    }
     return member;
   },
 
@@ -447,6 +539,12 @@ export const usePosStore = create<PosState>((set, get) => ({
     set((state) => ({
       staff: state.staff.map((s) => (s.id === id ? { ...s, ...data } : s)),
     }));
+    if (isSupabaseConfigured) void getStaffRepository().update(id, data);
+    else {
+      const idx = demoState.staff.findIndex((s) => s.id === id);
+      const updated = get().staff.find((s) => s.id === id);
+      if (idx >= 0 && updated) demoState.staff[idx] = updated;
+    }
   },
 
   deleteStaff: (id) => {
@@ -456,6 +554,8 @@ export const usePosStore = create<PosState>((set, get) => ({
         t.assigned_waiter_id === id ? { ...t, assigned_waiter_id: undefined } : t
       ),
     }));
+    if (isSupabaseConfigured) void getStaffRepository().remove(id);
+    else demoState.staff = demoState.staff.filter((s) => s.id !== id);
   },
 
   createCategory: (data) => {
@@ -467,12 +567,32 @@ export const usePosStore = create<PosState>((set, get) => ({
       sort_order,
     };
     set((state) => ({ categories: [...state.categories, category] }));
+    if (isSupabaseConfigured) {
+      void getMenuCategoriesRepository()
+        .create({ restaurant_id: data.restaurant_id, name: data.name, sort_order })
+        .then((created) => {
+          set((state) => ({
+            categories: state.categories.map((c) => (c.id === category.id ? created : c)),
+          }));
+        });
+    } else {
+      demoState.categories.push(category);
+    }
     return category;
   },
 
   createMenuItem: (data) => {
     const item: MenuItem = { id: generateId('m'), ...data };
     set((state) => ({ menuItems: [...state.menuItems, item] }));
+    if (isSupabaseConfigured) {
+      void getMenuItemsRepository().create(data).then((created) => {
+        set((state) => ({
+          menuItems: state.menuItems.map((m) => (m.id === item.id ? created : m)),
+        }));
+      });
+    } else {
+      demoState.menuItems.push(item);
+    }
     return item;
   },
 
@@ -480,10 +600,18 @@ export const usePosStore = create<PosState>((set, get) => ({
     set((state) => ({
       menuItems: state.menuItems.map((m) => (m.id === id ? { ...m, ...data } : m)),
     }));
+    if (isSupabaseConfigured) void getMenuItemsRepository().update(id, data);
+    else {
+      const idx = demoState.menuItems.findIndex((m) => m.id === id);
+      const updated = get().menuItems.find((m) => m.id === id);
+      if (idx >= 0 && updated) demoState.menuItems[idx] = updated;
+    }
   },
 
   deleteMenuItem: (id) => {
     set((state) => ({ menuItems: state.menuItems.filter((m) => m.id !== id) }));
+    if (isSupabaseConfigured) void getMenuItemsRepository().remove(id);
+    else demoState.menuItems = demoState.menuItems.filter((m) => m.id !== id);
   },
 
   toggleMenuItem: (id) => {
@@ -492,5 +620,13 @@ export const usePosStore = create<PosState>((set, get) => ({
         m.id === id ? { ...m, is_available: !m.is_available } : m
       ),
     }));
+    const item = get().menuItems.find((m) => m.id === id);
+    if (item) {
+      if (isSupabaseConfigured) void getMenuItemsRepository().update(id, { is_available: item.is_available });
+      else {
+        const idx = demoState.menuItems.findIndex((m) => m.id === id);
+        if (idx >= 0) demoState.menuItems[idx] = item;
+      }
+    }
   },
 }));

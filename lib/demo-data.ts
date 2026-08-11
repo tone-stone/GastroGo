@@ -36,10 +36,10 @@ export const demoRestaurants: Restaurant[] = [
 ];
 
 export const demoStaff: StaffMember[] = [
-  { id: 'w1', restaurant_id: DEMO_RESTAURANT_ID, name: 'Ana García', role: 'waiter', color: '#3D6B4F' },
-  { id: 'w2', restaurant_id: DEMO_RESTAURANT_ID, name: 'Carlos Ruiz', role: 'waiter', color: '#5C4A3A' },
-  { id: 'w3', restaurant_id: DEMO_RESTAURANT_ID, name: 'María López', role: 'waiter', color: '#40916C' },
-  { id: 'w4', restaurant_id: DEMO_RESTAURANT_ID, name: 'Luis Hernández', role: 'manager', color: '#C4A052' },
+  { id: 'w1', restaurant_id: DEMO_RESTAURANT_ID, name: 'Ana García', role: 'waiter', color: '#555842' },
+  { id: 'w2', restaurant_id: DEMO_RESTAURANT_ID, name: 'Carlos Ruiz', role: 'waiter', color: '#81634A' },
+  { id: 'w3', restaurant_id: DEMO_RESTAURANT_ID, name: 'María López', role: 'waiter', color: '#AEA781' },
+  { id: 'w4', restaurant_id: DEMO_RESTAURANT_ID, name: 'Luis Hernández', role: 'manager', color: '#A7805A' },
 ];
 
 export const demoTables: Table[] = [
