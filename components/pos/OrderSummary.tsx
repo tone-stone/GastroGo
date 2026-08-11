@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { OrderStatusBadge } from '@/components/ui/Badge';
@@ -15,6 +15,8 @@ interface OrderSummaryProps {
   onEditNotes?: (itemId: string, itemName: string, currentNotes?: string) => void;
   onSendToKitchen?: () => void;
   onCheckout?: () => void;
+  variant?: 'default' | 'panel';
+  maxItemsHeight?: number;
 }
 
 export function OrderSummary({
@@ -25,12 +27,84 @@ export function OrderSummary({
   onEditNotes,
   onSendToKitchen,
   onCheckout,
+  variant = 'default',
+  maxItemsHeight,
 }: OrderSummaryProps) {
   const itemCount = order.items.reduce((sum, i) => sum + i.quantity, 0);
   const canEdit = order.status === 'open';
+  const isPanel = variant === 'panel';
+
+  const itemsBlock = order.items.length === 0 ? (
+    <View style={styles.emptyWrap}>
+      <Ionicons name="receipt-outline" size={32} color={colors.textMuted} />
+      <Text style={styles.emptyTitle}>Comanda vacía</Text>
+      <Text style={styles.empty}>Selecciona platillos del menú para comenzar</Text>
+    </View>
+  ) : (
+    <>
+      <Text style={styles.itemCount}>{itemCount} artículo{itemCount !== 1 ? 's' : ''}</Text>
+      <View style={styles.items}>
+        {order.items.map((item) => (
+          <View key={item.id} style={styles.row}>
+            <View style={styles.qtyControls}>
+              <Pressable
+                style={styles.qtyBtn}
+                onPress={() => onDecrement(item.id, item.quantity - 1)}
+              >
+                <Ionicons name="remove" size={16} color={colors.text} />
+              </Pressable>
+              <Text style={styles.qty}>{item.quantity}</Text>
+              <Pressable
+                style={[styles.qtyBtn, styles.qtyBtnAdd]}
+                onPress={() => onIncrement(item.id, item.quantity + 1)}
+              >
+                <Ionicons name="add" size={16} color="#FFF" />
+              </Pressable>
+            </View>
+            <View style={styles.itemInfo}>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemUnit}>
+                {formatCurrency(item.unit_price)} c/u
+              </Text>
+              {item.notes ? (
+                <View style={styles.notesBadge}>
+                  <Ionicons name="flame-outline" size={12} color={colors.coffee} />
+                  <Text style={styles.notesText}>{item.notes}</Text>
+                </View>
+              ) : null}
+              {item.kitchen_status === 'ready' ? (
+                <View style={styles.readyServeBadge}>
+                  <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+                  <Text style={styles.readyServeText}>Listo en cocina — servir</Text>
+                </View>
+              ) : null}
+              {canEdit && onEditNotes ? (
+                <Pressable
+                  style={styles.notesBtn}
+                  onPress={() => onEditNotes(item.id, item.name, item.notes)}
+                >
+                  <Ionicons
+                    name={item.notes ? 'create-outline' : 'chatbubble-ellipses-outline'}
+                    size={14}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.notesBtnText}>
+                    {item.notes ? 'Editar comentario' : 'Comentario cocina'}
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
+            <Text style={styles.itemPrice}>
+              {formatCurrency(item.unit_price * item.quantity)}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </>
+  );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isPanel && styles.containerPanel]}>
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Comanda</Text>
@@ -39,73 +113,16 @@ export function OrderSummary({
         <OrderStatusBadge status={order.status} />
       </View>
 
-      {order.items.length === 0 ? (
-        <View style={styles.emptyWrap}>
-          <Ionicons name="receipt-outline" size={32} color={colors.textMuted} />
-          <Text style={styles.emptyTitle}>Comanda vacía</Text>
-          <Text style={styles.empty}>Selecciona platillos del menú para comenzar</Text>
-        </View>
+      {maxItemsHeight ? (
+        <ScrollView
+          style={{ maxHeight: maxItemsHeight }}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
+        >
+          {itemsBlock}
+        </ScrollView>
       ) : (
-        <>
-          <Text style={styles.itemCount}>{itemCount} artículo{itemCount !== 1 ? 's' : ''}</Text>
-          <View style={styles.items}>
-            {order.items.map((item) => (
-              <View key={item.id} style={styles.row}>
-                <View style={styles.qtyControls}>
-                  <Pressable
-                    style={styles.qtyBtn}
-                    onPress={() => onDecrement(item.id, item.quantity - 1)}
-                  >
-                    <Ionicons name="remove" size={16} color={colors.text} />
-                  </Pressable>
-                  <Text style={styles.qty}>{item.quantity}</Text>
-                  <Pressable
-                    style={[styles.qtyBtn, styles.qtyBtnAdd]}
-                    onPress={() => onIncrement(item.id, item.quantity + 1)}
-                  >
-                    <Ionicons name="add" size={16} color="#FFF" />
-                  </Pressable>
-                </View>
-                <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemUnit}>
-                    {formatCurrency(item.unit_price)} c/u
-                  </Text>
-                  {item.notes ? (
-                    <View style={styles.notesBadge}>
-                      <Ionicons name="flame-outline" size={12} color={colors.coffee} />
-                      <Text style={styles.notesText}>{item.notes}</Text>
-                    </View>
-                  ) : null}
-                  {item.kitchen_status === 'ready' ? (
-                    <View style={styles.readyServeBadge}>
-                      <Ionicons name="checkmark-circle" size={14} color={colors.success} />
-                      <Text style={styles.readyServeText}>Listo en cocina — servir</Text>
-                    </View>
-                  ) : null}
-                  {canEdit && onEditNotes ? (
-                    <Pressable
-                      style={styles.notesBtn}
-                      onPress={() => onEditNotes(item.id, item.name, item.notes)}
-                    >
-                      <Ionicons
-                        name={item.notes ? 'create-outline' : 'chatbubble-ellipses-outline'}
-                        size={14}
-                        color={colors.primary}
-                      />
-                      <Text style={styles.notesBtnText}>
-                        {item.notes ? 'Editar comentario' : 'Comentario cocina'}
-                      </Text>
-                    </Pressable>
-                  ) : null}
-                </View>
-                <Text style={styles.itemPrice}>
-                  {formatCurrency(item.unit_price * item.quantity)}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </>
+        itemsBlock
       )}
 
       <View style={styles.totals}>
@@ -156,6 +173,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderLight,
     ...shadows.md,
+  },
+  containerPanel: {
+    flex: 1,
+    borderRadius: radius.lg,
+    ...shadows.sm,
   },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   title: { fontSize: 18, fontWeight: '800', color: colors.text },

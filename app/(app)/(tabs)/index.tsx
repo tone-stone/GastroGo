@@ -1,15 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import { ItemNotesModal } from '@/components/pos/ItemNotesModal';
 import { MenuList } from '@/components/pos/MenuList';
 import { OrderSummary } from '@/components/pos/OrderSummary';
 import { PosCashRegister } from '@/components/pos/PosCashRegister';
-import { Button } from '@/components/ui/Button';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
 import { colors, radius, shadows } from '@/constants/theme';
+import { formatCurrency } from '@/lib/demo-data';
 import { confirmAction } from '@/lib/confirm';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -20,11 +28,20 @@ type NotesModalState =
   | { mode: 'edit'; itemId: string; itemName: string; notes?: string }
   | null;
 
-export default function SaleScreen() {
-  const { width } = useWindowDimensions();
-  const isWide = width >= 768;
+function getMenuColumns(width: number): number {
+  if (width >= 1400) return 4;
+  if (width >= 1100) return 3;
+  if (width >= 768) return 2;
+  return 1;
+}
 
-  const { activeRestaurantId, restaurants } = useSessionStore();
+export default function SaleScreen() {
+  const { width, height } = useWindowDimensions();
+  const isWeb = Platform.OS === 'web';
+  const isWide = width >= 768;
+  const isDesktop = width >= 1100;
+
+  const { activeRestaurantId, restaurants, user } = useSessionStore();
   const {
     categories,
     getMenuByCategory,
@@ -62,6 +79,8 @@ export default function SaleScreen() {
   }, [categories, selectedCategoryId]);
 
   const menuItems = getMenuByCategory(selectedCategoryId);
+  const menuColumns = getMenuColumns(width);
+  const itemCount = order?.items.reduce((sum, i) => sum + i.quantity, 0) ?? 0;
 
   const handleAddMenuItem = (item: MenuItem) => {
     setNotesModal({ mode: 'add', item });
@@ -84,8 +103,9 @@ export default function SaleScreen() {
     setNotesModal(null);
   };
 
-  const handleNewSale = async () => {
-    if (!order || order.items.length === 0) {
+  const handleNewSale = useCallback(async () => {
+    const current = getActiveSaleOrder();
+    if (!current || current.items.length === 0) {
       resetSaleOrder();
       if (activeRestaurantId) startSaleOrder(activeRestaurantId);
       return;
@@ -96,13 +116,55 @@ export default function SaleScreen() {
       'Se descartará el pedido actual sin cobrar. ¿Continuar?',
     );
     if (!ok) return;
-    cancelOrder(order.id);
+    cancelOrder(current.id);
     if (activeRestaurantId) startSaleOrder(activeRestaurantId);
-  };
+  }, [activeRestaurantId, cancelOrder, getActiveSaleOrder, resetSaleOrder, startSaleOrder]);
 
   const handlePaid = () => {
     if (activeRestaurantId) startSaleOrder(activeRestaurantId);
   };
+
+  const toolbar = (
+    <View style={[styles.toolbar, isDesktop && styles.toolbarDesktop]}>
+      <View style={styles.toolbarLeft}>
+        <View style={styles.toolbarIcon}>
+          <Ionicons name="cash" size={20} color="#FFF" />
+        </View>
+        <View>
+          <Text style={styles.toolbarTitle}>Punto de venta</Text>
+          <Text style={styles.toolbarSub} numberOfLines={1}>
+            {restaurant?.name ?? 'GastroGo'} · Mostrador
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.toolbarStats}>
+        <View style={styles.statChip}>
+          <Ionicons name="basket-outline" size={16} color={colors.primary} />
+          <Text style={styles.statValue}>{itemCount}</Text>
+          <Text style={styles.statLabel}>artículos</Text>
+        </View>
+        <View style={[styles.statChip, styles.statChipTotal]}>
+          <Text style={styles.statLabel}>Total</Text>
+          <Text style={styles.statTotal}>{formatCurrency(order?.total ?? 0)}</Text>
+        </View>
+      </View>
+
+      <View style={styles.toolbarRight}>
+        {user ? (
+          <View style={styles.cashierChip}>
+            <Ionicons name="person-circle-outline" size={18} color={colors.primary} />
+            <Text style={styles.cashierName} numberOfLines={1}>{user.full_name}</Text>
+          </View>
+        ) : null}
+        <Pressable style={styles.newSaleBtn} onPress={handleNewSale}>
+          <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
+          <Text style={styles.newSaleText}>Nueva venta</Text>
+        </Pressable>
+        <LiveClock />
+      </View>
+    </View>
+  );
 
   if (!order) {
     return (
@@ -112,53 +174,128 @@ export default function SaleScreen() {
     );
   }
 
-  return (
-    <Screen padded={false} scroll={!isWide}>
-      <View style={styles.hero}>
-        <View style={styles.heroTop}>
-          <View style={styles.titleBlock}>
-            <View style={styles.badge}>
-              <Ionicons name="cash-outline" size={14} color={colors.primary} />
-              <Text style={styles.badgeText}>Venta directa</Text>
+  if (isDesktop) {
+    return (
+      <Screen padded={false} scroll={false} style={styles.screenRoot}>
+        {toolbar}
+
+        <View style={[styles.desktopBody, { minHeight: height - 140 }]}>
+          <View style={styles.menuPanel}>
+            <View style={styles.panelHeader}>
+              <Ionicons name="restaurant-outline" size={18} color={colors.primary} />
+              <Text style={styles.panelTitle}>Menú</Text>
             </View>
-            <Text style={styles.title}>Mostrador</Text>
-            <View style={styles.locationRow}>
-              <Ionicons name="storefront-outline" size={14} color={colors.textMuted} />
-              <Text style={styles.locationName} numberOfLines={1}>
-                {restaurant?.name ?? 'GastroGo'}
-              </Text>
+            <ScrollView
+              style={styles.menuScroll}
+              contentContainerStyle={styles.menuScrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <MenuList
+                categories={categories}
+                items={menuItems}
+                selectedCategoryId={selectedCategoryId}
+                onSelectCategory={setSelectedCategoryId}
+                onAddItem={handleAddMenuItem}
+                layout="grid"
+                columns={menuColumns}
+              />
+            </ScrollView>
+          </View>
+
+          <View style={styles.ticketPanel}>
+            <View style={styles.panelHeader}>
+              <Ionicons name="receipt-outline" size={18} color={colors.primary} />
+              <Text style={styles.panelTitle}>Comanda</Text>
+            </View>
+            <View style={styles.ticketPanelBody}>
+              <OrderSummary
+              order={order}
+              tableName="Mostrador"
+              variant="panel"
+              maxItemsHeight={Math.min(320, height * 0.35)}
+              onIncrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
+              onDecrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
+              onEditNotes={(itemId, itemName, currentNotes) =>
+                setNotesModal({ mode: 'edit', itemId, itemName, notes: currentNotes })
+              }
+              onSendToKitchen={() => sendToKitchen(order.id)}
+            />
             </View>
           </View>
-          <LiveClock />
+
+          <View style={styles.registerPanel}>
+            <View style={styles.panelHeader}>
+              <Ionicons name="calculator-outline" size={18} color={colors.primary} />
+              <Text style={styles.panelTitle}>Cobro</Text>
+            </View>
+            <ScrollView
+              style={styles.registerScroll}
+              contentContainerStyle={styles.registerScrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <PosCashRegister
+                orderId={order.id}
+                saleMode
+                embedded
+                onPaid={handlePaid}
+              />
+            </ScrollView>
+          </View>
         </View>
 
-        <View style={styles.heroActions}>
-          <Button
-            title="Nueva venta"
-            variant="outline"
-            icon="add-circle-outline"
-            onPress={handleNewSale}
-          />
+        <ItemNotesModal
+          visible={notesModal !== null}
+          itemName={notesModal?.mode === 'add' ? notesModal.item.name : notesModal?.itemName ?? ''}
+          initialNotes={notesModal?.mode === 'edit' ? notesModal.notes : ''}
+          mode={notesModal?.mode ?? 'add'}
+          onClose={handleNotesModalClose}
+          onSave={handleNotesModalSave}
+        />
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen padded={false} scroll={!isWide} style={isWeb ? styles.screenRoot : undefined}>
+      {isWide ? toolbar : (
+        <View style={styles.mobileHero}>
+          <View style={styles.mobileHeroTop}>
+            <View>
+              <Text style={styles.mobileTitle}>Punto de venta</Text>
+              <Text style={styles.mobileSub}>{restaurant?.name ?? 'GastroGo'}</Text>
+            </View>
+            <LiveClock />
+          </View>
+          <Pressable style={styles.newSaleBtn} onPress={handleNewSale}>
+            <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
+            <Text style={styles.newSaleText}>Nueva venta</Text>
+          </Pressable>
         </View>
-      </View>
+      )}
 
       <View style={[styles.container, isWide && styles.containerWide]}>
         <View style={[styles.menuSection, isWide && styles.menuSectionWide]}>
-          <Text style={styles.sectionTitle}>Menú</Text>
+          {!isWide ? <Text style={styles.sectionTitle}>Menú</Text> : null}
           <MenuList
             categories={categories}
             items={menuItems}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={setSelectedCategoryId}
             onAddItem={handleAddMenuItem}
+            layout={isWide ? 'grid' : 'list'}
+            columns={menuColumns}
           />
         </View>
 
         <View style={[styles.orderSection, isWide && styles.orderSectionWide]}>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.orderScroll}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.orderScroll}
+          >
             <OrderSummary
               order={order}
               tableName="Mostrador"
+              variant={isWide ? 'panel' : 'default'}
               onIncrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
               onDecrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
               onEditNotes={(itemId, itemName, currentNotes) =>
@@ -167,13 +304,7 @@ export default function SaleScreen() {
               onSendToKitchen={() => sendToKitchen(order.id)}
             />
 
-            <View style={styles.registerWrap}>
-              <PosCashRegister
-                orderId={order.id}
-                saleMode
-                onPaid={handlePaid}
-              />
-            </View>
+            <PosCashRegister orderId={order.id} saleMode onPaid={handlePaid} />
           </ScrollView>
         </View>
       </View>
@@ -191,50 +322,158 @@ export default function SaleScreen() {
 }
 
 const styles = StyleSheet.create({
+  screenRoot: { flex: 1, backgroundColor: colors.backgroundWarm },
   loading: { fontSize: 15, color: colors.textMuted, textAlign: 'center', marginTop: 40 },
-  hero: {
+
+  toolbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    ...shadows.sm,
+  },
+  toolbarDesktop: {
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    flexWrap: 'nowrap',
+  },
+  toolbarLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1, minWidth: 180 },
+  toolbarIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toolbarTitle: { fontSize: 17, fontWeight: '800', color: colors.text },
+  toolbarSub: { fontSize: 12, color: colors.textMuted, marginTop: 1 },
+  toolbarStats: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  statChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  statChipTotal: {
+    backgroundColor: colors.primaryMuted,
+    borderColor: colors.primaryLight,
+    gap: 8,
+  },
+  statValue: { fontSize: 16, fontWeight: '800', color: colors.text },
+  statLabel: { fontSize: 11, fontWeight: '600', color: colors.textMuted, textTransform: 'uppercase' },
+  statTotal: { fontSize: 18, fontWeight: '800', color: colors.primary },
+  toolbarRight: { flexDirection: 'row', alignItems: 'center', gap: 12, marginLeft: 'auto' },
+  cashierChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: radius.full,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    maxWidth: 140,
+  },
+  cashierName: { fontSize: 12, fontWeight: '700', color: colors.text, flex: 1 },
+  newSaleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.full,
+    backgroundColor: colors.primaryMuted,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+  },
+  newSaleText: { fontSize: 13, fontWeight: '700', color: colors.primary },
+
+  desktopBody: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 16,
+    padding: 16,
+    maxWidth: 1600,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  menuPanel: {
+    flex: 1.35,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    overflow: 'hidden',
+    ...shadows.md,
+  },
+  ticketPanel: {
+    flex: 0.75,
+    minWidth: 300,
+    maxWidth: 380,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    overflow: 'hidden',
+    ...shadows.md,
+  },
+  ticketPanelBody: { flex: 1, padding: 12 },
+  registerPanel: {
+    flex: 0.85,
+    minWidth: 320,
+    maxWidth: 420,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    overflow: 'hidden',
+    ...shadows.md,
+  },
+  panelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    backgroundColor: colors.background,
+  },
+  panelTitle: { fontSize: 14, fontWeight: '800', color: colors.text, textTransform: 'uppercase', letterSpacing: 0.4 },
+  menuScroll: { flex: 1 },
+  menuScrollContent: { padding: 16, paddingBottom: 24 },
+  registerScroll: { flex: 1 },
+  registerScrollContent: { padding: 12, paddingBottom: 20 },
+
+  mobileHero: {
     backgroundColor: colors.surface,
     padding: 16,
     gap: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
-    ...shadows.sm,
   },
-  heroTop: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  titleBlock: { flex: 1, gap: 6 },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    alignSelf: 'flex-start',
-    backgroundColor: colors.primaryMuted,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radius.full,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: colors.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  title: { fontSize: 22, fontWeight: '800', color: colors.text },
-  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  locationName: { fontSize: 13, color: colors.textSecondary, flex: 1 },
-  heroActions: { flexDirection: 'row' },
+  mobileHeroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  mobileTitle: { fontSize: 20, fontWeight: '800', color: colors.text },
+  mobileSub: { fontSize: 13, color: colors.textMuted, marginTop: 2 },
+
   container: { flex: 1, gap: 16, padding: 16 },
   containerWide: { flexDirection: 'row', gap: 20, padding: 20 },
   menuSection: { flex: 1 },
   menuSectionWide: { flex: 3 },
   orderSection: { flex: 1 },
-  orderSectionWide: { flex: 2, maxWidth: 440 },
+  orderSectionWide: { flex: 2, maxWidth: 480 },
   orderScroll: { paddingBottom: 32, gap: 16 },
   sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 12 },
-  registerWrap: { marginTop: 4 },
 });

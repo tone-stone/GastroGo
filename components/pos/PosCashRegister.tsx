@@ -29,6 +29,7 @@ interface PosCashRegisterProps {
   orderId?: string;
   saleMode?: boolean;
   onPaid?: () => void;
+  embedded?: boolean;
 }
 
 export function PosCashRegister({
@@ -36,6 +37,7 @@ export function PosCashRegister({
   orderId,
   saleMode = false,
   onPaid,
+  embedded = false,
 }: PosCashRegisterProps) {
   const router = useRouter();
   const { user } = useSessionStore();
@@ -131,11 +133,13 @@ export function PosCashRegister({
   };
 
   return (
-    <View style={styles.register}>
-      <View style={styles.registerHeader}>
-        <Ionicons name="calculator-outline" size={18} color={LCD_TEXT} />
-        <Text style={styles.registerTitle}>Caja — Cobrar</Text>
-      </View>
+    <View style={[styles.register, embedded && styles.registerEmbedded]}>
+      {!embedded ? (
+        <View style={styles.registerHeader}>
+          <Ionicons name="calculator-outline" size={18} color={LCD_TEXT} />
+          <Text style={styles.registerTitle}>Caja — Cobrar</Text>
+        </View>
+      ) : null}
 
       {payableOrders.length === 0 ? (
         <View style={styles.empty}>
@@ -291,7 +295,7 @@ export function PosCashRegister({
             containerStyle={styles.cobrarBtn}
           />
 
-          {order ? (
+          {order && !saleMode ? (
             <Pressable style={styles.detailLink} onPress={() => router.push(`/checkout/${order.id}`)}>
               <Text style={styles.detailLinkText}>Ver detalle de cuenta</Text>
               <Ionicons name="chevron-forward" size={14} color={colors.primary} />
@@ -315,6 +319,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderLight,
     ...shadows.md,
+  },
+  registerEmbedded: {
+    flex: 1,
+    borderRadius: radius.lg,
+    ...shadows.sm,
   },
   registerHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   registerTitle: { fontSize: 16, fontWeight: '800', color: colors.text },

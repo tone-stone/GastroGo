@@ -45,6 +45,7 @@ export default function TabLayout() {
   const showAdmin = isAdminRole(role);
   const isSale = loginMode === 'sale';
   const isWaiter = loginMode === 'waiter';
+  const isWebSale = Platform.OS === 'web' && isSale;
 
   return (
     <Tabs
@@ -53,7 +54,7 @@ export default function TabLayout() {
         headerShown: true,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: isWebSale ? styles.tabBarWeb : styles.tabBar,
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -115,6 +116,15 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? 88 : 68,
     paddingBottom: Platform.OS === 'ios' ? 28 : 10,
     paddingTop: 8,
+    ...shadows.sm,
+  },
+  tabBarWeb: {
+    backgroundColor: colors.surface,
+    borderTopColor: colors.borderLight,
+    borderTopWidth: 1,
+    height: 52,
+    paddingBottom: 6,
+    paddingTop: 6,
     ...shadows.sm,
   },
   tabLabel: { fontSize: 11, fontWeight: '600', marginTop: 2 },
