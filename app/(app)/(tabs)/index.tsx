@@ -10,12 +10,15 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
+import { ActiveOrdersPanel } from '@/components/pos/ActiveOrdersPanel';
 import { ItemNotesModal } from '@/components/pos/ItemNotesModal';
 import { MenuList } from '@/components/pos/MenuList';
 import { OrderSummary } from '@/components/pos/OrderSummary';
 import { PosCashRegister } from '@/components/pos/PosCashRegister';
+import { ServiceFlowSteps } from '@/components/pos/ServiceFlowSteps';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
+import { getActiveStepFromOrder } from '@/constants/serviceFlow';
 import { colors, radius, shadows } from '@/constants/theme';
 import { formatCurrency } from '@/lib/demo-data';
 import { confirmAction } from '@/lib/confirm';
@@ -54,6 +57,8 @@ export default function SaleScreen() {
     updateItemQuantity,
     sendToKitchen,
     loadRestaurantData,
+    getTable,
+    orders,
   } = usePosStore();
 
   const restaurant = restaurants.find((r) => r.id === activeRestaurantId);
@@ -61,6 +66,7 @@ export default function SaleScreen() {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(categories[0]?.id ?? '');
   const [notesModal, setNotesModal] = useState<NotesModalState>(null);
+  const [paymentTargetId, setPaymentTargetId] = useState<string>('');
 
   useEffect(() => {
     if (activeRestaurantId) loadRestaurantData(activeRestaurantId);
@@ -81,6 +87,11 @@ export default function SaleScreen() {
   const menuItems = getMenuByCategory(selectedCategoryId);
   const menuColumns = getMenuColumns(width);
   const itemCount = order?.items.reduce((sum, i) => sum + i.quantity, 0) ?? 0;
+  const counterStep = getActiveStepFromOrder('occupied', order?.status, itemCount > 0);
+
+  useEffect(() => {
+    if (order?.id) setPaymentTargetId((prev) => (prev === '' || prev === order.id ? order.id : prev));
+  }, [order?.id]);
 
   const handleAddMenuItem = (item: MenuItem) => {
     setNotesModal({ mode: 'add', item });
@@ -120,8 +131,21 @@ export default function SaleScreen() {
     if (activeRestaurantId) startSaleOrder(activeRestaurantId);
   }, [activeRestaurantId, cancelOrder, getActiveSaleOrder, resetSaleOrder, startSaleOrder]);
 
-  const handlePaid = () => {
-    if (activeRestaurantId) startSaleOrder(activeRestaurantId);
+  const handlePaid = (paidOrderId: string) => {
+    if (paidOrderId === order?.id && activeRestaurantId) {
+      startSaleOrder(activeRestaurantId);
+      setPaymentTargetId('');
+    } else {
+      setPaymentTargetId(order?.id ?? '');
+    }
+  };
+
+  const handleSelectTableOrder = (tableOrderId: string) => {
+    const tableOrder = orders.find((o) => o.id === tableOrderId);
+    const table = tableOrder ? getTable(tableOrder.table_id) : undefined;
+    if (table?.status === 'bill_requested') {
+      setPaymentTargetId(tableOrderId);
+    }
   };
 
   const toolbar = (
@@ -179,7 +203,57 @@ export default function SaleScreen() {
       <Screen padded={false} scroll={false} style={styles.screenRoot}>
         {toolbar}
 
-        <View style={[styles.desktopBody, { minHeight: height - 140 }]}>
+        <View style={styles.ordersBar}>
+          <ActiveOrdersPanel
+            compact
+            selectedOrderId={paymentTargetId !== order?.id ? paymentTargetId : undefined}
+            onSelectOrder={handleSelectTableOrder}
+          />
+        </View>
+
+        <View style={[styles.desktopBody, { minHeight: height - 180 }]}>
+          <View style={styles.registerPanel}>
+            <ScrollView
+              style={styles.registerScroll}
+              contentContainerStyle={styles.registerScrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <PosCashRegister
+                orderId={order.id}
+                saleMode
+                hero
+                includeTableBills
+                paymentTargetId={paymentTargetId || order.id}
+                onPaymentTargetChange={setPaymentTargetId}
+                onPaid={handlePaid}
+              />
+            </ScrollView>
+          </View>
+
+          <View style={styles.ticketPanel}>
+            <View style={styles.panelHeader}>
+              <Ionicons name="receipt-outline" size={18} color={colors.primary} />
+              <Text style={styles.panelTitle}>Comanda · Mostrador</Text>
+            </View>
+            <View style={styles.flowStrip}>
+              <ServiceFlowSteps activeStep={counterStep} compact />
+            </View>
+            <View style={styles.ticketPanelBody}>
+              <OrderSummary
+              order={order}
+              tableName="Mostrador"
+              variant="panel"
+              maxItemsHeight={Math.min(280, height * 0.3)}
+              onIncrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
+              onDecrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
+              onEditNotes={(itemId, itemName, currentNotes) =>
+                setNotesModal({ mode: 'edit', itemId, itemName, notes: currentNotes })
+              }
+              onSendToKitchen={() => sendToKitchen(order.id)}
+            />
+            </View>
+          </View>
+
           <View style={styles.menuPanel}>
             <View style={styles.panelHeader}>
               <Ionicons name="restaurant-outline" size={18} color={colors.primary} />
@@ -198,46 +272,6 @@ export default function SaleScreen() {
                 onAddItem={handleAddMenuItem}
                 layout="grid"
                 columns={menuColumns}
-              />
-            </ScrollView>
-          </View>
-
-          <View style={styles.ticketPanel}>
-            <View style={styles.panelHeader}>
-              <Ionicons name="receipt-outline" size={18} color={colors.primary} />
-              <Text style={styles.panelTitle}>Comanda</Text>
-            </View>
-            <View style={styles.ticketPanelBody}>
-              <OrderSummary
-              order={order}
-              tableName="Mostrador"
-              variant="panel"
-              maxItemsHeight={Math.min(320, height * 0.35)}
-              onIncrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
-              onDecrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
-              onEditNotes={(itemId, itemName, currentNotes) =>
-                setNotesModal({ mode: 'edit', itemId, itemName, notes: currentNotes })
-              }
-              onSendToKitchen={() => sendToKitchen(order.id)}
-            />
-            </View>
-          </View>
-
-          <View style={styles.registerPanel}>
-            <View style={styles.panelHeader}>
-              <Ionicons name="calculator-outline" size={18} color={colors.primary} />
-              <Text style={styles.panelTitle}>Cobro</Text>
-            </View>
-            <ScrollView
-              style={styles.registerScroll}
-              contentContainerStyle={styles.registerScrollContent}
-              showsVerticalScrollIndicator={false}
-            >
-              <PosCashRegister
-                orderId={order.id}
-                saleMode
-                embedded
-                onPaid={handlePaid}
               />
             </ScrollView>
           </View>
@@ -264,7 +298,10 @@ export default function SaleScreen() {
               <Text style={styles.mobileTitle}>Punto de venta</Text>
               <Text style={styles.mobileSub}>{restaurant?.name ?? 'GastroGo'}</Text>
             </View>
-            <LiveClock />
+            <View style={styles.mobileHeroStats}>
+              <Text style={styles.mobileStatTotal}>{formatCurrency(order?.total ?? 0)}</Text>
+              <Text style={styles.mobileStatLabel}>{itemCount} artículos</Text>
+            </View>
           </View>
           <Pressable style={styles.newSaleBtn} onPress={handleNewSale}>
             <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
@@ -274,6 +311,64 @@ export default function SaleScreen() {
       )}
 
       <View style={[styles.container, isWide && styles.containerWide]}>
+        {!isWide ? (
+          <>
+            <View style={styles.registerSectionMobile}>
+              <PosCashRegister
+                orderId={order.id}
+                saleMode
+                hero
+                includeTableBills
+                paymentTargetId={paymentTargetId || order.id}
+                onPaymentTargetChange={setPaymentTargetId}
+                onPaid={handlePaid}
+              />
+            </View>
+            <ActiveOrdersPanel
+              selectedOrderId={paymentTargetId !== order?.id ? paymentTargetId : undefined}
+              onSelectOrder={handleSelectTableOrder}
+            />
+          </>
+        ) : null}
+
+        <View style={[styles.orderSection, isWide && styles.orderSectionWide]}>
+          {isWide ? (
+            <View style={styles.registerSectionWide}>
+              <PosCashRegister
+                orderId={order.id}
+                saleMode
+                hero
+                includeTableBills
+                paymentTargetId={paymentTargetId || order.id}
+                onPaymentTargetChange={setPaymentTargetId}
+                onPaid={handlePaid}
+              />
+            </View>
+          ) : null}
+
+          <View style={styles.flowStripMobile}>
+            <ServiceFlowSteps activeStep={counterStep} compact />
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.orderScroll}
+          >
+            <OrderSummary
+              order={order}
+              tableName="Mostrador"
+              variant={isWide ? 'panel' : 'default'}
+              maxItemsHeight={isWide ? undefined : 200}
+              onIncrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
+              onDecrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
+              onEditNotes={(itemId, itemName, currentNotes) =>
+                setNotesModal({ mode: 'edit', itemId, itemName, notes: currentNotes })
+              }
+              onSendToKitchen={() => sendToKitchen(order.id)}
+            />
+          </ScrollView>
+        </View>
+
         <View style={[styles.menuSection, isWide && styles.menuSectionWide]}>
           {!isWide ? <Text style={styles.sectionTitle}>Menú</Text> : null}
           <MenuList
@@ -285,27 +380,6 @@ export default function SaleScreen() {
             layout={isWide ? 'grid' : 'list'}
             columns={menuColumns}
           />
-        </View>
-
-        <View style={[styles.orderSection, isWide && styles.orderSectionWide]}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.orderScroll}
-          >
-            <OrderSummary
-              order={order}
-              tableName="Mostrador"
-              variant={isWide ? 'panel' : 'default'}
-              onIncrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
-              onDecrement={(itemId, qty) => updateItemQuantity(order.id, itemId, qty)}
-              onEditNotes={(itemId, itemName, currentNotes) =>
-                setNotesModal({ mode: 'edit', itemId, itemName, notes: currentNotes })
-              }
-              onSendToKitchen={() => sendToKitchen(order.id)}
-            />
-
-            <PosCashRegister orderId={order.id} saleMode onPaid={handlePaid} />
-          </ScrollView>
         </View>
       </View>
 
@@ -400,6 +474,26 @@ const styles = StyleSheet.create({
   },
   newSaleText: { fontSize: 13, fontWeight: '700', color: colors.primary },
 
+  ordersBar: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+  },
+  flowStrip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    backgroundColor: colors.primaryMuted,
+  },
+  flowStripMobile: {
+    backgroundColor: colors.primaryMuted,
+    borderRadius: radius.lg,
+    padding: 10,
+  },
+
   desktopBody: {
     flex: 1,
     flexDirection: 'row',
@@ -431,9 +525,9 @@ const styles = StyleSheet.create({
   },
   ticketPanelBody: { flex: 1, padding: 12 },
   registerPanel: {
-    flex: 0.85,
-    minWidth: 320,
-    maxWidth: 420,
+    flex: 1.05,
+    minWidth: 340,
+    maxWidth: 460,
     backgroundColor: colors.surface,
     borderRadius: radius.xl,
     borderWidth: 1,
@@ -455,7 +549,13 @@ const styles = StyleSheet.create({
   menuScroll: { flex: 1 },
   menuScrollContent: { padding: 16, paddingBottom: 24 },
   registerScroll: { flex: 1 },
-  registerScrollContent: { padding: 12, paddingBottom: 20 },
+  registerScrollContent: { padding: 16, paddingBottom: 20 },
+
+  registerSectionMobile: { marginBottom: 4 },
+  registerSectionWide: { marginBottom: 16 },
+  mobileHeroStats: { alignItems: 'flex-end' },
+  mobileStatTotal: { fontSize: 22, fontWeight: '800', color: colors.primary },
+  mobileStatLabel: { fontSize: 11, fontWeight: '600', color: colors.textMuted, marginTop: 2 },
 
   mobileHero: {
     backgroundColor: colors.surface,
@@ -471,9 +571,9 @@ const styles = StyleSheet.create({
   container: { flex: 1, gap: 16, padding: 16 },
   containerWide: { flexDirection: 'row', gap: 20, padding: 20 },
   menuSection: { flex: 1 },
-  menuSectionWide: { flex: 3 },
-  orderSection: { flex: 1 },
-  orderSectionWide: { flex: 2, maxWidth: 480 },
+  menuSectionWide: { flex: 2.5 },
+  orderSection: { flex: 1, gap: 12 },
+  orderSectionWide: { flex: 1.2, maxWidth: 420 },
   orderScroll: { paddingBottom: 32, gap: 16 },
   sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 12 },
 });

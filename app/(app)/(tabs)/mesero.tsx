@@ -1,16 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { StatusFilterBar, type DashboardFilter } from '@/components/dashboard/StatusFilterBar';
 import { AssignTableModal } from '@/components/pos/AssignTableModal';
 import { AttendCustomerModal } from '@/components/pos/AttendCustomerModal';
-import { PosCashRegister } from '@/components/pos/PosCashRegister';
+import { ServiceFlowSteps } from '@/components/pos/ServiceFlowSteps';
 import { TableGrid } from '@/components/pos/TableGrid';
 import { Button } from '@/components/ui/Button';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
+import { tableStatusConfig } from '@/constants/status';
 import { colors, radius, shadows } from '@/constants/theme';
 import { COUNTER_TABLE_ID } from '@/lib/demo-data';
 import { isAdminRole } from '@/lib/roles';
@@ -22,7 +23,7 @@ export default function WaiterScreen() {
   const { activeRestaurantId, restaurants, staffMemberId, role } = useSessionStore();
   const { tables, loadRestaurantData, getStaff, getMyTables } = usePosStore();
 
-  const [filter, setFilter] = useState<DashboardFilter>('all');
+  const [filter, setFilter] = useState<DashboardFilter>('free');
   const [assignOpen, setAssignOpen] = useState(false);
   const [assignTableId, setAssignTableId] = useState<string | undefined>();
   const [attendOpen, setAttendOpen] = useState(false);
@@ -35,6 +36,11 @@ export default function WaiterScreen() {
   const diningTables = useMemo(
     () => tables.filter((t) => t.id !== COUNTER_TABLE_ID),
     [tables],
+  );
+
+  const freeTables = useMemo(
+    () => diningTables.filter((t) => t.status === 'free' || t.status === 'reserved'),
+    [diningTables],
   );
 
   useEffect(() => {
@@ -91,7 +97,7 @@ export default function WaiterScreen() {
               <Ionicons name="restaurant-outline" size={14} color={colors.primary} />
               <Text style={styles.badgeText}>Mesero</Text>
             </View>
-            <Text style={styles.title}>Mesas y comandas</Text>
+            <Text style={styles.title}>Atender y tomar orden</Text>
             <View style={styles.locationRow}>
               <Ionicons name="storefront-outline" size={14} color={colors.textMuted} />
               <Text style={styles.locationName} numberOfLines={1}>
@@ -100,6 +106,26 @@ export default function WaiterScreen() {
             </View>
           </View>
           <LiveClock />
+        </View>
+
+        <View style={styles.flowCard}>
+          <ServiceFlowSteps activeStep="assign" compact />
+          <Text style={styles.flowHint}>Asigna mesa → toma orden → envía a cocina</Text>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={[styles.statCard, styles.statCardFree]}>
+            <Text style={styles.statNum}>{counts.free}</Text>
+            <Text style={styles.statLabel}>Libres</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statNum}>{counts.occupied}</Text>
+            <Text style={styles.statLabel}>Ocupadas</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statNum, styles.statNumMine]}>{myTables.length}</Text>
+            <Text style={styles.statLabel}>Mis mesas</Text>
+          </View>
         </View>
 
         {waiter ? (
@@ -113,27 +139,64 @@ export default function WaiterScreen() {
               <Text style={styles.waiterLabel}>Mesero en turno</Text>
               <Text style={styles.waiterName}>{waiter.name}</Text>
             </View>
-            <View style={styles.waiterStat}>
-              <Text style={styles.waiterStatNum}>{myTables.length}</Text>
-              <Text style={styles.waiterStatLabel}>mesas</Text>
-            </View>
           </View>
         ) : null}
 
         <Button
-          title="Atender cliente"
+          title={freeTables.length > 0 ? `Atender cliente (${freeTables.length} libres)` : 'Atender cliente'}
           onPress={() => openAttend()}
           icon="restaurant-outline"
           size="lg"
-          variant="outline"
+          disabled={freeTables.length === 0}
         />
       </View>
 
-      <PosCashRegister staffMemberId={staffMemberId} />
+      {freeTables.length > 0 ? (
+        <View style={styles.quickSection}>
+          <Text style={styles.sectionTitle}>Mesas disponibles — toca para sentar</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickRow}>
+            {freeTables.map((table) => {
+              const config = tableStatusConfig[table.status];
+              return (
+                <Pressable
+                  key={table.id}
+                  style={[styles.quickCard, { borderColor: config.border }]}
+                  onPress={() => openAttend(table.id)}
+                >
+                  <Text style={styles.quickNum}>{table.number}</Text>
+                  <Text style={styles.quickZone}>{table.zone}</Text>
+                  <View style={styles.quickMeta}>
+                    <Ionicons name="people-outline" size={11} color={colors.textMuted} />
+                    <Text style={styles.quickCap}>{table.capacity}</Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ) : null}
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Mapa de mesas</Text>
         <StatusFilterBar filter={filter} counts={counts} onChange={setFilter} />
+        <View style={styles.kitchenLegend}>
+          <View style={styles.legendItem}>
+            <Ionicons name="create-outline" size={13} color={colors.coffee} />
+            <Text style={styles.legendText}>Sin enviar</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <Ionicons name="flame" size={13} color={colors.info} />
+            <Text style={styles.legendText}>En cocina</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <Ionicons name="checkmark-circle" size={13} color={colors.success} />
+            <Text style={styles.legendText}>Listo</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <Ionicons name="receipt-outline" size={13} color={colors.warning} />
+            <Text style={styles.legendText}>Cuenta</Text>
+          </View>
+        </View>
         <TableGrid
           tables={diningTables}
           filter={filter}
@@ -145,7 +208,7 @@ export default function WaiterScreen() {
 
       {myTables.length > 0 ? (
         <View style={styles.myTablesSection}>
-          <Text style={styles.sectionTitle}>Mis mesas activas</Text>
+          <Text style={styles.sectionTitle}>Mis mesas activas — continuar orden</Text>
           <View style={styles.myTablesRow}>
             {myTables.map((table) => (
               <Pressable
@@ -229,6 +292,29 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: '800', color: colors.text },
   locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   locationName: { fontSize: 13, color: colors.textSecondary, flex: 1 },
+  flowCard: {
+    backgroundColor: colors.primaryMuted,
+    borderRadius: radius.lg,
+    padding: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+  },
+  flowHint: { fontSize: 12, color: colors.textSecondary, textAlign: 'center', fontWeight: '600' },
+  statsRow: { flexDirection: 'row', gap: 10 },
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: radius.lg,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  statCardFree: { backgroundColor: colors.successBg, borderColor: colors.success },
+  statNum: { fontSize: 22, fontWeight: '800', color: colors.text },
+  statNumMine: { color: colors.primary },
+  statLabel: { fontSize: 10, fontWeight: '700', color: colors.textMuted, marginTop: 2 },
   waiterStrip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -256,10 +342,36 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   waiterName: { fontSize: 16, fontWeight: '800', color: colors.text, marginTop: 1 },
-  waiterStat: { alignItems: 'center', paddingHorizontal: 8 },
-  waiterStatNum: { fontSize: 20, fontWeight: '800', color: colors.primary },
-  waiterStatLabel: { fontSize: 10, fontWeight: '600', color: colors.textMuted },
+  quickSection: { marginBottom: 16, gap: 10 },
+  quickRow: { gap: 10, paddingVertical: 2 },
+  quickCard: {
+    width: 80,
+    padding: 12,
+    borderRadius: radius.lg,
+    borderWidth: 1.5,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    gap: 3,
+    ...shadows.sm,
+  },
+  quickNum: { fontSize: 22, fontWeight: '800', color: colors.primary },
+  quickZone: { fontSize: 10, color: colors.textMuted },
+  quickMeta: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 2 },
+  quickCap: { fontSize: 10, color: colors.textMuted },
   section: { gap: 12, marginBottom: 16 },
+  kitchenLegend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+  },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  legendText: { fontSize: 11, fontWeight: '600', color: colors.textSecondary },
   sectionTitle: {
     fontSize: 12,
     fontWeight: '700',

@@ -14,7 +14,9 @@ interface OrderSummaryProps {
   onDecrement: (itemId: string, quantity: number) => void;
   onEditNotes?: (itemId: string, itemName: string, currentNotes?: string) => void;
   onSendToKitchen?: () => void;
+  onRequestBill?: () => void;
   onCheckout?: () => void;
+  billRequested?: boolean;
   variant?: 'default' | 'panel';
   maxItemsHeight?: number;
 }
@@ -26,7 +28,9 @@ export function OrderSummary({
   onDecrement,
   onEditNotes,
   onSendToKitchen,
+  onRequestBill,
   onCheckout,
+  billRequested = false,
   variant = 'default',
   maxItemsHeight,
 }: OrderSummaryProps) {
@@ -153,8 +157,22 @@ export function OrderSummary({
         {order.status === 'sent_to_kitchen' ? (
           <View style={styles.kitchenSent}>
             <Ionicons name="checkmark-circle" size={16} color={colors.info} />
-            <Text style={styles.kitchenSentText}>Enviado a cocina</Text>
+            <Text style={styles.kitchenSentText}>Enviado a cocina — en preparación</Text>
           </View>
+        ) : null}
+        {billRequested ? (
+          <View style={styles.billRequested}>
+            <Ionicons name="receipt-outline" size={16} color={colors.warning} />
+            <Text style={styles.billRequestedText}>Cuenta solicitada — cobro en caja</Text>
+          </View>
+        ) : null}
+        {onRequestBill && order.items.length > 0 && order.status !== 'open' && !billRequested ? (
+          <Button
+            title="Pedir cuenta"
+            variant="outline"
+            icon="receipt-outline"
+            onPress={onRequestBill}
+          />
         ) : null}
         {onCheckout && order.items.length > 0 ? (
           <Button title="Cobrar cuenta" icon="card-outline" onPress={onCheckout} size="lg" />
@@ -248,4 +266,14 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   kitchenSentText: { fontSize: 13, fontWeight: '600', color: colors.info },
+  billRequested: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    backgroundColor: colors.warningBg,
+    borderRadius: radius.md,
+  },
+  billRequestedText: { fontSize: 13, fontWeight: '600', color: colors.warning },
 });

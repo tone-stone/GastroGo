@@ -5,7 +5,48 @@ import { tableStatusConfig } from '@/constants/status';
 import { colors, radius, shadows } from '@/constants/theme';
 import { formatCurrency } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
-import type { Table, TableStatus } from '@/types';
+import type { Order, Table, TableStatus } from '@/types';
+
+type KitchenIndicator = 'none' | 'draft' | 'preparing' | 'ready' | 'bill';
+
+function getKitchenIndicator(order: Order | undefined, table: Table): KitchenIndicator {
+  if (!order || order.items.length === 0) return 'none';
+  if (table.status === 'bill_requested') return 'bill';
+  if (order.status === 'open') return 'draft';
+  const ready = order.items.filter((i) => i.kitchen_status === 'ready').length;
+  if (ready === order.items.length) return 'ready';
+  return 'preparing';
+}
+
+const KITCHEN_INDICATOR_CONFIG: Record<
+  Exclude<KitchenIndicator, 'none'>,
+  { icon: keyof typeof Ionicons.glyphMap; color: string; bg: string; label: string }
+> = {
+  draft: {
+    icon: 'create-outline',
+    color: colors.coffee,
+    bg: colors.coffeeMuted,
+    label: 'Sin enviar',
+  },
+  preparing: {
+    icon: 'flame',
+    color: colors.info,
+    bg: colors.infoBg,
+    label: 'En cocina',
+  },
+  ready: {
+    icon: 'checkmark-circle',
+    color: colors.success,
+    bg: colors.successBg,
+    label: 'Listo',
+  },
+  bill: {
+    icon: 'receipt-outline',
+    color: colors.warning,
+    bg: colors.warningBg,
+    label: 'Cuenta',
+  },
+};
 
 interface TableGridProps {
   tables: Table[];
@@ -56,6 +97,13 @@ function TableCard({
   const waiter = table.assigned_waiter_id ? getStaff(table.assigned_waiter_id) : null;
   const config = tableStatusConfig[table.status];
   const itemCount = order?.items.reduce((s, i) => s + i.quantity, 0) ?? 0;
+  const kitchen = getKitchenIndicator(order, table);
+  const kitchenConfig = kitchen !== 'none' ? KITCHEN_INDICATOR_CONFIG[kitchen] : null;
+  const readyCount = order?.items.filter((i) => i.kitchen_status === 'ready').length ?? 0;
+  const kitchenProgress =
+    kitchen === 'preparing' && order
+      ? `${readyCount}/${order.items.length}`
+      : null;
 
   return (
     <View style={[styles.cardWrap, { width: size, height: size }]}>
@@ -67,6 +115,8 @@ function TableCard({
             borderColor: config.border,
           },
           isMine && styles.cardMine,
+          kitchen === 'preparing' && styles.cardPreparing,
+          kitchen === 'ready' && styles.cardReady,
           pressed && styles.pressed,
         ]}
       >
@@ -85,6 +135,17 @@ function TableCard({
             ) : (
               <View />
             )}
+
+            {kitchenConfig ? (
+              <View style={[styles.kitchenBadge, { backgroundColor: kitchenConfig.bg }]}>
+                <Ionicons name={kitchenConfig.icon} size={11} color={kitchenConfig.color} />
+                {kitchenProgress ? (
+                  <Text style={[styles.kitchenProgress, { color: kitchenConfig.color }]}>
+                    {kitchenProgress}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
           </View>
 
           <View style={styles.center}>
@@ -96,7 +157,11 @@ function TableCard({
               <Ionicons name="people-outline" size={13} color={colors.textMuted} />
               <Text style={styles.metaText}>{table.capacity}</Text>
             </View>
-            {order && order.total > 0 ? (
+            {kitchenConfig ? (
+              <Text style={[styles.kitchenLabel, { color: kitchenConfig.color }]} numberOfLines={1}>
+                {kitchenConfig.label}
+              </Text>
+            ) : order && order.total > 0 ? (
               <Text style={styles.total} numberOfLines={1}>
                 {formatCurrency(order.total)}
               </Text>
@@ -218,6 +283,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.92, transform: [{ scale: 0.97 }] },
   cardMine: { borderWidth: 2, borderColor: colors.primary },
+  cardPreparing: { borderColor: colors.info },
+  cardReady: { borderColor: colors.success },
   assignBtn: {
     position: 'absolute',
     top: 6,
@@ -237,10 +304,21 @@ const styles = StyleSheet.create({
   cardTop: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 8,
     paddingTop: 8,
     minHeight: 24,
   },
+  kitchenBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: radius.full,
+  },
+  kitchenProgress: { fontSize: 9, fontWeight: '800' },
+  kitchenLabel: { fontSize: 10, fontWeight: '700', maxWidth: '58%' },
   waiterBadge: {
     width: 22,
     height: 22,

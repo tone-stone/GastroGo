@@ -151,6 +151,9 @@ export function AttendCustomerModal({ visible, onClose, initialTableId }: Attend
                 icon="restaurant-outline"
                 size="lg"
               />
+              <Text style={styles.kitchenHint}>
+                La orden se envía a cocina desde el menú de la mesa
+              </Text>
               <Pressable style={styles.backBtn} onPress={() => setStep(1)}>
                 <Ionicons name="arrow-back" size={16} color={colors.primary} />
                 <Text style={styles.backText}>Cambiar mesa</Text>
@@ -249,6 +252,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   backText: { fontSize: 14, fontWeight: '600', color: colors.primary },
+  kitchenHint: {
+    fontSize: 12,
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginTop: -8,
+    marginBottom: 4,
+  },
   empty: { alignItems: 'center', paddingVertical: 32, gap: 8 },
   emptyText: { color: colors.textMuted, fontSize: 14 },
 });

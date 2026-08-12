@@ -6,7 +6,7 @@ import { OrderStatusBadge } from '@/components/ui/Badge';
 import { AppHeader } from '@/components/ui/AppHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
-import { formatCurrency } from '@/lib/demo-data';
+import { COUNTER_TABLE_ID, formatCurrency } from '@/lib/demo-data';
 import { colors, radius, shadows, typography } from '@/constants/theme';
 import { usePosStore } from '@/stores/posStore';
 
@@ -43,6 +43,14 @@ export default function OrdersScreen() {
         ) : (
           activeOrders.map((order) => {
             const table = getTable(order.table_id);
+            const isCounter = order.table_id === COUNTER_TABLE_ID;
+            const readyCount = order.items.filter((i) => i.kitchen_status === 'ready').length;
+            const kitchenLabel =
+              order.status === 'open'
+                ? 'Pendiente de envío'
+                : readyCount === order.items.length && order.items.length > 0
+                  ? 'Listo en cocina'
+                  : `${readyCount}/${order.items.length} en cocina`;
             const itemsPreview = order.items
               .map((i) => {
                 const base = `${i.quantity}× ${i.name}`;
@@ -51,18 +59,44 @@ export default function OrdersScreen() {
               .join(' · ');
 
             return (
-              <Link key={order.id} href={`/table/${order.table_id}`} asChild>
+              <Link
+                key={order.id}
+                href={isCounter ? '/(app)/(tabs)' : `/table/${order.table_id}`}
+                asChild
+              >
                 <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
                   <View style={styles.cardTop}>
                     <View style={styles.tableBadge}>
-                      <Text style={styles.tableNumber}>{table?.number ?? '?'}</Text>
+                      <Text style={styles.tableNumber}>
+                        {isCounter ? 'M' : (table?.number ?? '?')}
+                      </Text>
                     </View>
                     <View style={styles.cardInfo}>
-                      <Text style={styles.tableName}>{table?.name ?? 'Mesa'}</Text>
-                      <Text style={styles.zone}>{table?.zone ?? 'General'}</Text>
+                      <Text style={styles.tableName}>
+                        {isCounter ? 'Mostrador' : (table?.name ?? 'Mesa')}
+                      </Text>
+                      <Text style={styles.zone}>
+                        {isCounter ? 'Venta directa' : (table?.zone ?? 'General')}
+                      </Text>
                     </View>
                     <OrderStatusBadge status={order.status} size="sm" />
                   </View>
+
+                  {order.items.length > 0 ? (
+                    <View style={styles.kitchenRow}>
+                      <Ionicons
+                        name={readyCount === order.items.length ? 'checkmark-circle' : 'flame-outline'}
+                        size={14}
+                        color={readyCount === order.items.length ? colors.success : colors.info}
+                      />
+                      <Text style={styles.kitchenText}>{kitchenLabel}</Text>
+                      {table?.status === 'bill_requested' ? (
+                        <View style={styles.billChip}>
+                          <Text style={styles.billChipText}>Por cobrar</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  ) : null}
 
                   {itemsPreview ? (
                     <Text style={styles.items} numberOfLines={2}>{itemsPreview}</Text>
@@ -125,6 +159,23 @@ const styles = StyleSheet.create({
   cardInfo: { flex: 1 },
   tableName: { fontSize: 16, fontWeight: '700', color: colors.text },
   zone: { fontSize: 12, color: colors.textMuted, marginTop: 1 },
+  kitchenRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.background,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: radius.md,
+  },
+  kitchenText: { flex: 1, fontSize: 12, fontWeight: '600', color: colors.textSecondary },
+  billChip: {
+    backgroundColor: colors.goldMuted,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: radius.full,
+  },
+  billChipText: { fontSize: 10, fontWeight: '800', color: colors.coffee },
   items: { fontSize: 13, color: colors.textSecondary, lineHeight: 18 },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   itemCount: { fontSize: 12, color: colors.textMuted },

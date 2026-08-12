@@ -1,0 +1,13 @@
+name: Deploy Web (Production)
+
+on:
+  push:
+    branches: ['master', 'main']
+
+jobs:
+  deploy:
+    type: deploy
+    name: Deploy to EAS Hosting
+    environment: production
+    params:
+      prod: true

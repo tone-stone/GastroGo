@@ -56,7 +56,84 @@ Entidades con CRUD: mesas, categorías, menú, meseros, usuarios, órdenes (+ í
 | `npm start`   | Servidor de desarrollo   |
 | `npm run web` | Abrir en navegador       |
 | `npm run android` | Android emulator   |
-| `npm run ios` | iOS simulator (macOS)    |
+| `npm run build:web` | Export estático web → carpeta `dist` |
+| `npm run deploy:web` | Build + preview en **EAS Hosting** |
+| `npm run deploy:web:prod` | Build + producción en **EAS Hosting** |
+
+## Despliegue web (EAS Hosting)
+
+GastroGo usa [EAS Hosting](https://docs.expo.dev/eas/hosting/introduction/) (no Vercel). El export web va a la carpeta `dist` con `expo.web.output: static`.
+
+### Requisitos
+
+- Cuenta en [expo.dev](https://expo.dev/signup)
+- EAS CLI (opcional global): `npm install -g eas-cli` — los scripts usan `npx eas-cli@latest`
+- Sesión: `npx eas-cli login`
+
+### Primer deploy
+
+```bash
+npm install
+npm run deploy:web
+```
+
+La primera vez EAS te pedirá:
+
+1. Vincular el proyecto (crea el proyecto en expo.dev)
+2. Elegir un **subdominio de preview** (ej. `gastrogo`)
+
+Obtendrás URLs como:
+
+- **Preview:** `https://gastrogo--<deployment-id>.expo.app`
+- **Producción:** `https://gastrogo.expo.app` (con `npm run deploy:web:prod`)
+
+### Variables de entorno (Supabase)
+
+En builds web, configura las variables en EAS (no uses `.env` en producción):
+
+```bash
+eas env:create --name EXPO_PUBLIC_SUPABASE_URL --value https://tu-proyecto.supabase.co --environment production
+eas env:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value tu-anon-key --environment production
+```
+
+Repite para `preview` si quieres el mismo backend en previews. Documentación: [Environment variables + EAS Hosting](https://docs.expo.dev/eas/environment-variables/usage/#using-environment-variables-with-eas-hosting).
+
+### Dominio propio (opcional)
+
+Plan de pago: [Custom domain en EAS Hosting](https://docs.expo.dev/eas/hosting/custom-domain/).
+
+### CI/CD automático (EAS Workflows)
+
+El repo incluye workflows en `.eas/workflows/`:
+
+| Archivo | Cuándo corre | Qué hace |
+|---------|--------------|----------|
+| `deploy-web.yml` | Push a `master` o `main` | Export web + deploy a **producción** |
+| `pr-preview.yml` | Pull request abierto/actualizado | Preview + comentario en el PR |
+
+**Configuración única (GitHub + Expo):**
+
+1. Primer deploy manual: `npm run deploy:web` (vincula el proyecto en expo.dev).
+2. En [expo.dev](https://expo.dev) → tu proyecto → **GitHub** → instala la app y conecta el repo `tone-stone/GastroGo`.
+3. Variables de entorno en EAS (`production` y opcionalmente `preview`) — ver arriba.
+4. Push a `master` → el workflow despliega solo.
+
+Probar un workflow sin push:
+
+```bash
+npx eas-cli workflow:run .eas/workflows/deploy-web.yml
+```
+
+Ver ejecuciones: proyecto en expo.dev → **Workflows**.
+
+### Apps nativas (Android / iOS)
+
+EAS Hosting es solo la **web**. Para tablet/móvil nativo:
+
+```bash
+eas build --platform android
+eas build --platform ios
+```
 
 ## Estructura
 

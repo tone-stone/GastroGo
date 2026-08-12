@@ -218,10 +218,8 @@ export default function TableOrderScreen() {
                   setNotesModal({ mode: 'edit', itemId, itemName, notes: currentNotes })
                 }
                 onSendToKitchen={() => sendToKitchen(order.id)}
-                onCheckout={() => {
-                  requestBill(table.id);
-                  router.push(`/checkout/${order.id}`);
-                }}
+                onRequestBill={() => requestBill(table.id)}
+                billRequested={table.status === 'bill_requested'}
               />
             </ScrollView>
           </View>

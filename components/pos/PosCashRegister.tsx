@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
-import { formatCurrency } from '@/lib/demo-data';
+import { formatCurrency, isCounterTable } from '@/lib/demo-data';
 import { colors, kitchenAccent, palette, radius, shadows } from '@/constants/theme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -28,16 +28,24 @@ interface PosCashRegisterProps {
   staffMemberId?: string | null;
   orderId?: string;
   saleMode?: boolean;
-  onPaid?: () => void;
+  includeTableBills?: boolean;
+  paymentTargetId?: string;
+  onPaymentTargetChange?: (orderId: string) => void;
+  onPaid?: (paidOrderId: string) => void;
   embedded?: boolean;
+  hero?: boolean;
 }
 
 export function PosCashRegister({
   staffMemberId: _staffMemberId,
   orderId,
   saleMode = false,
+  includeTableBills = false,
+  paymentTargetId: paymentTargetIdProp,
+  onPaymentTargetChange,
   onPaid,
   embedded = false,
+  hero = false,
 }: PosCashRegisterProps) {
   const router = useRouter();
   const { user } = useSessionStore();
@@ -47,7 +55,11 @@ export function PosCashRegister({
     const open = orders.filter(
       (o) => o.status !== 'paid' && o.status !== 'cancelled' && o.items.length > 0,
     );
-    if (orderId) {
+    if (orderId && saleMode && !includeTableBills) {
+      const locked = open.find((o) => o.id === orderId);
+      return locked ? [locked] : [];
+    }
+    if (orderId && !saleMode) {
       const locked = open.find((o) => o.id === orderId);
       return locked ? [locked] : [];
     }
@@ -63,15 +75,61 @@ export function PosCashRegister({
         const priB = tableB?.status === 'bill_requested' ? 0 : 1;
         return priA - priB || b.total - a.total;
       });
-  }, [orders, getTable, orderId]);
+  }, [orders, getTable, orderId, saleMode, includeTableBills]);
+
+  const tableBillOrders = useMemo(() => {
+    if (!saleMode || !includeTableBills) return [];
+    return orders
+      .filter(
+        (o) =>
+          o.status !== 'paid' &&
+          o.status !== 'cancelled' &&
+          o.items.length > 0 &&
+          !isCounterTable(o.table_id) &&
+          getTable(o.table_id)?.status === 'bill_requested',
+      )
+      .sort((a, b) => b.total - a.total);
+  }, [orders, getTable, saleMode, includeTableBills]);
 
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
+  const [internalPaymentTargetId, setInternalPaymentTargetId] = useState(orderId ?? '');
+  const paymentTargetId = paymentTargetIdProp ?? internalPaymentTargetId;
+
+  const setPaymentTargetId = (id: string) => {
+    if (onPaymentTargetChange) onPaymentTargetChange(id);
+    else setInternalPaymentTargetId(id);
+  };
   const [tipPercent, setTipPercent] = useState(10);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const order = payableOrders.find((o) => o.id === selectedOrderId) ?? payableOrders[0];
+  const lockedSaleOrder = useMemo(() => {
+    if (!saleMode || !orderId) return undefined;
+    return orders.find(
+      (o) => o.id === orderId && o.status !== 'paid' && o.status !== 'cancelled',
+    );
+  }, [orders, orderId, saleMode]);
+
+  const order = useMemo(() => {
+    if (saleMode) {
+      if (paymentTargetId && paymentTargetId !== orderId) {
+        return orders.find(
+          (o) => o.id === paymentTargetId && o.status !== 'paid' && o.status !== 'cancelled',
+        );
+      }
+      if (lockedSaleOrder) return lockedSaleOrder;
+    }
+    return payableOrders.find((o) => o.id === selectedOrderId) ?? payableOrders[0];
+  }, [saleMode, paymentTargetId, orderId, lockedSaleOrder, orders, payableOrders, selectedOrderId]);
+
+  useEffect(() => {
+    if (orderId && !paymentTargetIdProp && !internalPaymentTargetId) {
+      setInternalPaymentTargetId(orderId);
+    }
+  }, [orderId, paymentTargetIdProp, internalPaymentTargetId]);
+
+  const isCounterPayment = !!order && isCounterTable(order.table_id);
   const table = order ? getTable(order.table_id) : undefined;
   const waiter = order?.waiter_id ? getStaff(order.waiter_id) : null;
   const cashierName = saleMode ? user?.full_name : waiter?.name;
@@ -84,7 +142,7 @@ export function PosCashRegister({
 
   useEffect(() => {
     setInput('');
-  }, [selectedOrderId, tipPercent, paymentMethod]);
+  }, [selectedOrderId, paymentTargetId, tipPercent, paymentMethod]);
 
   const tipAmount = order ? Math.round(order.subtotal * (tipPercent / 100) * 100) / 100 : 0;
   const amountDue = order ? order.subtotal + order.tax + tipAmount : 0;
@@ -126,22 +184,25 @@ export function PosCashRegister({
     setInput('');
     setLoading(false);
     if (saleMode) {
-      onPaid?.();
+      onPaid?.(order.id);
+      if (!isCounterPayment) setPaymentTargetId(orderId ?? '');
     } else {
       router.push('/(app)/(tabs)/mesero');
     }
   };
 
+  const showCalculator = saleMode || payableOrders.length > 0;
+
   return (
-    <View style={[styles.register, embedded && styles.registerEmbedded]}>
+    <View style={[styles.register, embedded && styles.registerEmbedded, hero && styles.registerHero]}>
       {!embedded ? (
         <View style={styles.registerHeader}>
-          <Ionicons name="calculator-outline" size={18} color={LCD_TEXT} />
-          <Text style={styles.registerTitle}>Caja — Cobrar</Text>
+          <Ionicons name="calculator-outline" size={hero ? 22 : 18} color={hero ? colors.primary : LCD_TEXT} />
+          <Text style={[styles.registerTitle, hero && styles.registerTitleHero]}>Caja registradora</Text>
         </View>
       ) : null}
 
-      {payableOrders.length === 0 ? (
+      {!showCalculator ? (
         <View style={styles.empty}>
           <Ionicons name="receipt-outline" size={28} color={colors.textMuted} />
           <Text style={styles.emptyText}>
@@ -155,6 +216,46 @@ export function PosCashRegister({
         </View>
       ) : (
         <>
+          {saleMode && includeTableBills && orderId ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.orderTabs}>
+              <Pressable
+                style={[
+                  styles.orderTab,
+                  isCounterPayment && styles.orderTabActive,
+                ]}
+                onPress={() => setPaymentTargetId(orderId)}
+              >
+                <Text style={[styles.orderTabNum, isCounterPayment && styles.orderTabTextActive]}>
+                  Mostrador
+                </Text>
+                <Text style={[styles.orderTabTotal, isCounterPayment && styles.orderTabTextActive]}>
+                  {formatCurrency(lockedSaleOrder?.total ?? 0)}
+                </Text>
+              </Pressable>
+              {tableBillOrders.map((o) => {
+                const t = getTable(o.table_id);
+                const active = o.id === order?.id;
+                return (
+                  <Pressable
+                    key={o.id}
+                    style={[styles.orderTab, active && styles.orderTabActive, styles.orderTabBill]}
+                    onPress={() => setPaymentTargetId(o.id)}
+                  >
+                    <Text style={[styles.orderTabNum, active && styles.orderTabTextActive]}>
+                      Mesa {t?.number ?? '?'}
+                    </Text>
+                    <Text style={[styles.orderTabTotal, active && styles.orderTabTextActive]}>
+                      {formatCurrency(o.total)}
+                    </Text>
+                    <View style={styles.billTag}>
+                      <Text style={styles.billTagText}>Cuenta</Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          ) : null}
+
           {!saleMode && payableOrders.length > 1 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.orderTabs}>
               {payableOrders.map((o) => {
@@ -184,11 +285,19 @@ export function PosCashRegister({
             </ScrollView>
           ) : null}
 
-          {order && table ? (
+          {saleMode && order && isCounterPayment && order.items.length > 0 ? (
+            <View style={styles.saleSummary}>
+              <Text style={styles.saleSummaryLabel}>
+                {order.items.reduce((s, i) => s + i.quantity, 0)} artículos · {formatCurrency(order.subtotal)}
+              </Text>
+            </View>
+          ) : null}
+
+          {order && table && (!saleMode || !isCounterPayment) ? (
             <View style={styles.orderMeta}>
               <Text style={styles.metaItem}>
-                <Text style={styles.metaLabel}>{saleMode ? 'Canal ' : 'Mesa '}</Text>
-                {saleMode ? 'Mostrador' : `${table.name} · ${table.zone}`}
+                <Text style={styles.metaLabel}>{isCounterPayment ? 'Canal ' : 'Mesa '}</Text>
+                {isCounterPayment ? 'Mostrador' : `${table.name} · ${table.zone}`}
               </Text>
               {cashierName ? (
                 <Text style={styles.metaItem}>
@@ -199,23 +308,25 @@ export function PosCashRegister({
             </View>
           ) : null}
 
-          <View style={styles.display}>
+          <View style={[styles.display, hero && styles.displayHero]}>
             <View style={styles.displayRow}>
               <Text style={styles.displayLabel}>TOTAL</Text>
-              <Text style={styles.displayMain}>{formatCurrency(amountDue)}</Text>
+              <Text style={[styles.displayMain, hero && styles.displayMainHero]}>
+                {formatCurrency(amountDue)}
+              </Text>
             </View>
             {paymentMethod === 'cash' ? (
               <>
                 <View style={styles.displayDivider} />
                 <View style={styles.displayRow}>
                   <Text style={styles.displayLabel}>RECIBIDO</Text>
-                  <Text style={styles.displaySub}>
+                  <Text style={[styles.displaySub, hero && styles.displaySubHero]}>
                     {input ? formatCurrency(amountReceived) : '$0.00'}
                   </Text>
                 </View>
                 <View style={styles.displayRow}>
                   <Text style={styles.displayLabel}>CAMBIO</Text>
-                  <Text style={[styles.displayChange, change > 0 && styles.displayChangeActive]}>
+                  <Text style={[styles.displayChange, change > 0 && styles.displayChangeActive, hero && styles.displaySubHero]}>
                     {formatCurrency(change)}
                   </Text>
                 </View>
@@ -223,7 +334,16 @@ export function PosCashRegister({
             ) : null}
           </View>
 
-          <View style={styles.tipRow}>
+          {saleMode && isCounterPayment && order && order.items.length === 0 ? (
+            <View style={styles.saleHint}>
+              <Ionicons name="restaurant-outline" size={20} color={colors.textMuted} />
+              <Text style={styles.saleHintText}>Agrega platillos del menú para cobrar</Text>
+            </View>
+          ) : null}
+
+          {saleMode || (order && order.items.length > 0) ? (
+            <>
+              <View style={[styles.tipRow, hero && styles.tipRowHero]}>
             {TIP_OPTIONS.map((pct) => (
               <Pressable
                 key={pct}
@@ -262,25 +382,27 @@ export function PosCashRegister({
                 {row.map((key) => (
                   <Pressable
                     key={key}
-                    style={[styles.key, key === 'C' && styles.keyClear]}
+                    style={[styles.key, hero && styles.keyHero, key === 'C' && styles.keyClear]}
                     onPress={() => handleKey(key)}
                   >
-                    <Text style={[styles.keyText, key === 'C' && styles.keyClearText]}>{key}</Text>
+                    <Text style={[styles.keyText, hero && styles.keyTextHero, key === 'C' && styles.keyClearText]}>
+                      {key}
+                    </Text>
                   </Pressable>
                 ))}
               </View>
             ))}
             <View style={styles.numpadActions}>
-              <Pressable style={styles.actionKey} onPress={handleExact}>
-                <Text style={styles.actionKeyText}>Monto exacto</Text>
+              <Pressable style={[styles.actionKey, hero && styles.actionKeyHero]} onPress={handleExact}>
+                <Text style={styles.actionKeyText}>Exacto</Text>
               </Pressable>
               <Pressable
-                style={[styles.actionKey, styles.actionKeyPay, !canPay && styles.keyPayDisabled]}
+                style={[styles.actionKey, styles.actionKeyPay, hero && styles.actionKeyPayHero, !canPay && styles.keyPayDisabled]}
                 onPress={handlePay}
                 disabled={!canPay || loading}
               >
-                <Ionicons name="cash" size={20} color="#FFF" />
-                <Text style={styles.actionKeyPayText}>Cobrar</Text>
+                <Ionicons name="cash" size={hero ? 24 : 20} color="#FFF" />
+                <Text style={[styles.actionKeyPayText, hero && styles.actionKeyPayTextHero]}>Cobrar</Text>
               </Pressable>
             </View>
           </View>
@@ -294,6 +416,8 @@ export function PosCashRegister({
             icon="cash-outline"
             containerStyle={styles.cobrarBtn}
           />
+            </>
+          ) : null}
 
           {order && !saleMode ? (
             <Pressable style={styles.detailLink} onPress={() => router.push(`/checkout/${order.id}`)}>
@@ -325,6 +449,38 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     ...shadows.sm,
   },
+  registerHero: {
+    padding: 20,
+    gap: 16,
+    backgroundColor: colors.surface,
+  },
+  registerTitleHero: { fontSize: 18 },
+  saleSummary: {
+    backgroundColor: colors.primaryMuted,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.md,
+  },
+  saleSummaryLabel: { fontSize: 13, fontWeight: '700', color: colors.primary },
+  saleHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    backgroundColor: colors.background,
+    borderRadius: radius.md,
+  },
+  saleHintText: { fontSize: 13, color: colors.textMuted, fontWeight: '600' },
+  displayHero: { padding: 20 },
+  displayMainHero: { fontSize: 42 },
+  displaySubHero: { fontSize: 26 },
+  tipRowHero: { gap: 10 },
+  keyHero: { maxHeight: 64, aspectRatio: 1.4 },
+  keyTextHero: { fontSize: 26 },
+  actionKeyHero: { paddingVertical: 16 },
+  actionKeyPayHero: { paddingVertical: 16 },
+  actionKeyPayTextHero: { fontSize: 17 },
   registerHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   registerTitle: { fontSize: 16, fontWeight: '800', color: colors.text },
   empty: { alignItems: 'center', paddingVertical: 24, gap: 6 },
