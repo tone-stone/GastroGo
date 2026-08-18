@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
+import { memo, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { OrderStatusBadge } from '@/components/ui/Badge';
 import { colors, radius, shadows } from '@/constants/theme';
 import { COUNTER_TABLE_ID, formatCurrency } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
-import type { Order } from '@/types';
+import type { Order, Table } from '@/types';
 
 function getKitchenProgress(order: Order) {
   const total = order.items.length;
@@ -15,6 +16,65 @@ function getKitchenProgress(order: Order) {
   if (ready === total) return { ready, total, label: 'Listo en cocina' };
   return { ready, total, label: `${ready}/${total} listos` };
 }
+
+const ActiveOrderCard = memo(function ActiveOrderCard({
+  order,
+  table,
+  selected,
+  compact,
+  onSelectOrder,
+}: {
+  order: Order;
+  table?: Table;
+  selected: boolean;
+  compact: boolean;
+  onSelectOrder?: (orderId: string) => void;
+}) {
+  const progress = getKitchenProgress(order);
+  const isBill = table?.status === 'bill_requested';
+  const allReady = progress.total > 0 && progress.ready === progress.total;
+
+  return (
+    <Pressable
+      style={[
+        styles.card,
+        compact && styles.cardCompact,
+        isBill && styles.cardBill,
+        selected && styles.cardSelected,
+      ]}
+      onPress={() => onSelectOrder?.(order.id)}
+      disabled={!onSelectOrder}
+    >
+      <View style={styles.cardTop}>
+        <Text style={[styles.tableNum, selected && styles.tableNumSelected]}>
+          {table?.number ?? '?'}
+        </Text>
+        <OrderStatusBadge status={order.status} size="sm" />
+      </View>
+      <Text style={styles.zone} numberOfLines={1}>
+        {table?.zone ?? 'Mesa'}
+      </Text>
+      <View style={styles.progressRow}>
+        <Ionicons
+          name={allReady ? 'checkmark-circle' : 'flame-outline'}
+          size={13}
+          color={allReady ? colors.success : colors.info}
+        />
+        <Text style={[styles.progressText, allReady && styles.progressReady]}>
+          {progress.label}
+        </Text>
+      </View>
+      <View style={styles.cardFooter}>
+        <Text style={styles.total}>{formatCurrency(order.total)}</Text>
+        {isBill ? (
+          <View style={styles.payTag}>
+            <Text style={styles.payTagText}>Cobrar</Text>
+          </View>
+        ) : null}
+      </View>
+    </Pressable>
+  );
+});
 
 interface ActiveOrdersPanelProps {
   selectedOrderId?: string;
@@ -27,14 +87,27 @@ export function ActiveOrdersPanel({
   onSelectOrder,
   compact = false,
 }: ActiveOrdersPanelProps) {
-  const { orders, getTable } = usePosStore();
+  const orders = usePosStore((s) => s.orders);
+  const tables = usePosStore((s) => s.tables);
 
-  const activeOrders = orders.filter(
-    (o) =>
-      o.status !== 'paid' &&
-      o.status !== 'cancelled' &&
-      o.table_id !== COUNTER_TABLE_ID &&
-      o.items.length > 0,
+  const activeOrders = useMemo(
+    () =>
+      orders.filter(
+        (o) =>
+          o.status !== 'paid' &&
+          o.status !== 'cancelled' &&
+          o.table_id !== COUNTER_TABLE_ID &&
+          o.items.length > 0,
+      ),
+    [orders],
+  );
+
+  const tableById = useMemo(() => new Map(tables.map((t) => [t.id, t])), [tables]);
+
+  const billReadyCount = useMemo(
+    () =>
+      activeOrders.filter((o) => tableById.get(o.table_id)?.status === 'bill_requested').length,
+    [activeOrders, tableById],
   );
 
   if (activeOrders.length === 0) {
@@ -46,17 +119,15 @@ export function ActiveOrdersPanel({
     );
   }
 
-  const billReady = activeOrders.filter((o) => getTable(o.table_id)?.status === 'bill_requested');
-
   return (
     <View style={styles.wrap}>
       {!compact ? (
         <View style={styles.header}>
           <Text style={styles.title}>Mesas en servicio</Text>
-          {billReady.length > 0 ? (
+          {billReadyCount > 0 ? (
             <View style={styles.billBadge}>
               <Ionicons name="receipt-outline" size={12} color={colors.coffee} />
-              <Text style={styles.billBadgeText}>{billReady.length} por cobrar</Text>
+              <Text style={styles.billBadgeText}>{billReadyCount} por cobrar</Text>
             </View>
           ) : null}
         </View>
@@ -67,55 +138,16 @@ export function ActiveOrdersPanel({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[styles.list, compact && styles.listCompact]}
       >
-        {activeOrders.map((order) => {
-          const table = getTable(order.table_id);
-          const progress = getKitchenProgress(order);
-          const isBill = table?.status === 'bill_requested';
-          const selected = selectedOrderId === order.id;
-          const allReady = progress.total > 0 && progress.ready === progress.total;
-
-          return (
-            <Pressable
-              key={order.id}
-              style={[
-                styles.card,
-                compact && styles.cardCompact,
-                isBill && styles.cardBill,
-                selected && styles.cardSelected,
-              ]}
-              onPress={() => onSelectOrder?.(order.id)}
-              disabled={!onSelectOrder}
-            >
-              <View style={styles.cardTop}>
-                <Text style={[styles.tableNum, selected && styles.tableNumSelected]}>
-                  {table?.number ?? '?'}
-                </Text>
-                <OrderStatusBadge status={order.status} size="sm" />
-              </View>
-              <Text style={styles.zone} numberOfLines={1}>
-                {table?.zone ?? 'Mesa'}
-              </Text>
-              <View style={styles.progressRow}>
-                <Ionicons
-                  name={allReady ? 'checkmark-circle' : 'flame-outline'}
-                  size={13}
-                  color={allReady ? colors.success : colors.info}
-                />
-                <Text style={[styles.progressText, allReady && styles.progressReady]}>
-                  {progress.label}
-                </Text>
-              </View>
-              <View style={styles.cardFooter}>
-                <Text style={styles.total}>{formatCurrency(order.total)}</Text>
-                {isBill ? (
-                  <View style={styles.payTag}>
-                    <Text style={styles.payTagText}>Cobrar</Text>
-                  </View>
-                ) : null}
-              </View>
-            </Pressable>
-          );
-        })}
+        {activeOrders.map((order) => (
+          <ActiveOrderCard
+            key={order.id}
+            order={order}
+            table={tableById.get(order.table_id)}
+            selected={selectedOrderId === order.id}
+            compact={compact}
+            onSelectOrder={onSelectOrder}
+          />
+        ))}
       </ScrollView>
     </View>
   );

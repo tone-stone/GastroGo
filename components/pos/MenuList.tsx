@@ -1,5 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { memo, useCallback, useMemo } from 'react';
+import {
+  FlatList,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  type ListRenderItem,
+} from 'react-native';
 
 import { formatCurrency } from '@/lib/demo-data';
 import { colors, radius, shadows } from '@/constants/theme';
@@ -13,6 +23,8 @@ interface MenuListProps {
   onAddItem: (item: MenuItem) => void;
   layout?: 'list' | 'grid';
   columns?: number;
+  /** Cuando true, la lista virtualiza el menú (recomendado si el padre tiene altura acotada). */
+  scrollable?: boolean;
 }
 
 const categoryIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
@@ -22,6 +34,68 @@ const categoryIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
   Postres: 'ice-cream-outline',
 };
 
+const MenuListItem = memo(function MenuListItem({
+  item,
+  onAddItem,
+}: {
+  item: MenuItem;
+  onAddItem: (item: MenuItem) => void;
+}) {
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+      onPress={() => onAddItem(item)}
+    >
+      <View style={styles.itemLeft}>
+        <View style={styles.itemIcon}>
+          <Ionicons name="fast-food-outline" size={18} color={colors.primary} />
+        </View>
+        <View style={styles.itemInfo}>
+          <Text style={styles.itemName}>{item.name}</Text>
+          {item.description ? (
+            <Text style={styles.itemDesc} numberOfLines={1}>{item.description}</Text>
+          ) : null}
+        </View>
+      </View>
+      <View style={styles.itemRight}>
+        <Text style={styles.itemPrice}>{formatCurrency(item.price)}</Text>
+        <View style={styles.addBtn}>
+          <Ionicons name="add" size={18} color="#FFF" />
+        </View>
+      </View>
+    </Pressable>
+  );
+});
+
+const MenuGridItem = memo(function MenuGridItem({
+  item,
+  onAddItem,
+}: {
+  item: MenuItem;
+  onAddItem: (item: MenuItem) => void;
+}) {
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.gridCard, pressed && styles.itemPressed]}
+      onPress={() => onAddItem(item)}
+    >
+      <View style={styles.gridIcon}>
+        <Ionicons name="fast-food-outline" size={22} color={colors.primary} />
+      </View>
+      <Text style={styles.gridName} numberOfLines={2}>{item.name}</Text>
+      {item.description ? (
+        <Text style={styles.gridDesc} numberOfLines={2}>{item.description}</Text>
+      ) : null}
+      <View style={styles.gridFooter}>
+        <Text style={styles.gridPrice}>{formatCurrency(item.price)}</Text>
+        <View style={styles.addBtn}>
+          <Ionicons name="add" size={18} color="#FFF" />
+        </View>
+      </View>
+    </Pressable>
+  );
+});
+
 export function MenuList({
   categories,
   items,
@@ -30,85 +104,99 @@ export function MenuList({
   onAddItem,
   layout = 'list',
   columns = 2,
+  scrollable = false,
 }: MenuListProps) {
-  const sortedCategories = [...categories].sort((a, b) => a.sort_order - b.sort_order);
+  const sortedCategories = useMemo(
+    () => [...categories].sort((a, b) => a.sort_order - b.sort_order),
+    [categories],
+  );
   const isGrid = layout === 'grid';
+  const numColumns = isGrid ? columns : 1;
 
-  return (
-    <View style={styles.container}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
-        {sortedCategories.map((cat) => {
-          const active = selectedCategoryId === cat.id;
-          const icon = categoryIcons[cat.name] ?? 'fast-food-outline';
-          return (
-            <Pressable
-              key={cat.id}
-              style={[styles.tab, active && styles.tabActive]}
-              onPress={() => onSelectCategory(cat.id)}
-            >
-              <Ionicons name={icon} size={16} color={active ? '#FFF' : colors.textSecondary} />
-              <Text style={[styles.tabText, active && styles.tabTextActive]}>{cat.name}</Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+  const renderItem: ListRenderItem<MenuItem> = useCallback(
+    ({ item }) =>
+      isGrid ? (
+        <View style={styles.gridCellFlex}>
+          <MenuGridItem item={item} onAddItem={onAddItem} />
+        </View>
+      ) : (
+        <MenuListItem item={item} onAddItem={onAddItem} />
+      ),
+    [isGrid, onAddItem],
+  );
 
-      {items.length === 0 ? (
+  const keyExtractor = useCallback((item: MenuItem) => item.id, []);
+
+  const categoryTabs = (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+      {sortedCategories.map((cat) => {
+        const active = selectedCategoryId === cat.id;
+        const icon = categoryIcons[cat.name] ?? 'fast-food-outline';
+        return (
+          <Pressable
+            key={cat.id}
+            style={[styles.tab, active && styles.tabActive]}
+            onPress={() => onSelectCategory(cat.id)}
+          >
+            <Ionicons name={icon} size={16} color={active ? '#FFF' : colors.textSecondary} />
+            <Text style={[styles.tabText, active && styles.tabTextActive]}>{cat.name}</Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
+  );
+
+  if (items.length === 0) {
+    return (
+      <View style={styles.container}>
+        {categoryTabs}
         <View style={styles.emptyWrap}>
           <Ionicons name="restaurant-outline" size={36} color={colors.textMuted} />
           <Text style={styles.empty}>No hay platillos en esta categoría</Text>
         </View>
-      ) : isGrid ? (
+      </View>
+    );
+  }
+
+  if (scrollable) {
+    return (
+      <View style={styles.container}>
+        {categoryTabs}
+        <FlatList
+          data={items}
+          key={`menu-${layout}-${numColumns}`}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          numColumns={numColumns}
+          style={styles.listFlex}
+          contentContainerStyle={isGrid ? undefined : styles.listContent}
+          columnWrapperStyle={isGrid ? styles.gridRow : undefined}
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={12}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          removeClippedSubviews={Platform.OS === 'android'}
+          keyboardShouldPersistTaps="handled"
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {categoryTabs}
+      {isGrid ? (
         <View style={styles.grid}>
           {items.map((item) => (
             <View key={item.id} style={[styles.gridCell, { width: `${100 / columns}%` }]}>
-              <Pressable
-                style={({ pressed }) => [styles.gridCard, pressed && styles.itemPressed]}
-                onPress={() => onAddItem(item)}
-              >
-                <View style={styles.gridIcon}>
-                  <Ionicons name="fast-food-outline" size={22} color={colors.primary} />
-                </View>
-                <Text style={styles.gridName} numberOfLines={2}>{item.name}</Text>
-                {item.description ? (
-                  <Text style={styles.gridDesc} numberOfLines={2}>{item.description}</Text>
-                ) : null}
-                <View style={styles.gridFooter}>
-                  <Text style={styles.gridPrice}>{formatCurrency(item.price)}</Text>
-                  <View style={styles.addBtn}>
-                    <Ionicons name="add" size={18} color="#FFF" />
-                  </View>
-                </View>
-              </Pressable>
+              <MenuGridItem item={item} onAddItem={onAddItem} />
             </View>
           ))}
         </View>
       ) : (
         <View style={styles.items}>
           {items.map((item) => (
-            <Pressable
-              key={item.id}
-              style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
-              onPress={() => onAddItem(item)}
-            >
-              <View style={styles.itemLeft}>
-                <View style={styles.itemIcon}>
-                  <Ionicons name="fast-food-outline" size={18} color={colors.primary} />
-                </View>
-                <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  {item.description ? (
-                    <Text style={styles.itemDesc} numberOfLines={1}>{item.description}</Text>
-                  ) : null}
-                </View>
-              </View>
-              <View style={styles.itemRight}>
-                <Text style={styles.itemPrice}>{formatCurrency(item.price)}</Text>
-                <View style={styles.addBtn}>
-                  <Ionicons name="add" size={18} color="#FFF" />
-                </View>
-              </View>
-            </Pressable>
+            <MenuListItem key={item.id} item={item} onAddItem={onAddItem} />
           ))}
         </View>
       )}
@@ -118,6 +206,7 @@ export function MenuList({
 
 const styles = StyleSheet.create({
   container: { flex: 1, gap: 14 },
+  listFlex: { flex: 1 },
   tabs: { gap: 8, paddingBottom: 4 },
   tab: {
     flexDirection: 'row',
@@ -136,7 +225,10 @@ const styles = StyleSheet.create({
   emptyWrap: { alignItems: 'center', paddingVertical: 48, gap: 8 },
   empty: { textAlign: 'center', color: colors.textMuted, fontSize: 14 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6 },
+  gridRow: { marginHorizontal: -6 },
+  listContent: { gap: 10, paddingBottom: 8 },
   gridCell: { padding: 6 },
+  gridCellFlex: { flex: 1, padding: 6 },
   gridCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
@@ -145,7 +237,6 @@ const styles = StyleSheet.create({
     borderColor: colors.borderLight,
     minHeight: 148,
     justifyContent: 'space-between',
-    ...shadows.sm,
   },
   gridIcon: {
     width: 44,
@@ -175,7 +266,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: colors.borderLight,
-    ...shadows.sm,
   },
   itemPressed: { backgroundColor: colors.primaryMuted, borderColor: colors.primaryLight },
   itemLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },

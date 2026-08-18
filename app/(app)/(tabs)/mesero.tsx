@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { StatusFilterBar, type DashboardFilter } from '@/components/dashboard/StatusFilterBar';
@@ -20,8 +20,13 @@ import { useSessionStore } from '@/stores/sessionStore';
 
 export default function WaiterScreen() {
   const router = useRouter();
-  const { activeRestaurantId, restaurants, staffMemberId, role } = useSessionStore();
-  const { tables, loadRestaurantData, getStaff, getMyTables } = usePosStore();
+  const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
+  const restaurants = useSessionStore((s) => s.restaurants);
+  const staffMemberId = useSessionStore((s) => s.staffMemberId);
+  const role = useSessionStore((s) => s.role);
+  const tables = usePosStore((s) => s.tables);
+  const staff = usePosStore((s) => s.staff);
+  const loadRestaurantData = usePosStore((s) => s.loadRestaurantData);
 
   const [filter, setFilter] = useState<DashboardFilter>('free');
   const [assignOpen, setAssignOpen] = useState(false);
@@ -30,8 +35,17 @@ export default function WaiterScreen() {
   const [attendTableId, setAttendTableId] = useState<string | undefined>();
 
   const restaurant = restaurants.find((r) => r.id === activeRestaurantId);
-  const waiter = staffMemberId ? getStaff(staffMemberId) : null;
-  const myTables = staffMemberId ? getMyTables(staffMemberId) : [];
+  const waiter = useMemo(
+    () => (staffMemberId ? staff.find((s) => s.id === staffMemberId) ?? null : null),
+    [staff, staffMemberId],
+  );
+  const myTables = useMemo(
+    () =>
+      staffMemberId
+        ? tables.filter((t) => t.assigned_waiter_id === staffMemberId && t.status !== 'free')
+        : [],
+    [staffMemberId, tables],
+  );
   const canReassign = isAdminRole(role);
   const diningTables = useMemo(
     () => tables.filter((t) => t.id !== COUNTER_TABLE_ID),
@@ -68,25 +82,32 @@ export default function WaiterScreen() {
     setAttendOpen(true);
   };
 
-  const handleTablePress = (tableId: string) => {
-    const table = diningTables.find((t) => t.id === tableId);
-    if (!table || !staffMemberId) return;
+  const handleTablePress = useCallback(
+    (tableId: string) => {
+      const table = diningTables.find((t) => t.id === tableId);
+      if (!table || !staffMemberId) return;
 
-    const isMine = table.assigned_waiter_id === staffMemberId;
-    const isFree = table.status === 'free' || table.status === 'reserved';
+      const isMine = table.assigned_waiter_id === staffMemberId;
+      const isFree = table.status === 'free' || table.status === 'reserved';
 
-    if (isFree) {
-      openAttend(tableId);
-      return;
-    }
+      if (isFree) {
+        setAttendTableId(tableId);
+        setAttendOpen(true);
+        return;
+      }
 
-    if (isMine) {
-      router.push(`/table/${tableId}`);
-      return;
-    }
+      if (isMine) {
+        router.push(`/table/${tableId}`);
+        return;
+      }
 
-    if (canReassign) openAssign(tableId);
-  };
+      if (canReassign) {
+        setAssignTableId(tableId);
+        setAssignOpen(true);
+      }
+    },
+    [canReassign, diningTables, router, staffMemberId],
+  );
 
   return (
     <Screen scroll>

@@ -8,9 +8,15 @@
     "scheme": "gastrogo",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gastrogo.app",
+      "infoPlist": {
+        "UIRequiresFullScreen": false,
+        "CADisableMinimumFrameDurationOnPhone": true
+      }
     },
     "android": {
+      "package": "com.gastrogo.app",
       "adaptiveIcon": {
         "backgroundColor": "#FAF6F0",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -37,6 +43,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0bd3b1c5-e367-4fc2-931b-362f0f4abb53"
+      }
     }
   }
 }

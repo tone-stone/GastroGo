@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
@@ -16,7 +17,13 @@ interface KitchenItemTicketProps {
   onItemReady?: () => void;
 }
 
-export function KitchenItemTicket({ order, item, table, waiter, onItemReady }: KitchenItemTicketProps) {
+export const KitchenItemTicket = memo(function KitchenItemTicket({
+  order,
+  item,
+  table,
+  waiter,
+  onItemReady,
+}: KitchenItemTicketProps) {
   const markKitchenItemReady = usePosStore((s) => s.markKitchenItemReady);
   const isReady = item.kitchen_status === 'ready';
   const orderTime = order.kitchen_sent_at ?? order.created_at;
@@ -89,7 +96,7 @@ export function KitchenItemTicket({ order, item, table, waiter, onItemReady }: K
       ) : null}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   ticket: {
@@ -101,7 +108,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: kitchenAccent,
     borderColor: colors.borderLight,
-    ...shadows.md,
+    ...shadows.sm,
   },
   ticketDone: {
     borderLeftColor: colors.success,

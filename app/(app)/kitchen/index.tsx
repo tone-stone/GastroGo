@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Redirect } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { FlatList, Platform, Pressable, StyleSheet, Text, View, type ListRenderItem } from 'react-native';
 
 import { KitchenItemTicket } from '@/components/kitchen/KitchenItemTicket';
 import { useSignOut } from '@/components/navigation/NavButtons';
@@ -11,28 +11,55 @@ import { Screen } from '@/components/ui/Screen';
 import { colors, kitchenAccent, radius, shadows } from '@/constants/theme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
-import type { Order, OrderItem } from '@/types';
+import type { Order, OrderItem, StaffMember, Table } from '@/types';
 
 type KitchenFilter = 'active' | 'all';
 
 interface KitchenTicketEntry {
   order: Order;
   item: OrderItem;
+  table?: Table;
+  waiter?: StaffMember;
 }
 
 export default function KitchenDashboardScreen() {
   const confirmSignOut = useSignOut();
-  const { loginMode, user, restaurants, activeRestaurantId } = useSessionStore();
-  const { getKitchenOrders, getTable, getStaff } = usePosStore();
+  const loginMode = useSessionStore((s) => s.loginMode);
+  const user = useSessionStore((s) => s.user);
+  const restaurants = useSessionStore((s) => s.restaurants);
+  const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
+  const orders = usePosStore((s) => s.orders);
+  const tables = usePosStore((s) => s.tables);
+  const staff = usePosStore((s) => s.staff);
   const [filter, setFilter] = useState<KitchenFilter>('active');
-  const [, setTick] = useState(0);
 
   const restaurant = restaurants.find((r) => r.id === activeRestaurantId);
-  const allOrders = getKitchenOrders().filter((o) => o.restaurant_id === activeRestaurantId);
+
+  const allOrders = useMemo(
+    () =>
+      orders
+        .filter(
+          (o) =>
+            o.restaurant_id === activeRestaurantId &&
+            (o.status === 'sent_to_kitchen' || o.status === 'ready'),
+        )
+        .sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+        ),
+    [activeRestaurantId, orders],
+  );
 
   const tickets = useMemo(() => {
+    const tableById = new Map(tables.map((t) => [t.id, t]));
+    const staffById = new Map(staff.map((s) => [s.id, s]));
+
     const entries: KitchenTicketEntry[] = allOrders.flatMap((order) =>
-      order.items.map((item) => ({ order, item }))
+      order.items.map((item) => ({
+        order,
+        item,
+        table: tableById.get(order.table_id),
+        waiter: order.waiter_id ? staffById.get(order.waiter_id) : undefined,
+      })),
     );
 
     const filtered =
@@ -45,19 +72,37 @@ export default function KitchenDashboardScreen() {
       const timeB = new Date(b.order.kitchen_sent_at ?? b.order.created_at).getTime();
       return timeA - timeB;
     });
-  }, [allOrders, filter]);
+  }, [allOrders, filter, staff, tables]);
 
-  const pendingItems = allOrders.reduce(
-    (sum, o) => sum + o.items.filter((i) => i.kitchen_status !== 'ready').length,
-    0,
+  const pendingItems = useMemo(
+    () =>
+      allOrders.reduce(
+        (sum, o) => sum + o.items.filter((i) => i.kitchen_status !== 'ready').length,
+        0,
+      ),
+    [allOrders],
   );
+
+  const renderTicket: ListRenderItem<KitchenTicketEntry> = useCallback(
+    ({ item: entry }) => (
+      <KitchenItemTicket
+        order={entry.order}
+        item={entry.item}
+        table={entry.table}
+        waiter={entry.waiter}
+      />
+    ),
+    [],
+  );
+
+  const keyExtractor = useCallback((entry: KitchenTicketEntry) => entry.item.id, []);
 
   if (loginMode !== 'kitchen') {
     return <Redirect href="/(auth)/login" />;
   }
 
   return (
-    <Screen scroll padded={false}>
+    <Screen padded={false}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={styles.logo}>
@@ -112,26 +157,25 @@ export default function KitchenDashboardScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.list}>
-        {tickets.length === 0 ? (
+      <FlatList
+        data={tickets}
+        keyExtractor={keyExtractor}
+        renderItem={renderTicket}
+        style={styles.list}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={8}
+        maxToRenderPerBatch={6}
+        windowSize={7}
+        removeClippedSubviews={Platform.OS === 'android'}
+        ListEmptyComponent={
           <EmptyState
             icon="flame-outline"
             title="Sin comandas pendientes"
             description="Cuando el mesero envíe órdenes a cocina, aparecerán aquí con mesa, mesero y hora."
           />
-        ) : (
-          tickets.map(({ order, item }) => (
-            <KitchenItemTicket
-              key={item.id}
-              order={order}
-              item={item}
-              table={getTable(order.table_id)}
-              waiter={order.waiter_id ? getStaff(order.waiter_id) : undefined}
-              onItemReady={() => setTick((t) => t + 1)}
-            />
-          ))
-        )}
-      </View>
+        }
+      />
     </Screen>
   );
 }
@@ -201,5 +245,6 @@ const styles = StyleSheet.create({
   filterChipActive: { backgroundColor: `${kitchenAccent}18`, borderColor: kitchenAccent },
   filterText: { fontSize: 13, fontWeight: '600', color: colors.textSecondary },
   filterTextActive: { color: kitchenAccent, fontWeight: '700' },
-  list: { paddingHorizontal: 16, paddingBottom: 24, gap: 12 },
+  list: { flex: 1 },
+  listContent: { paddingHorizontal: 16, paddingBottom: 24, gap: 12 },
 });

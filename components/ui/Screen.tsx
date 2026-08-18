@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
@@ -18,6 +18,9 @@ export function Screen({ children, scroll, padded = true, style, ...props }: Scr
           contentContainerStyle={[padStyle, styles.scrollContent, style]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          removeClippedSubviews={Platform.OS === 'android'}
+          scrollEventThrottle={16}
         >
           {children}
         </ScrollView>

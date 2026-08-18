@@ -17,7 +17,11 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function AuthGate({ children }: { children: React.ReactNode }) {
-  const { user, isLoading, initialize, loginMode, role } = useSessionStore();
+  const user = useSessionStore((s) => s.user);
+  const isLoading = useSessionStore((s) => s.isLoading);
+  const initialize = useSessionStore((s) => s.initialize);
+  const loginMode = useSessionStore((s) => s.loginMode);
+  const role = useSessionStore((s) => s.role);
   const segments = useSegments();
   const router = useRouter();
 

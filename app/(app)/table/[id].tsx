@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 import { Breadcrumb } from '@/components/navigation/Breadcrumb';
@@ -30,23 +30,28 @@ export default function TableOrderScreen() {
   const { width } = useWindowDimensions();
   const isWide = width >= 768;
 
-  const { activeRestaurantId, staffMemberId } = useSessionStore();
-  const {
-    getTable,
-    getOrderByTable,
-    getStaff,
-    categories,
-    getMenuByCategory,
-    addItemToOrder,
-    updateItemNotes,
-    updateItemQuantity,
-    sendToKitchen,
-    requestBill,
-  } = usePosStore();
+  const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
+  const staffMemberId = useSessionStore((s) => s.staffMemberId);
+  const tables = usePosStore((s) => s.tables);
+  const orders = usePosStore((s) => s.orders);
+  const staff = usePosStore((s) => s.staff);
+  const categories = usePosStore((s) => s.categories);
+  const menuItemsAll = usePosStore((s) => s.menuItems);
+  const addItemToOrder = usePosStore((s) => s.addItemToOrder);
+  const updateItemNotes = usePosStore((s) => s.updateItemNotes);
+  const updateItemQuantity = usePosStore((s) => s.updateItemQuantity);
+  const sendToKitchen = usePosStore((s) => s.sendToKitchen);
+  const requestBill = usePosStore((s) => s.requestBill);
 
-  const table = id ? getTable(id) : undefined;
-  const order = id ? getOrderByTable(id) : undefined;
-  const waiter = table?.assigned_waiter_id ? getStaff(table.assigned_waiter_id) : null;
+  const table = id ? tables.find((t) => t.id === id) : undefined;
+  const order = id
+    ? orders.find(
+        (o) => o.table_id === id && o.status !== 'paid' && o.status !== 'cancelled',
+      )
+    : undefined;
+  const waiter = table?.assigned_waiter_id
+    ? staff.find((s) => s.id === table.assigned_waiter_id) ?? null
+    : null;
   const isMyTable = !!staffMemberId && table?.assigned_waiter_id === staffMemberId;
   const needsAssignment = table && (table.status === 'free' || !table.assigned_waiter_id || !isMyTable);
 
@@ -123,7 +128,12 @@ export default function TableOrderScreen() {
     );
   }
 
-  const menuItems = getMenuByCategory(selectedCategoryId);
+  const menuItems = useMemo(
+    () => menuItemsAll.filter(
+      (item) => item.category_id === selectedCategoryId && item.is_available,
+    ),
+    [menuItemsAll, selectedCategoryId],
+  );
   const statusConfig = tableStatusConfig[table.status];
   const itemCount = order.items.reduce((sum, i) => sum + i.quantity, 0);
   const activeStep = getActiveStepFromOrder(table.status, order.status, itemCount > 0);

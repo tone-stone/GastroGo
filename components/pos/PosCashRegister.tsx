@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
@@ -48,8 +48,19 @@ export function PosCashRegister({
   hero = false,
 }: PosCashRegisterProps) {
   const router = useRouter();
-  const { user } = useSessionStore();
-  const { orders, getTable, getStaff, payOrder } = usePosStore();
+  const user = useSessionStore((s) => s.user);
+  const orders = usePosStore((s) => s.orders);
+  const tables = usePosStore((s) => s.tables);
+  const staff = usePosStore((s) => s.staff);
+  const payOrder = usePosStore((s) => s.payOrder);
+  const getTable = useCallback(
+    (id: string) => tables.find((t) => t.id === id),
+    [tables],
+  );
+  const getStaff = useCallback(
+    (id: string) => staff.find((s) => s.id === id),
+    [staff],
+  );
 
   const payableOrders = useMemo(() => {
     const open = orders.filter(

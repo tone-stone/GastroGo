@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { memo, useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 import { tableStatusConfig } from '@/constants/status';
@@ -78,7 +79,7 @@ function getInitials(name: string): string {
   return name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 }
 
-function TableCard({
+const TableCard = memo(function TableCard({
   table,
   size,
   isMine,
@@ -91,10 +92,16 @@ function TableCard({
   onPress?: () => void;
   onAssign?: () => void;
 }) {
-  const getOrderByTable = usePosStore((s) => s.getOrderByTable);
-  const getStaff = usePosStore((s) => s.getStaff);
-  const order = getOrderByTable(table.id);
-  const waiter = table.assigned_waiter_id ? getStaff(table.assigned_waiter_id) : null;
+  const order = usePosStore((s) =>
+    s.orders.find(
+      (o) => o.table_id === table.id && o.status !== 'paid' && o.status !== 'cancelled',
+    ),
+  );
+  const waiter = usePosStore((s) =>
+    table.assigned_waiter_id
+      ? s.staff.find((member) => member.id === table.assigned_waiter_id)
+      : undefined,
+  );
   const config = tableStatusConfig[table.status];
   const itemCount = order?.items.reduce((s, i) => s + i.quantity, 0) ?? 0;
   const kitchen = getKitchenIndicator(order, table);
@@ -111,9 +118,7 @@ function TableCard({
         onPress={onPress}
         style={({ pressed }) => [
           styles.card,
-          {
-            borderColor: config.border,
-          },
+          { borderColor: config.border },
           isMine && styles.cardMine,
           kitchen === 'preparing' && styles.cardPreparing,
           kitchen === 'ready' && styles.cardReady,
@@ -176,13 +181,28 @@ function TableCard({
       ) : null}
     </View>
   );
-}
+});
 
 export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress, onAssignTable }: TableGridProps) {
   const { cardSize } = useGridLayout();
 
-  const filtered = filter === 'all' ? tables : tables.filter((t) => t.status === filter);
-  const zones = [...new Set(filtered.map((t) => t.zone ?? 'General'))];
+  const filtered = useMemo(
+    () => (filter === 'all' ? tables : tables.filter((t) => t.status === filter)),
+    [filter, tables],
+  );
+  const zones = useMemo(
+    () => [...new Set(filtered.map((t) => t.zone ?? 'General'))],
+    [filtered],
+  );
+
+  const handlePress = useCallback(
+    (tableId: string) => onTablePress?.(tableId),
+    [onTablePress],
+  );
+  const handleAssign = useCallback(
+    (tableId: string) => onAssignTable?.(tableId),
+    [onAssignTable],
+  );
 
   if (filtered.length === 0) {
     return (
@@ -219,8 +239,8 @@ export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress,
                   table={table}
                   size={cardSize}
                   isMine={!!staffMemberId && table.assigned_waiter_id === staffMemberId}
-                  onPress={onTablePress ? () => onTablePress(table.id) : undefined}
-                  onAssign={onAssignTable ? () => onAssignTable(table.id) : undefined}
+                  onPress={onTablePress ? () => handlePress(table.id) : undefined}
+                  onAssign={onAssignTable ? () => handleAssign(table.id) : undefined}
                 />
               ))}
             </View>
@@ -281,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     ...shadows.sm,
   },
-  pressed: { opacity: 0.92, transform: [{ scale: 0.97 }] },
+  pressed: { opacity: 0.92 },
   cardMine: { borderWidth: 2, borderColor: colors.primary },
   cardPreparing: { borderColor: colors.info },
   cardReady: { borderColor: colors.success },

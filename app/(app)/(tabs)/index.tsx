@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -20,7 +20,7 @@ import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveStepFromOrder } from '@/constants/serviceFlow';
 import { colors, radius, shadows } from '@/constants/theme';
-import { formatCurrency } from '@/lib/demo-data';
+import { formatCurrency, isCounterTable } from '@/lib/demo-data';
 import { confirmAction } from '@/lib/confirm';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -44,25 +44,37 @@ export default function SaleScreen() {
   const isWide = width >= 768;
   const isDesktop = width >= 1100;
 
-  const { activeRestaurantId, restaurants, user } = useSessionStore();
-  const {
-    categories,
-    getMenuByCategory,
-    getActiveSaleOrder,
-    startSaleOrder,
-    resetSaleOrder,
-    cancelOrder,
-    addItemToOrder,
-    updateItemNotes,
-    updateItemQuantity,
-    sendToKitchen,
-    loadRestaurantData,
-    getTable,
-    orders,
-  } = usePosStore();
+  const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
+  const restaurants = useSessionStore((s) => s.restaurants);
+  const user = useSessionStore((s) => s.user);
+
+  const categories = usePosStore((s) => s.categories);
+  const menuItemsAll = usePosStore((s) => s.menuItems);
+  const orders = usePosStore((s) => s.orders);
+  const tables = usePosStore((s) => s.tables);
+  const activeSaleOrderId = usePosStore((s) => s.activeSaleOrderId);
+  const startSaleOrder = usePosStore((s) => s.startSaleOrder);
+  const resetSaleOrder = usePosStore((s) => s.resetSaleOrder);
+  const cancelOrder = usePosStore((s) => s.cancelOrder);
+  const addItemToOrder = usePosStore((s) => s.addItemToOrder);
+  const updateItemNotes = usePosStore((s) => s.updateItemNotes);
+  const updateItemQuantity = usePosStore((s) => s.updateItemQuantity);
+  const sendToKitchen = usePosStore((s) => s.sendToKitchen);
+  const loadRestaurantData = usePosStore((s) => s.loadRestaurantData);
 
   const restaurant = restaurants.find((r) => r.id === activeRestaurantId);
-  const order = getActiveSaleOrder();
+  const order = useMemo(
+    () =>
+      orders.find(
+        (o) =>
+          o.id === activeSaleOrderId &&
+          o.status !== 'paid' &&
+          o.status !== 'cancelled' &&
+          isCounterTable(o.table_id),
+      ),
+    [activeSaleOrderId, orders],
+  );
+  const tableById = useMemo(() => new Map(tables.map((t) => [t.id, t])), [tables]);
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(categories[0]?.id ?? '');
   const [notesModal, setNotesModal] = useState<NotesModalState>(null);
@@ -84,7 +96,10 @@ export default function SaleScreen() {
     }
   }, [categories, selectedCategoryId]);
 
-  const menuItems = getMenuByCategory(selectedCategoryId);
+  const menuItems = useMemo(
+    () => menuItemsAll.filter((item) => item.category_id === selectedCategoryId && item.is_available),
+    [menuItemsAll, selectedCategoryId],
+  );
   const menuColumns = getMenuColumns(width);
   const itemCount = order?.items.reduce((sum, i) => sum + i.quantity, 0) ?? 0;
   const counterStep = getActiveStepFromOrder('occupied', order?.status, itemCount > 0);
@@ -92,10 +107,6 @@ export default function SaleScreen() {
   useEffect(() => {
     if (order?.id) setPaymentTargetId((prev) => (prev === '' || prev === order.id ? order.id : prev));
   }, [order?.id]);
-
-  const handleAddMenuItem = (item: MenuItem) => {
-    setNotesModal({ mode: 'add', item });
-  };
 
   const handleNotesModalClose = () => {
     if (notesModal?.mode === 'add' && order) {
@@ -115,8 +126,7 @@ export default function SaleScreen() {
   };
 
   const handleNewSale = useCallback(async () => {
-    const current = getActiveSaleOrder();
-    if (!current || current.items.length === 0) {
+    if (!order || order.items.length === 0) {
       resetSaleOrder();
       if (activeRestaurantId) startSaleOrder(activeRestaurantId);
       return;
@@ -127,9 +137,9 @@ export default function SaleScreen() {
       'Se descartará el pedido actual sin cobrar. ¿Continuar?',
     );
     if (!ok) return;
-    cancelOrder(current.id);
+    cancelOrder(order.id);
     if (activeRestaurantId) startSaleOrder(activeRestaurantId);
-  }, [activeRestaurantId, cancelOrder, getActiveSaleOrder, resetSaleOrder, startSaleOrder]);
+  }, [activeRestaurantId, cancelOrder, order, resetSaleOrder, startSaleOrder]);
 
   const handlePaid = (paidOrderId: string) => {
     if (paidOrderId === order?.id && activeRestaurantId) {
@@ -140,13 +150,20 @@ export default function SaleScreen() {
     }
   };
 
-  const handleSelectTableOrder = (tableOrderId: string) => {
-    const tableOrder = orders.find((o) => o.id === tableOrderId);
-    const table = tableOrder ? getTable(tableOrder.table_id) : undefined;
-    if (table?.status === 'bill_requested') {
-      setPaymentTargetId(tableOrderId);
-    }
-  };
+  const handleSelectTableOrder = useCallback(
+    (tableOrderId: string) => {
+      const tableOrder = orders.find((o) => o.id === tableOrderId);
+      const table = tableOrder ? tableById.get(tableOrder.table_id) : undefined;
+      if (table?.status === 'bill_requested') {
+        setPaymentTargetId(tableOrderId);
+      }
+    },
+    [orders, tableById],
+  );
+
+  const handleAddMenuItem = useCallback((item: MenuItem) => {
+    setNotesModal({ mode: 'add', item });
+  }, []);
 
   const toolbar = (
     <View style={[styles.toolbar, isDesktop && styles.toolbarDesktop]}>
@@ -259,11 +276,7 @@ export default function SaleScreen() {
               <Ionicons name="restaurant-outline" size={18} color={colors.primary} />
               <Text style={styles.panelTitle}>Menú</Text>
             </View>
-            <ScrollView
-              style={styles.menuScroll}
-              contentContainerStyle={styles.menuScrollContent}
-              showsVerticalScrollIndicator={false}
-            >
+            <View style={styles.menuScroll}>
               <MenuList
                 categories={categories}
                 items={menuItems}
@@ -272,8 +285,9 @@ export default function SaleScreen() {
                 onAddItem={handleAddMenuItem}
                 layout="grid"
                 columns={menuColumns}
+                scrollable
               />
-            </ScrollView>
+            </View>
           </View>
         </View>
 
