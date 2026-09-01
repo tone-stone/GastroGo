@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
-import { colors, kitchenAccent, radius, shadows } from '@/constants/theme';
+import { colors, kitchenAccent, radius, shadows } from '@/constants/legacyTheme';
 import { formatOrderTime } from '@/lib/demo-data';
 import { showKitchenReadyAlert } from '@/lib/notify';
 import { usePosStore } from '@/stores/posStore';

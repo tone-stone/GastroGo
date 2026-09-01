@@ -1,7 +1,5 @@
-// constants/theme.ts — tokens del rediseño GastroGo POS (design_handoff_gastrogo_pos).
-// Tres paletas sobre los mismos roles. Cada acento tiene cuatro variantes:
-// solid, soft (fondo), ink (texto sobre soft), on (texto sobre solid).
-// Detalle de cada rol en design_handoff_gastrogo_pos/README.md.
+// constants/theme.ts — tres paletas sobre los mismos roles.
+// Cada acento tiene cuatro variantes: solid, soft (fondo), ink (texto sobre soft), on (texto sobre solid).
 
 export type Accent = { solid: string; soft: string; ink: string; on: string; line: string };
 
@@ -54,27 +52,16 @@ export const palettes = { olivo, madera, barro };
 export const theme = olivo; // paleta elegida
 
 // Roles funcionales derivados de la paleta activa.
-// libre/ocupada comparten el acento principal (a1) en soft/solid; pide cuenta usa el
-// dorado (a2) y reservada el frío (a4) — ver "Estados de mesa" en el README del handoff.
 export const tableStatus = (p: Palette) => ({
-  free:     { dot: p.a1.solid, bg: p.a1.soft, fg: p.a1.ink, label: 'Libre' },
+  free:     { dot: p.a2.soft, bg: p.a2.soft, fg: p.a2.ink, label: 'Libre' },
   occupied: { dot: p.a1.solid, bg: p.a1.solid, fg: p.a1.on, label: 'Ocupada' },
-  bill:     { dot: p.a2.solid, bg: p.a2.solid, fg: p.a2.on, label: 'Pide cuenta' },
+  bill:     { dot: p.a3.solid, bg: p.a3.solid, fg: p.a3.on, label: 'Pide cuenta' },
   reserved: { dot: p.a4.solid, bg: p.a4.solid, fg: p.a4.on, label: 'Reservada' },
 });
 
 export const radius = { xs: 8, sm: 10, md: 12, lg: 14, panel: 16, dialog: 18, pill: 999 };
 export const space = { xs: 6, sm: 8, md: 12, lg: 16, xl: 22 };
 export const font = { family: 'Inter', weights: [400, 500, 600, 700] };
-
-// Sombras del handoff (`sm`/`md`/`lg`) traducidas a props de sombra de React Native.
-// El hairline `0 0 0 1px line` de cada sombra se aplica aparte, como borderWidth+borderColor,
-// porque su color depende de la paleta activa.
-export const shadow = {
-  sm: { shadowColor: '#3A3428', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 2, elevation: 1 },
-  md: { shadowColor: '#3A3428', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.09, shadowRadius: 14, elevation: 4 },
-  lg: { shadowColor: '#3A3428', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.14, shadowRadius: 36, elevation: 10 },
-};
 
 // SLA de cocina por canal, en minutos.
 export const sla = { dine_in: 14, takeaway: 15, didi: 15, uber: 15 };

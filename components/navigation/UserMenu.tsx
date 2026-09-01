@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/Avatar';
 import { useSignOut } from '@/components/navigation/NavButtons';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 import { useSessionStore } from '@/stores/sessionStore';
 
 export function UserMenu({ compact }: { compact?: boolean }) {

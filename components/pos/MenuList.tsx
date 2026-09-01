@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { formatCurrency } from '@/lib/demo-data';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 import type { MenuCategory, MenuItem } from '@/types';
 
 interface MenuListProps {

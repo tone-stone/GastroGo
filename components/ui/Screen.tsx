@@ -1,7 +1,7 @@
 import { Platform, ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '@/constants/theme';
+import { colors } from '@/constants/legacyTheme';
 
 interface ScreenProps extends ViewProps {
   scroll?: boolean;

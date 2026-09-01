@@ -19,7 +19,7 @@ import { ServiceFlowSteps } from '@/components/pos/ServiceFlowSteps';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveStepFromOrder } from '@/constants/serviceFlow';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 import { formatCurrency, isCounterTable } from '@/lib/demo-data';
 import { confirmAction } from '@/lib/confirm';
 import { usePosStore } from '@/stores/posStore';

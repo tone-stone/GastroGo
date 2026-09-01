@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, radius, shadows } from '@/constants/theme';
+import { tableStatusConfig } from '@/constants/status';
+import { radius, shadow, space, theme } from '@/constants/theme';
 import type { TableStatus } from '@/types';
 
 export type DashboardFilter = TableStatus | 'all';
@@ -15,11 +16,11 @@ interface FilterOption {
 }
 
 const FILTERS: FilterOption[] = [
-  { id: 'all', icon: 'grid-outline', activeIcon: 'grid', color: colors.text, bg: colors.borderLight },
-  { id: 'free', icon: 'checkmark-circle-outline', activeIcon: 'checkmark-circle', color: colors.success, bg: colors.successBg },
-  { id: 'occupied', icon: 'flame-outline', activeIcon: 'flame', color: colors.info, bg: colors.infoBg },
-  { id: 'bill_requested', icon: 'receipt-outline', activeIcon: 'receipt', color: colors.warning, bg: colors.warningBg },
-  { id: 'reserved', icon: 'bookmark-outline', activeIcon: 'bookmark', color: colors.coffee, bg: colors.coffeeMuted },
+  { id: 'all', icon: 'grid-outline', activeIcon: 'grid', color: theme.text, bg: theme.surface2 },
+  { id: 'free', icon: 'checkmark-circle-outline', activeIcon: 'checkmark-circle', color: tableStatusConfig.free.color, bg: tableStatusConfig.free.bg },
+  { id: 'occupied', icon: 'flame-outline', activeIcon: 'flame', color: tableStatusConfig.occupied.color, bg: tableStatusConfig.occupied.bg },
+  { id: 'bill_requested', icon: 'receipt-outline', activeIcon: 'receipt', color: tableStatusConfig.bill_requested.color, bg: tableStatusConfig.bill_requested.bg },
+  { id: 'reserved', icon: 'bookmark-outline', activeIcon: 'bookmark', color: tableStatusConfig.reserved.color, bg: tableStatusConfig.reserved.bg },
 ];
 
 interface StatusFilterBarProps {
@@ -49,7 +50,7 @@ export function StatusFilterBar({ filter, counts, onChange }: StatusFilterBarPro
             <Ionicons
               name={active ? item.activeIcon : item.icon}
               size={20}
-              color={active ? item.color : colors.textMuted}
+              color={active ? item.color : theme.mut}
             />
             <View style={[styles.badge, active && { backgroundColor: item.color }]}>
               <Text style={[styles.badgeText, active && styles.badgeTextActive]}>{count}</Text>
@@ -65,14 +66,14 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
-    marginBottom: 20,
-    padding: 8,
-    backgroundColor: colors.surface,
+    gap: space.sm,
+    marginBottom: space.lg + 4,
+    padding: space.sm,
+    backgroundColor: theme.surface,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    ...shadows.sm,
+    borderColor: theme.line,
+    ...shadow.sm,
   },
   btn: {
     flex: 1,
@@ -91,11 +92,11 @@ const styles = StyleSheet.create({
     minWidth: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: colors.borderLight,
+    backgroundColor: theme.surface2,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
   },
-  badgeText: { fontSize: 9, fontWeight: '800', color: colors.textSecondary },
+  badgeText: { fontSize: 9, fontWeight: '700', color: theme.mut },
   badgeTextActive: { color: '#FFF' },
 });

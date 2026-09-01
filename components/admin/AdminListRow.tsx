@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 
 interface AdminListRowProps {
   title: string;

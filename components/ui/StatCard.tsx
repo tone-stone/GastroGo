@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radius, shadows, typography } from '@/constants/theme';
+import { colors, radius, shadows, typography } from '@/constants/legacyTheme';
 
 interface StatCardProps {
   label: string;

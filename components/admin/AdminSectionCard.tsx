@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 
 interface AdminSectionCardProps {
   title: string;

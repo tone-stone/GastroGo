@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 import { BackButton, CloseButton } from '@/components/navigation/NavButtons';
 import { UserMenu } from '@/components/navigation/UserMenu';
-import { colors, headerStyle } from '@/constants/theme';
+import { colors, headerStyle } from '@/constants/legacyTheme';
 
 const stackHeaderOptions = {
   headerStyle,

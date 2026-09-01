@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { orderStatusConfig, tableStatusConfig } from '@/constants/status';
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 import type { OrderStatus, TableStatus } from '@/types';
 
 interface StatusBadgeProps {

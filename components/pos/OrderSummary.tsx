@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { OrderStatusBadge } from '@/components/ui/Badge';
 import { formatCurrency } from '@/lib/demo-data';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 import type { Order } from '@/types';
 
 interface OrderSummaryProps {

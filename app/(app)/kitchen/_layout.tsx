@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { colors } from '@/constants/theme';
+import { colors } from '@/constants/legacyTheme';
 
 export default function KitchenLayout() {
   return (

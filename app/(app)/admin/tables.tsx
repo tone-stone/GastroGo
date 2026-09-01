@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/ui/Screen';
 import { tableStatusConfig } from '@/constants/status';
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 import { TABLE_ZONES } from '@/lib/roles';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';

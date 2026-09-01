@@ -8,7 +8,7 @@ import { AppHeader } from '@/components/ui/AppHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
 import { COUNTER_TABLE_ID, formatCurrency } from '@/lib/demo-data';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import type { Order, Table } from '@/types';
 

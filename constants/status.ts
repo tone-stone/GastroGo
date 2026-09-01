@@ -1,37 +1,40 @@
-import { colors } from '@/constants/theme';
+import { colors } from '@/constants/legacyTheme';
+import { theme, tableStatus } from '@/constants/theme';
 import type { OrderStatus, TableStatus } from '@/types';
+
+const tableTokens = tableStatus(theme);
 
 export const tableStatusConfig: Record<
   TableStatus,
   { label: string; bg: string; color: string; border: string; dot: string }
 > = {
   free: {
-    label: 'Libre',
-    bg: colors.successBg,
-    color: colors.success,
-    border: '#C5C9B8',
-    dot: colors.success,
+    label: tableTokens.free.label,
+    bg: tableTokens.free.bg,
+    color: tableTokens.free.fg,
+    border: theme.a1.line,
+    dot: tableTokens.free.dot,
   },
   occupied: {
-    label: 'Ocupada',
-    bg: colors.infoBg,
-    color: colors.info,
-    border: '#D4C4AE',
-    dot: colors.info,
+    label: tableTokens.occupied.label,
+    bg: tableTokens.occupied.bg,
+    color: tableTokens.occupied.fg,
+    border: theme.a1.line,
+    dot: tableTokens.occupied.dot,
   },
   bill_requested: {
-    label: 'Pide cuenta',
-    bg: colors.goldMuted,
-    color: colors.gold,
-    border: colors.goldLight,
-    dot: colors.gold,
+    label: tableTokens.bill.label,
+    bg: tableTokens.bill.bg,
+    color: tableTokens.bill.fg,
+    border: theme.a2.line,
+    dot: tableTokens.bill.dot,
   },
   reserved: {
-    label: 'Reservada',
-    bg: colors.coffeeMuted,
-    color: colors.coffee,
-    border: '#DCC9B0',
-    dot: colors.coffeeLight,
+    label: tableTokens.reserved.label,
+    bg: tableTokens.reserved.bg,
+    color: tableTokens.reserved.fg,
+    border: theme.a4.line,
+    dot: tableTokens.reserved.dot,
   },
 };
 

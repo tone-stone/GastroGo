@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 import { confirmAction } from '@/lib/confirm';
 import { useSessionStore } from '@/stores/sessionStore';
 

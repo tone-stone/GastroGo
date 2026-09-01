@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { MainHeader } from '@/components/navigation/MainHeader';
-import { colors, shadows } from '@/constants/theme';
+import { colors, shadows } from '@/constants/legacyTheme';
 import { isAdminRole } from '@/lib/roles';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';

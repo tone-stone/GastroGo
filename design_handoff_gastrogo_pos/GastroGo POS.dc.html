@@ -1,0 +1,2440 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="_ds/nocturne-13a554b1-64ad-41cd-b049-fdab71821c1f/styles.css">
+<script src="_ds/nocturne-13a554b1-64ad-41cd-b049-fdab71821c1f/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+:root{
+  --pal-name:"Madera";
+  --ink:#3A3428; --ink-soft:#4A4234; --ink-line:#55493A; --on-ink:#DCC9B0; --on-ink-mut:#B39A7E;
+  --color-bg:#F1E8DB; --color-surface:#FFFCF8; --surface-2:#F3EADC; --line:#E0D3BF;
+  --color-text:#3A3428; --mut:#8A7660; --color-accent:#8C5A34;
+  --cta:#555842; --cta-dark:#434832; --cta-on:#FFFCF8;
+  --a1:#8C5A34; --a1-soft:#F5E6D8; --a1-ink:#5A3A1E; --a1-on:#FFF4E7; --a1-line:#E5CDB6;
+  --a2:#6E7350; --a2-soft:#E9EBD8; --a2-ink:#3D411F; --a2-on:#F4F6E7; --a2-line:#CFD4B4;
+  --a3:#C9821A; --a3-soft:#FBEED6; --a3-ink:#6B4F13; --a3-on:#2C1E06; --a3-line:#EAD3A2;
+  --a4:#37605B; --a4-soft:#E1EDEA; --a4-ink:#24433F; --a4-on:#E2F0EC; --a4-line:#BCD5CE;
+  --accent-soft:var(--a1-soft); --accent-ink:var(--a1-ink);
+  --ok:var(--a2); --ok-bg:var(--a2-soft); --warn:var(--a3); --warn-bg:var(--a3-soft);
+  --clay:#A65D4A; --sage:#8A8A5C;
+  --shadow-sm:0 1px 2px rgba(58,52,40,.06),0 0 0 1px var(--line);
+  --shadow-md:0 4px 14px rgba(58,52,40,.09),0 0 0 1px var(--line);
+  --shadow-lg:0 14px 36px rgba(58,52,40,.14),0 0 0 1px var(--line);
+}
+[data-pal="olivo"]{
+  --pal-name:"Olivo & dorado";
+  --ink:#2E3327; --ink-soft:#3D4434; --ink-line:#4C5441; --on-ink:#E4E2CB; --on-ink-mut:#A9A98C;
+  --color-bg:#F7F4E9; --color-surface:#FFFDF6; --surface-2:#F0EDDD; --line:#DFDBC6;
+  --color-text:#2B2E24; --mut:#7C7C66; --color-accent:#8A6D2E;
+  --cta:#4F5B34; --cta-dark:#3C4627; --cta-on:#FFFDF6;
+  --a1:#4F5B34; --a1-soft:#E8ECD8; --a1-ink:#333D1D; --a1-on:#F7F9EC; --a1-line:#CBD3AE;
+  --a2:#C09A3E; --a2-soft:#F8EFD5; --a2-ink:#6A5115; --a2-on:#2A2107; --a2-line:#E8D49B;
+  --a3:#B4643C; --a3-soft:#F8E7DE; --a3-ink:#6E3620; --a3-on:#FFF3EC; --a3-line:#EBC9B7;
+  --a4:#3E5A6B; --a4-soft:#E3EBF0; --a4-ink:#29404E; --a4-on:#EAF2F7; --a4-line:#C2D4DF;
+}
+[data-pal="barro"]{
+  --pal-name:"Barro & cobre";
+  --ink:#2B211C; --ink-soft:#3B2E27; --ink-line:#4C3A31; --on-ink:#E7D3BE; --on-ink-mut:#B0937A;
+  --color-bg:#F7F0E6; --color-surface:#FFFCF6; --surface-2:#F1E7DA; --line:#E2D2BF;
+  --color-text:#2F2620; --mut:#8B7561; --color-accent:#B4643C;
+  --cta:#55654A; --cta-dark:#42503A; --cta-on:#FFFCF6;
+  --a1:#B4643C; --a1-soft:#F9E8DF; --a1-ink:#6E3620; --a1-on:#FFF4EE; --a1-line:#EDCCB9;
+  --a2:#6E7B5C; --a2-soft:#E9EDE1; --a2-ink:#3E4832; --a2-on:#F5F8EF; --a2-line:#CCD4BE;
+  --a3:#CFA347; --a3-soft:#FAF0DA; --a3-ink:#6E5417; --a3-on:#2C2207; --a3-line:#EBD8A6;
+  --a4:#2F4858; --a4-soft:#E0E8ED; --a4-ink:#21323D; --a4-on:#E7F0F5; --a4-line:#BFD1DB;
+}
+body{background:var(--color-bg);color:var(--color-text);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+a{color:var(--color-accent);}a:hover{color:var(--a1-ink);}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit;}
+*{box-sizing:border-box;}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+</style>
+</helmet>
+
+<div data-pal="{{ pal }}" style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:'Inter',system-ui,sans-serif;font-size:15px">
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr">
+    <div style="background:linear-gradient(160deg,var(--ink) 0%,var(--cta) 55%,var(--a1) 100%);padding:64px 56px;display:flex;flex-direction:column;justify-content:space-between;color:var(--color-bg)">
+      <div style="display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;letter-spacing:-0.01em"><i class="ph-fill ph-fork-knife" style="font-size:22px;color:var(--on-ink)"></i>GastroGo</div>
+      <div style="max-width:420px;display:flex;flex-direction:column;gap:18px">
+        <div style="font-size:40px;line-height:1.08;font-weight:500;letter-spacing:-0.02em">El turno empieza aquí.</div>
+        <div style="font-size:15px;line-height:1.6;color:var(--on-ink)">Mesas, comandas, cocina y cobro en una sola pantalla. Sin backend en modo demo.</div>
+      </div>
+      <div style="font-size:12px;color:var(--on-ink-mut)">GastroGo Centro · Av. Principal 123</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:48px">
+      <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:24px;font-weight:600;letter-spacing:-0.02em">Iniciar turno</div>
+          <div style="font-size:13px;color:var(--mut)">Modo demo: cualquier correo y contraseña.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--mut);letter-spacing:0.04em;text-transform:uppercase">Correo
+            <input value="ana@gastrogo.app" readonly style="font:inherit;font-size:15px;color:var(--color-text);text-transform:none;letter-spacing:0;font-weight:400;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--color-surface)">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--mut);letter-spacing:0.04em;text-transform:uppercase">Contraseña
+            <input type="password" value="demodemo" readonly style="font:inherit;font-size:15px;color:var(--color-text);letter-spacing:0;font-weight:400;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--color-surface)">
+          </label>
+        </div>
+        <button onClick="{{ enter }}" style="padding:14px;border-radius:10px;background:var(--cta);color:var(--color-surface);font-weight:600;font-size:15px;box-shadow:0 4px 14px rgba(85,88,66,.3)" style-hover="background:var(--cta-dark)">Entrar</button>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--mut)"><i class="ph ph-users-three"></i>Turno: Ana García · Mesera</div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isTablet }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:88px 1fr;min-height:100vh">
+
+  <div style="background:var(--ink);border-right:1px solid var(--ink-line);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px;overflow-y:auto">
+    <div style="width:44px;height:44px;border-radius:12px;background:var(--cta);display:flex;align-items:center;justify-content:center;margin-bottom:10px"><i class="ph-fill ph-fork-knife" style="font-size:22px;color:var(--on-ink)"></i></div>
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+      <button onClick="{{ n.go }}" style="width:64px;padding:10px 0 8px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:600;background:{{ n.bg }};color:{{ n.fg }}" style-hover="background:var(--ink-soft)">
+        <i class="{{ n.icon }}" style="font-size:22px"></i>{{ n.label }}
+      </button>
+    </sc-for>
+    <div style="flex:1"></div>
+    <button onClick="{{ toggleMobile }}" title="Ver versión móvil" style="width:64px;padding:8px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--on-ink-mut)" style-hover="background:var(--ink-soft)"><i class="ph ph-device-mobile" style="font-size:20px"></i>Móvil</button>
+    <button onClick="{{ logout }}" style="width:40px;height:40px;border-radius:50%;background:var(--a3);color:var(--ink);font-weight:700;font-size:13px;margin-top:6px">AG</button>
+  </div>
+
+  <div style="display:flex;flex-direction:column;min-width:0">
+    <div style="min-height:62px;flex:none;display:flex;align-items:center;gap:12px;padding:8px 20px;background:var(--color-surface);border-bottom:2px solid var(--cta);flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;flex:1;min-width:160px">
+        <div style="font-size:17px;font-weight:600;letter-spacing:-0.015em;white-space:nowrap">{{ title }}</div>
+        <div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ subtitle }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:500;white-space:nowrap;flex:none"><i class="ph ph-storefront" style="color:var(--color-accent)"></i>GastroGo Centro<i class="ph ph-caret-down" style="font-size:12px;color:var(--mut)"></i></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 210px"><i class="ph ph-magnifying-glass" style="flex:none"></i>Buscar mesa, orden o platillo</div>
+      <div style="display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:none">
+        <sc-for list="{{ palettes }}" as="p" hint-placeholder-count="3">
+          <button onClick="{{ p.pick }}" title="{{ p.name }}" style="display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:{{ p.bg }};color:{{ p.fg }}">
+            <span style="display:flex;gap:2px"><span style="width:7px;height:7px;border-radius:2px;background:{{ p.s1 }}"></span><span style="width:7px;height:7px;border-radius:2px;background:{{ p.s2 }}"></span><span style="width:7px;height:7px;border-radius:2px;background:{{ p.s3 }}"></span></span>{{ p.name }}
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;flex:none"><span style="width:8px;height:8px;border-radius:50%;background:var(--ok)"></span>{{ clock }}</div>
+    </div>
+
+    <div style="flex:1;min-height:0;overflow:auto;padding:20px 22px 28px">
+
+      <sc-if value="{{ isMesas }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+            <sc-for list="{{ channels }}" as="ch" hint-placeholder-count="4">
+              <button onClick="{{ ch.open }}" style="text-align:left;background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);border-top:3px solid {{ ch.dot }};padding:13px 15px;display:flex;align-items:center;gap:12px;min-width:0" style-hover="box-shadow:var(--shadow-md);transform:translateY(-1px)">
+                <span style="width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ ch.bg }};color:{{ ch.dot }}"><i class="{{ ch.icon }}" style="font-size:19px"></i></span>
+                <div style="display:flex;flex-direction:column;min-width:0;overflow:hidden">
+                  <div style="font-size:14px;font-weight:600;letter-spacing:-0.01em">{{ ch.name }}</div>
+                  <div style="font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ch.meta }}</div>
+                </div>
+                <div style="flex:1"></div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+                  <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ ch.total }}</div>
+                  <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;background:{{ ch.bg }};color:{{ ch.fg }}">{{ ch.badge }}</div>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px">
+              <button onClick="{{ setVarA }}" style="padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;background:{{ vaBg }};color:{{ vaFg }}">A · Plano por zona</button>
+              <button onClick="{{ setVarB }}" style="padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;background:{{ vbBg }};color:{{ vbFg }}">B · Cola de servicio</button>
+            </div>
+            <div style="flex:1"></div>
+            <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--mut);white-space:nowrap"><span style="width:9px;height:9px;border-radius:3px;background:{{ l.dot }}"></span>{{ l.label }} · {{ l.n }}</div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ isVarA }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <sc-for list="{{ zones }}" as="z" hint-placeholder-count="3">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;align-items:baseline;gap:10px"><div style="font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--mut)">{{ z.name }}</div><div style="font-size:12px;color:var(--on-ink-mut)">{{ z.meta }}</div></div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+                    <sc-for list="{{ z.tables }}" as="t" hint-placeholder-count="4">
+                      <button onClick="{{ t.open }}" style="text-align:left;background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:12px;min-height:132px;position:relative;overflow:hidden" style-hover="box-shadow:var(--shadow-md);transform:translateY(-1px)">
+                        <span style="position:absolute;left:0;top:0;bottom:0;width:4px;background:{{ t.dot }}"></span>
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+                          <div style="display:flex;flex-direction:column;gap:2px">
+                            <div style="font-size:26px;font-weight:600;letter-spacing:-0.02em;line-height:1">{{ t.label }}</div>
+                            <div style="font-size:12px;color:var(--mut)">{{ t.capacity }}</div>
+                          </div>
+                          <div style="font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;background:{{ t.bg }};color:{{ t.fg }}">{{ t.status }}</div>
+                        </div>
+                        <div style="flex:1"></div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:10px">
+                          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mut)"><i class="{{ t.metaIcon }}"></i>{{ t.meta }}</div>
+                          <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.total }}</div>
+                        </div>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isVarB }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;align-items:start">
+              <sc-for list="{{ columns }}" as="c" hint-placeholder-count="4">
+                <div style="background:{{ c.soft }};border-radius:14px;border:1px solid {{ c.line }};padding:10px;display:flex;flex-direction:column;gap:9px;min-height:320px">
+                  <div style="display:flex;align-items:center;gap:8px;padding:2px 4px">
+                    <span style="width:9px;height:9px;border-radius:3px;background:{{ c.dot }}"></span>
+                    <div style="font-size:12px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase">{{ c.name }}</div>
+                    <div style="flex:1"></div>
+                    <div style="font-size:12px;font-weight:600;color:var(--mut)">{{ c.count }}</div>
+                  </div>
+                  <sc-for list="{{ c.cards }}" as="k" hint-placeholder-count="2">
+                    <button onClick="{{ k.open }}" style="text-align:left;background:var(--color-surface);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px;display:flex;flex-direction:column;gap:8px" style-hover="box-shadow:var(--shadow-md)">
+                      <div style="display:flex;align-items:center;justify-content:space-between">
+                        <div style="font-size:17px;font-weight:600;letter-spacing:-0.015em">{{ k.title }}</div>
+                        <div style="font-size:12px;font-weight:600;color:{{ k.timeFg }};font-variant-numeric:tabular-nums">{{ k.time }}</div>
+                      </div>
+                      <div style="font-size:12px;color:var(--mut);line-height:1.45">{{ k.detail }}</div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid var(--line)">
+                        <div style="font-size:12px;color:var(--mut)">{{ k.waiter }}</div>
+                        <div style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;background:{{ k.ctaBg }};color:{{ k.ctaFg }}">{{ k.cta }}</div>
+                      </div>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isComanda }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding-bottom:2px">
+              <sc-for list="{{ comandaChans }}" as="h" hint-placeholder-count="4">
+                <button onClick="{{ h.pick }}" style="flex:none;text-align:left;padding:11px 15px;border-radius:12px;border:1px solid {{ h.bd }};background:{{ h.bg }};color:{{ h.fg }};display:flex;align-items:center;gap:10px" style-hover="border-color:var(--cta)">
+                  <i class="{{ h.icon }}" style="font-size:19px"></i>
+                  <div style="display:flex;flex-direction:column">
+                    <div style="font-size:13px;font-weight:600;white-space:nowrap">{{ h.label }}</div>
+                    <div style="font-size:11px;opacity:.75;white-space:nowrap">{{ h.meta }}</div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ comandaIsTakeaway }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+                <label style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:170px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--mut)">Nombre de quien recoge
+                  <input value="Sofía Ramírez" readonly style="font:inherit;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--color-text);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)">
+                </label>
+                <label style="display:flex;flex-direction:column;gap:6px;width:130px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--mut)">Hora
+                  <input value="20:05" readonly style="font:inherit;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--color-text);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-variant-numeric:tabular-nums">
+                </label>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--mut)">Empaque</div>
+                  <div style="display:flex;gap:6px">
+                    <sc-for list="{{ packOpts }}" as="p" hint-placeholder-count="3">
+                      <button onClick="{{ p.pick }}" style="padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }}">{{ p.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ comandaIsPlatform }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--a4-soft);border:1px solid var(--a4-line);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <i class="ph-fill ph-plugs-connected" style="font-size:22px;color:var(--a4)"></i>
+                <div style="display:flex;flex-direction:column;flex:1;min-width:200px">
+                  <div style="font-size:14px;font-weight:600;color:var(--a4-ink)">{{ platformTitle }}</div>
+                  <div style="font-size:12px;color:var(--a4-ink);opacity:.8;line-height:1.5">{{ platformNote }}</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ prepTimes }}" as="p" hint-placeholder-count="3">
+                    <button onClick="{{ p.pick }}" style="padding:10px 15px;border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }}">{{ p.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ cats }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.pick }}" style="padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }}">{{ c.name }}</button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+              <sc-for list="{{ menu }}" as="m" hint-placeholder-count="6">
+                <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:6px;min-height:118px" style-hover="box-shadow:var(--shadow-md)">
+                  <button onClick="{{ m.mods }}" style="text-align:left;display:flex;flex-direction:column;gap:6px;flex:1">
+                    <div style="font-size:15px;font-weight:600;letter-spacing:-0.01em">{{ m.name }}</div>
+                    <div style="font-size:12px;color:var(--mut);line-height:1.4">{{ m.description }}</div>
+                  </button>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <div style="font-size:17px;font-weight:600;font-variant-numeric:tabular-nums">{{ m.price }}</div>
+                    <div style="display:flex;gap:6px">
+                      <button onClick="{{ m.mods }}" title="Modificadores" style="width:32px;height:32px;border-radius:9px;border:1px solid var(--line);color:var(--mut);display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><i class="ph ph-sliders-horizontal" style="font-size:15px"></i></button>
+                      <button onClick="{{ m.add }}" title="Agregar sin modificar" style="width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--color-accent);display:flex;align-items:center;justify-content:center" style-hover="background:var(--cta);color:var(--cta-on)"><i class="ph ph-plus" style="font-size:16px"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;position:sticky;top:0;max-height:calc(100vh - 110px)">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px">
+              <div style="display:flex;flex-direction:column"><div style="font-size:16px;font-weight:600">{{ comandaTitle }}</div><div style="font-size:12px;color:var(--mut)">{{ comandaMeta }}</div></div>
+              <div style="flex:1"></div>
+              <span style="font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink)">{{ cartCount }}</span>
+            </div>
+            <div style="flex:1;overflow:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+              <sc-if value="{{ cartIsEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--mut);text-align:center;padding:26px 12px;line-height:1.5">{{ cartEmpty }}</div></sc-if>
+              <sc-for list="{{ cart }}" as="i" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px" style-hover="background:var(--surface-2)">
+                  <div style="display:flex;align-items:center;gap:2px;background:var(--surface-2);border-radius:9px;padding:2px">
+                    <button onClick="{{ i.dec }}" style="width:28px;height:28px;border-radius:7px;color:var(--mut)" style-hover="background:var(--surface-2)"><i class="ph ph-minus"></i></button>
+                    <div style="width:22px;text-align:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums">{{ i.qty }}</div>
+                    <button onClick="{{ i.inc }}" style="width:28px;height:28px;border-radius:7px;color:var(--color-accent)" style-hover="background:var(--surface-2)"><i class="ph ph-plus"></i></button>
+                  </div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+                    <div style="font-size:14px;font-weight:500">{{ i.name }}</div>
+                    <div style="font-size:11px;color:var(--warn)">{{ i.notes }}</div>
+                  </div>
+                  <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ i.line }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="padding:14px 16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>Subtotal</span><span style="font-variant-numeric:tabular-nums">{{ cartSubtotal }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>IVA 16%</span><span style="font-variant-numeric:tabular-nums">{{ cartTax }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:22px;font-weight:600;letter-spacing:-0.02em"><span>Total</span><span style="font-variant-numeric:tabular-nums">{{ cartTotal }}</span></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px">
+                <button onClick="{{ sendKitchen }}" style="padding:13px;border-radius:11px;border:1px solid var(--color-accent);color:var(--color-accent);font-weight:600;font-size:14px" style-hover="background:var(--accent-soft)"><i class="ph ph-fire" style="margin-right:6px"></i>A cocina</button>
+                <button onClick="{{ comandaAct }}" style="padding:13px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-weight:600;font-size:14px" style-hover="background:var(--cta-dark)"><i class="{{ comandaActIcon }}" style="margin-right:6px"></i>{{ comandaActLabel }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCaja }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+            <div style="display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding-bottom:2px">
+              <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.pick }}" style="flex:none;min-width:150px;text-align:left;padding:11px 14px;border-radius:12px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};display:flex;flex-direction:column;gap:2px">
+                  <div style="font-size:12px;font-weight:600;opacity:.85">{{ t.label }}</div>
+                  <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.total }}</div>
+                </button>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="font-size:15px;font-weight:600">{{ payTitle }}</div>
+                <div style="flex:1"></div>
+                <div style="font-size:12px;color:var(--mut)">Cajero · Ana García</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <sc-for list="{{ payItems }}" as="i" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)">
+                    <div style="display:flex;align-items:center;gap:2px;background:var(--surface-2);border-radius:8px;padding:2px">
+                      <button onClick="{{ i.dec }}" style="width:26px;height:26px;border-radius:6px;color:var(--mut)" style-hover="background:var(--surface-2)"><i class="ph ph-minus" style="font-size:13px"></i></button>
+                      <div style="width:20px;text-align:center;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums">{{ i.qty }}</div>
+                      <button onClick="{{ i.inc }}" style="width:26px;height:26px;border-radius:6px;color:var(--color-accent)" style-hover="background:var(--surface-2)"><i class="ph ph-plus" style="font-size:13px"></i></button>
+                    </div>
+                    <div style="flex:1;font-size:14px">{{ i.name }}</div>
+                    <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ i.line }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ payIsEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--mut);padding:10px 0">{{ payEmpty }}</div></sc-if>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut);margin-right:2px">Venta rápida</div>
+                  <sc-for list="{{ cajaCats }}" as="c" hint-placeholder-count="4">
+                    <button onClick="{{ c.pick }}" style="padding:6px 13px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }}">{{ c.name }}</button>
+                  </sc-for>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+                  <sc-for list="{{ cajaMenu }}" as="m" hint-placeholder-count="4">
+                    <button onClick="{{ m.add }}" style="text-align:left;padding:11px 12px;border-radius:11px;border:1px solid var(--line);background:var(--color-surface);display:flex;flex-direction:column;gap:3px" style-hover="border-color:var(--color-accent);background:var(--accent-soft)">
+                      <div style="font-size:13px;font-weight:600;line-height:1.25">{{ m.name }}</div>
+                      <div style="font-size:14px;font-weight:600;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ m.price }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{ hasDiscount }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--a2-soft);color:var(--a2-ink)">
+                  <i class="ph-fill ph-tag" style="font-size:16px"></i>
+                  <div style="flex:1;font-size:13px;font-weight:600">{{ discountRow }}</div>
+                  <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">− {{ discountAmt }}</div>
+                </div>
+              </sc-if>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px">
+                <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Propina</div>
+                <sc-for list="{{ tips }}" as="p" hint-placeholder-count="4">
+                  <button onClick="{{ p.pick }}" style="padding:8px 16px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }}">{{ p.label }}</button>
+                </sc-for>
+                <div style="flex:1"></div>
+                <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--mut)">{{ tipAmount }}</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onClick="{{ openSplit }}" style="flex:1;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid {{ splitBd }};background:{{ splitBg }};color:{{ splitFg }};font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="border-color:var(--cta)"><i class="ph ph-users-three" style="font-size:17px"></i>{{ splitLabel }}</button>
+              <button onClick="{{ openDiscount }}" style="flex:1;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid {{ discBd }};background:{{ discBg }};color:{{ discFg }};font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="border-color:var(--cta)"><i class="ph ph-tag" style="font-size:17px"></i>{{ discLabel }}</button>
+            </div>
+
+            <sc-if value="{{ splitActive }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Cuenta dividida</div>
+                  <div style="flex:1"></div>
+                  <button onClick="{{ clearSplit }}" style="font-size:12px;font-weight:600;color:var(--mut)" style-hover="color:var(--a3)">Quitar división</button>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <sc-for list="{{ splitChecks }}" as="c" hint-placeholder-count="3">
+                    <button onClick="{{ c.pick }}" style="flex:1;min-width:112px;padding:11px 13px;border-radius:11px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};display:flex;flex-direction:column;gap:2px;text-align:left">
+                      <div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px"><i class="{{ c.icon }}"></i>{{ c.label }}</div>
+                      <div style="font-size:17px;font-weight:600;font-variant-numeric:tabular-nums">{{ c.amount }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Método de pago</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px">
+                <sc-for list="{{ methods }}" as="m" hint-placeholder-count="4">
+                  <button onClick="{{ m.pick }}" style="padding:14px 10px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:13px;font-weight:600;border:1.5px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }}">
+                    <i class="{{ m.icon }}" style="font-size:24px"></i>{{ m.label }}
+                    <span style="font-size:10px;font-weight:600;color:{{ m.tagFg }}">{{ m.tag }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);padding:16px;display:flex;flex-direction:column;gap:12px;position:sticky;top:0">
+            <div style="background:var(--ink);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--on-ink-mut)">TOTAL A COBRAR</div><div style="font-size:38px;font-weight:600;color:var(--on-ink);font-variant-numeric:tabular-nums;letter-spacing:-0.02em">{{ due }}</div></div>
+              <sc-if value="{{ isCash }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--ink-line);padding-top:8px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--on-ink-mut)">RECIBIDO</div><div style="font-size:22px;font-weight:600;color:var(--on-ink);font-variant-numeric:tabular-nums">{{ received }}</div></div>
+                  <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--on-ink-mut)">CAMBIO</div><div style="font-size:26px;font-weight:600;color:{{ changeFg }};font-variant-numeric:tabular-nums">{{ change }}</div></div>
+                </div>
+              </sc-if>
+            </div>
+
+            <sc-if value="{{ isCash }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
+                    <button onClick="{{ q.press }}" style="flex:1;padding:11px 0;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);font-size:14px;font-weight:600" style-hover="border-color:var(--color-accent);color:var(--color-accent)">{{ q.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                  <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+                    <button onClick="{{ k.press }}" style="height:62px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:24px;font-weight:600;color:{{ k.fg }};font-variant-numeric:tabular-nums" style-hover="background:var(--surface-2)">{{ k.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isTerminal }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:12px;padding:6px 2px">
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);font-size:13px;font-weight:600"><i class="{{ termIcon }}" style="font-size:20px"></i>{{ termLabel }}</div>
+                <sc-for list="{{ termSteps }}" as="s" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:{{ s.fg }}">
+                    <span style="width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:{{ s.bg }};color:{{ s.numFg }}">{{ s.n }}</span>{{ s.label }}
+                  </div>
+                </sc-for>
+                <div style="font-size:12px;color:var(--mut);line-height:1.5;padding:10px 12px;border:1px dashed var(--line);border-radius:10px">{{ termNote }}</div>
+              </div>
+            </sc-if>
+
+            <button onClick="{{ pay }}" style="padding:18px;border-radius:13px;background:var(--cta);color:var(--color-surface);font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 18px rgba(85,88,66,.32)" style-hover="background:var(--cta-dark)">
+              <i class="{{ payIcon }}" style="font-size:20px"></i>{{ payLabel }}
+            </button>
+            <div style="font-size:12px;color:var(--mut);text-align:center">{{ payHint }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCocina }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px">
+            <sc-for list="{{ kFilters }}" as="k" hint-placeholder-count="4">
+              <button onClick="{{ k.pick }}" style="padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;background:{{ k.bg }};color:{{ k.fg }}">{{ k.label }}<span style="opacity:.6;margin-left:6px;font-variant-numeric:tabular-nums">{{ k.n }}</span></button>
+            </sc-for>
+          </div>
+          <div style="flex:1"></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;background:var(--a3-soft);color:var(--a3-ink);border:1px solid var(--a3-line)">
+            <i class="ph-fill ph-warning-circle" style="font-size:16px"></i>{{ kAlert }}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut)"><i class="ph ph-timer"></i>Promedio {{ kAvg }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start">
+          <sc-for list="{{ kitchen }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:8px;padding:0 2px"><span style="width:9px;height:9px;border-radius:3px;background:{{ c.dot }}"></span><div style="font-size:12px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase">{{ c.name }}</div><div style="flex:1"></div><div style="font-size:12px;color:var(--mut)">{{ c.count }}</div></div>
+              <sc-if value="{{ c.isEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--mut);padding:14px;border:1px dashed var(--line);border-radius:12px;text-align:center">{{ c.empty }}</div></sc-if>
+              <sc-for list="{{ c.tickets }}" as="k" hint-placeholder-count="2">
+                <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:10px;border-left:4px solid {{ k.dot }}">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">{{ k.table }}</div>
+                    <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;background:{{ k.chBg }};color:{{ k.chFg }}">{{ k.channel }}</span>
+                    <div style="flex:1"></div>
+                    <div style="font-size:15px;font-weight:700;color:{{ k.timeFg }};font-variant-numeric:tabular-nums">{{ k.time }}</div>
+                  </div>
+                  <div style="height:4px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="height:100%;width:{{ k.pct }};background:{{ k.timeFg }}"></div></div>
+                  <div style="font-size:12px;font-weight:600;color:{{ k.timeFg }}">{{ k.slaLabel }}</div>
+                  <sc-for list="{{ k.items }}" as="i" hint-placeholder-count="2">
+                    <div style="display:flex;gap:9px;align-items:flex-start">
+                      <div style="font-size:16px;font-weight:700;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ i.qty }}×</div>
+                      <div style="flex:1;display:flex;flex-direction:column"><div style="font-size:16px;font-weight:500">{{ i.name }}</div><div style="font-size:12px;color:var(--warn);font-weight:600">{{ i.notes }}</div></div>
+                    </div>
+                  </sc-for>
+                  <button onClick="{{ k.advance }}" style="margin-top:2px;padding:12px;border-radius:10px;border:1px solid var(--cta);background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">{{ k.cta }}</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOrdenes }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <sc-for list="{{ oFilters }}" as="o" hint-placeholder-count="5">
+            <button onClick="{{ o.pick }}" style="padding:8px 15px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}<span style="opacity:.65;margin-left:6px;font-variant-numeric:tabular-nums">{{ o.n }}</span></button>
+          </sc-for>
+          <div style="display:flex;gap:18px;margin-left:auto;flex:none">
+            <sc-for list="{{ oStats }}" as="k" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;align-items:flex-end;padding-left:18px;border-left:1px solid var(--line)">
+                <div style="font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ k.fg }}">{{ k.value }}</div>
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">{{ k.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);overflow:hidden">
+          <div style="display:grid;grid-template-columns:90px 1.4fr 1fr 1fr 110px 130px;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mut)">
+            <div>Orden</div><div>Mesa</div><div>Mesero</div><div>Estado</div><div>Tiempo</div><div style="text-align:right">Total</div>
+          </div>
+          <sc-for list="{{ orders }}" as="o" hint-placeholder-count="4">
+            <div onClick="{{ o.open }}" style="display:grid;grid-template-columns:90px 1.4fr 1fr 1fr 110px 130px;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center;font-size:14px;cursor:pointer;background:{{ o.rowBg }}" style-hover="background:var(--surface-2)">
+              <div style="font-weight:600;color:var(--mut);font-variant-numeric:tabular-nums">{{ o.id }}</div>
+              <div style="font-weight:500;display:flex;align-items:center;gap:8px"><i class="{{ o.icon }}" style="color:var(--mut)"></i>{{ o.table }}</div>
+              <div style="color:var(--mut)">{{ o.waiter }}</div>
+              <div><span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;background:{{ o.bg }};color:{{ o.fg }}">{{ o.status }}</span></div>
+              <div style="font-variant-numeric:tabular-nums;font-weight:{{ o.timeW }};color:{{ o.timeFg }};display:flex;align-items:center;gap:6px"><i class="{{ o.timeIcon }}"></i>{{ o.time }}</div>
+              <div style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">{{ o.total }}</div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ ordersIsEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:26px 18px;text-align:center;font-size:13px;color:var(--mut)">{{ ordersEmpty }}</div></sc-if>
+        </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start">
+          <sc-for list="{{ adminCards }}" as="a" hint-placeholder-count="3">
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:34px;height:34px;border-radius:10px;background:{{ a.bg }};color:{{ a.fg }};display:flex;align-items:center;justify-content:center"><i class="{{ a.icon }}" style="font-size:18px"></i></span>
+                <div style="display:flex;flex-direction:column"><div style="font-size:15px;font-weight:600">{{ a.title }}</div><div style="font-size:12px;color:var(--mut)">{{ a.meta }}</div></div>
+              </div>
+              <sc-for list="{{ a.rows }}" as="r" hint-placeholder-count="3">
+                <div onClick="{{ r.open }}" style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer" style-hover="color:var(--color-accent)">
+                  <div style="flex:1;font-size:14px">{{ r.name }}</div>
+                  <div style="font-size:12px;font-weight:500;color:{{ r.fg }}">{{ r.value }}</div>
+                  <i class="ph ph-caret-right" style="font-size:14px;color:var(--mut)"></i>
+                </div>
+              </sc-for>
+              <button onClick="{{ a.open }}" style="padding:10px;border-radius:10px;border:1px solid var(--color-accent);color:var(--color-accent);font-size:13px;font-weight:600" style-hover="background:var(--accent-soft)">{{ a.cta }}</button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ orderOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-end;background:rgba(43,46,36,.32)">
+          <div onClick="{{ closeOrder }}" style="flex:1"></div>
+          <div style="width:min(430px,92vw);height:100%;background:var(--color-surface);box-shadow:var(--shadow-lg);display:flex;flex-direction:column">
+            <div style="padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:9px">
+                  <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">{{ od.title }}</div>
+                  <span style="font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;background:{{ od.bg }};color:{{ od.fg }}">{{ od.status }}</span>
+                </div>
+                <div style="font-size:12px;color:var(--mut)">{{ od.meta }}</div>
+              </div>
+              <button onClick="{{ closeOrder }}" style="width:34px;height:34px;border-radius:9px;color:var(--mut);flex:none" style-hover="background:var(--surface-2)"><i class="ph ph-x" style="font-size:17px"></i></button>
+            </div>
+            <div style="flex:1;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--mut)">Artículos</div>
+                <sc-for list="{{ od.items }}" as="i" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px solid var(--line)">
+                    <div style="width:28px;font-size:14px;font-weight:700;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ i.qty }}×</div>
+                    <div style="flex:1;display:flex;flex-direction:column"><div style="font-size:14px">{{ i.name }}</div><div style="font-size:11px;color:var(--warn);font-weight:600">{{ i.notes }}</div></div>
+                    <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ i.line }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--mut)">Línea de tiempo</div>
+                <sc-for list="{{ od.timeline }}" as="t" hint-placeholder-count="4">
+                  <div style="display:flex;gap:11px;align-items:flex-start">
+                    <span style="width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:{{ t.bg }};color:{{ t.iconFg }}"><i class="{{ t.icon }}" style="font-size:12px"></i></span>
+                    <div style="flex:1;display:flex;flex-direction:column;padding-bottom:6px">
+                      <div style="font-size:13px;font-weight:600;color:{{ t.fg }}">{{ t.label }}</div>
+                      <div style="font-size:11px;color:var(--mut)">{{ t.meta }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:12px;background:var(--surface-2)">
+                <sc-for list="{{ od.totals }}" as="t" hint-placeholder-count="4">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline">
+                    <div style="font-size:{{ t.size }};color:{{ t.fg }};font-weight:{{ t.w }}">{{ t.label }}</div>
+                    <div style="font-size:{{ t.size }};font-weight:{{ t.w }};font-variant-numeric:tabular-nums">{{ t.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding:14px 18px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <button onClick="{{ od.print }}" style="padding:13px;border-radius:11px;border:1px solid var(--line);color:var(--color-text);font-size:14px;font-weight:600" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><i class="ph ph-printer" style="margin-right:6px"></i>Reimprimir</button>
+              <button onClick="{{ od.act }}" style="padding:13px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">{{ od.cta }}</button>
+              <button onClick="{{ openTransfer }}" style="padding:12px;border-radius:11px;border:1px solid var(--line);color:var(--color-text);font-size:13px;font-weight:600" style-hover="border-color:var(--a4);color:var(--a4)"><i class="ph ph-arrows-left-right" style="margin-right:6px"></i>Transferir mesa</button>
+              <button onClick="{{ openCancel }}" style="padding:12px;border-radius:11px;border:1px solid var(--a3-line);color:var(--a3-ink);background:var(--a3-soft);font-size:13px;font-weight:600" style-hover="background:var(--a3);color:var(--a3-on)"><i class="ph ph-prohibit" style="margin-right:6px"></i>Cancelar orden</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInv }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px">
+              <sc-for list="{{ invTabs }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.pick }}" style="padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <div style="flex:1"></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;background:var(--a3-soft);color:var(--a3-ink);border:1px solid var(--a3-line)"><i class="ph-fill ph-warning-circle"></i>{{ invAlert }}</div>
+            <button onClick="{{ invAdd }}" style="padding:9px 16px;border-radius:10px;background:var(--cta);color:var(--cta-on);font-size:13px;font-weight:600" style-hover="background:var(--cta-dark)"><i class="ph ph-plus" style="margin-right:6px"></i>{{ invCta }}</button>
+          </div>
+
+          <sc-if value="{{ invIsStock }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);overflow:hidden">
+              <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 130px;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mut)">
+                <div>Insumo</div><div>Existencia</div><div>Mínimo</div><div>Costo unitario</div><div style="text-align:right">Estado</div>
+              </div>
+              <sc-for list="{{ invStock }}" as="r" hint-placeholder-count="6">
+                <div onClick="{{ r.open }}" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 130px;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line);align-items:center;font-size:14px;cursor:pointer" style-hover="background:var(--surface-2)">
+                  <div style="font-weight:500">{{ r.name }}</div>
+                  <div style="font-weight:600;font-variant-numeric:tabular-nums;color:{{ r.fg }}">{{ r.qty }}</div>
+                  <div style="color:var(--mut);font-variant-numeric:tabular-nums">{{ r.min }}</div>
+                  <div style="color:var(--mut);font-variant-numeric:tabular-nums">{{ r.cost }}</div>
+                  <div style="text-align:right"><span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;background:{{ r.bg }};color:{{ r.chipFg }}">{{ r.status }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ invIsMoves }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start">
+              <sc-for list="{{ invMoves }}" as="m" hint-placeholder-count="3">
+                <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:10px;border-left:4px solid {{ m.dot }}">
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <span style="width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:{{ m.soft }};color:{{ m.dot }}"><i class="{{ m.icon }}" style="font-size:16px"></i></span>
+                    <div style="display:flex;flex-direction:column"><div style="font-size:14px;font-weight:600">{{ m.kind }}</div><div style="font-size:12px;color:var(--mut)">{{ m.meta }}</div></div>
+                    <div style="flex:1"></div>
+                    <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ m.dot }}">{{ m.delta }}</div>
+                  </div>
+                  <sc-for list="{{ m.lines }}" as="l" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;gap:10px;font-size:13px;padding-top:8px;border-top:1px solid var(--line)"><div style="flex:1">{{ l.name }}</div><div style="color:var(--mut);font-variant-numeric:tabular-nums">{{ l.qty }}</div></div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ invIsCount }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;align-items:start">
+              <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:10px"><div style="font-size:15px;font-weight:600">Conteo físico · 31 ago, 23:40</div><div style="flex:1"></div><span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--a3-soft);color:var(--a3-ink)">En curso</span></div>
+                <sc-for list="{{ invCount }}" as="c" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line)">
+                    <div style="flex:1;font-size:14px">{{ c.name }}</div>
+                    <div style="font-size:12px;color:var(--mut);width:74px;text-align:right">Sistema {{ c.sys }}</div>
+                    <div style="display:flex;align-items:center;gap:2px;background:var(--surface-2);border-radius:9px;padding:2px">
+                      <button onClick="{{ c.dec }}" style="width:28px;height:28px;border-radius:7px;color:var(--mut)" style-hover="background:var(--line)"><i class="ph ph-minus"></i></button>
+                      <div style="width:34px;text-align:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums">{{ c.real }}</div>
+                      <button onClick="{{ c.inc }}" style="width:28px;height:28px;border-radius:7px;color:var(--color-accent)" style-hover="background:var(--line)"><i class="ph ph-plus"></i></button>
+                    </div>
+                    <div style="width:62px;text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ c.fg }}">{{ c.diff }}</div>
+                  </div>
+                </sc-for>
+                <button onClick="{{ closeCount }}" style="margin-top:4px;padding:13px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">Cerrar conteo y ajustar existencias</button>
+              </div>
+              <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+                <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Resumen del conteo</div>
+                <sc-for list="{{ invSummary }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)">
+                    <div style="font-size:14px;color:var(--mut)">{{ r.label }}</div>
+                    <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ r.fg }}">{{ r.value }}</div>
+                  </div>
+                </sc-for>
+                <div style="font-size:12px;color:var(--mut);line-height:1.5;padding:10px 12px;border:1px dashed var(--line);border-radius:10px">La merma se calcula contra el consumo teórico de las recetas: ventas del turno × receta menos existencia contada.</div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCorte }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+              <sc-for list="{{ shiftKpis }}" as="k" hint-placeholder-count="4">
+                <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:5px;border-top:3px solid {{ k.dot }}">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--mut)">{{ k.label }}</div>
+                  <div style="font-size:24px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ k.value }}</div>
+                  <div style="font-size:12px;color:var(--mut)">{{ k.meta }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Ventas por método</div>
+              <sc-for list="{{ shiftMethods }}" as="m" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;gap:6px;padding:8px 0;border-top:1px solid var(--line)">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <i class="{{ m.icon }}" style="font-size:17px;color:{{ m.dot }}"></i>
+                    <div style="flex:1;font-size:14px;font-weight:500">{{ m.label }}</div>
+                    <div style="font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums">{{ m.count }}</div>
+                    <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;width:100px;text-align:right">{{ m.total }}</div>
+                  </div>
+                  <div style="height:5px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="height:100%;width:{{ m.pct }};background:{{ m.dot }}"></div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Ventas por canal</div>
+              <sc-for list="{{ shiftChannels }}" as="c" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)">
+                  <span style="width:9px;height:9px;border-radius:3px;background:{{ c.dot }}"></span>
+                  <div style="flex:1;font-size:14px">{{ c.label }}</div>
+                  <div style="font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums">{{ c.count }}</div>
+                  <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;width:100px;text-align:right">{{ c.total }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="background:var(--ink);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--on-ink-mut)">EFECTIVO EN CAJA</div>
+              <div style="font-size:40px;font-weight:600;color:var(--on-ink);letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ cashExpected }}</div>
+              <sc-for list="{{ cashRows }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--on-ink-mut);border-top:1px solid var(--ink-line);padding-top:8px"><span>{{ r.label }}</span><span style="font-variant-numeric:tabular-nums;color:{{ r.fg }}">{{ r.value }}</span></div>
+              </sc-for>
+            </div>
+            <div style="background:var(--color-surface);border-radius:16px;box-shadow:var(--shadow-md);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Contar caja</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px">
+                <sc-for list="{{ denoms }}" as="d" hint-placeholder-count="6">
+                  <button onClick="{{ d.add }}" style="padding:11px 8px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);display:flex;flex-direction:column;gap:2px;align-items:center" style-hover="border-color:var(--cta);background:var(--a2-soft)">
+                    <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ d.label }}</div>
+                    <div style="font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums">× {{ d.n }}</div>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line)">
+                <div style="font-size:13px;color:var(--mut)">Contado</div>
+                <div style="font-size:22px;font-weight:600;font-variant-numeric:tabular-nums">{{ counted }}</div>
+              </div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between">
+                <div style="font-size:13px;color:var(--mut)">Diferencia</div>
+                <div style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ diffFg }}">{{ diff }}</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <button onClick="{{ resetCount }}" style="padding:12px;border-radius:11px;border:1px solid var(--line);color:var(--mut);font-size:14px;font-weight:600" style-hover="border-color:var(--color-accent);color:var(--color-accent)">Reiniciar</button>
+                <button onClick="{{ closeShift }}" style="padding:12px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">Cerrar turno</button>
+              </div>
+              <div style="font-size:12px;color:var(--mut);text-align:center">{{ shiftHint }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isNotas }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px;display:flex;flex-direction:column;gap:22px">
+          <sc-for list="{{ notes }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--color-accent)">{{ s.kicker }}</div>
+              <div style="font-size:20px;font-weight:600;letter-spacing:-0.015em">{{ s.title }}</div>
+              <sc-for list="{{ s.bullets }}" as="b" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;font-size:14px;line-height:1.6;color:var(--ink-soft)">
+                  <span style="width:5px;height:5px;border-radius:50%;background:var(--color-accent);margin-top:9px;flex:none"></span>
+                  <div style="text-wrap:pretty">{{ b }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:14px;padding:24px;background:var(--surface-2)" data-phone="1">
+    <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--mut)">
+      <button onClick="{{ toggleMobile }}" style="padding:8px 14px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-sm);font-size:13px;font-weight:600"><i class="ph ph-device-tablet" style="margin-right:6px"></i>Volver a tablet</button>
+      Vista mesero — 390 × 844
+    </div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;justify-content:center">
+
+      <div style="width:390px;height:844px;background:var(--color-bg);border-radius:34px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:16px 18px 10px;background:var(--color-surface);border-bottom:1px solid var(--line)">
+          <div style="display:flex;align-items:center;gap:10px"><div style="font-size:19px;font-weight:600;letter-spacing:-0.02em">Mis mesas</div><div style="flex:1"></div><span style="width:32px;height:32px;border-radius:50%;background:var(--a1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">AG</span></div>
+          <div style="font-size:12px;color:var(--mut)">Ana García · Terraza y Barra</div>
+        </div>
+        <div style="flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ phoneTables }}" as="t" hint-placeholder-count="5">
+            <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;align-items:center;gap:12px;border-left:4px solid {{ t.dot }}">
+              <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+                <div style="font-size:17px;font-weight:600;letter-spacing:-0.015em">{{ t.label }}</div>
+                <div style="font-size:12px;color:var(--mut)">{{ t.meta }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+                <div style="font-size:16px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.total }}</div>
+                <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:{{ t.bg }};color:{{ t.fg }}">{{ t.status }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="flex:none;display:flex;padding:8px 12px 22px;background:var(--color-surface);border-top:1px solid var(--line)">
+          <sc-for list="{{ phoneTabs }}" as="n" hint-placeholder-count="4">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;font-size:10px;font-weight:600;color:{{ n.fg }}"><i class="{{ n.icon }}" style="font-size:22px"></i>{{ n.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="width:390px;height:844px;background:var(--color-bg);border-radius:34px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:16px 18px 12px;background:var(--color-surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px">
+          <i class="ph ph-arrow-left" style="font-size:20px;color:var(--mut)"></i>
+          <div style="font-size:17px;font-weight:600">Cobrar Mesa 3</div>
+        </div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;overflow:auto">
+          <div style="background:var(--ink);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--on-ink-mut)">TOTAL A COBRAR</div>
+            <div style="font-size:38px;font-weight:600;color:var(--on-ink);letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ due }}</div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--on-ink-mut);border-top:1px solid var(--ink-line);padding-top:8px"><span>Cambio</span><span style="color:{{ changeFg }};font-weight:600;font-variant-numeric:tabular-nums">{{ change }}</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px">
+            <sc-for list="{{ methods }}" as="m" hint-placeholder-count="4">
+              <button onClick="{{ m.pick }}" style="padding:14px 10px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:600;border:1.5px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }}"><i class="{{ m.icon }}" style="font-size:22px"></i>{{ m.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+              <button onClick="{{ k.press }}" style="height:58px;border-radius:12px;background:var(--color-surface);border:1px solid var(--line);font-size:23px;font-weight:600;color:{{ k.fg }};font-variant-numeric:tabular-nums">{{ k.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding:12px 14px 24px;background:var(--color-surface);border-top:1px solid var(--line)">
+          <button onClick="{{ pay }}" style="width:100%;padding:17px;border-radius:13px;background:var(--cta);color:var(--color-surface);font-size:16px;font-weight:600">{{ payLabel }}</button>
+        </div>
+      </div>
+
+      <div style="width:390px;height:844px;background:var(--color-bg);border-radius:34px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:16px 18px 12px;background:var(--color-surface);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px"><div style="font-size:19px;font-weight:600;letter-spacing:-0.02em">Para llevar y online</div><div style="flex:1"></div><span style="font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;background:var(--a3-soft);color:var(--a3-ink)">{{ phoneOnlineCount }}</span></div>
+          <div style="display:flex;gap:6px">
+            <sc-for list="{{ phoneChanFilters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.pick }}" style="flex:1;padding:7px 0;border-radius:9px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ phoneOnline }}" as="o" hint-placeholder-count="4">
+            <div style="background:var(--color-surface);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;flex-direction:column;gap:10px;border-left:4px solid {{ o.dot }}">
+              <div style="display:flex;align-items:center;gap:9px">
+                <span style="width:32px;height:32px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ o.soft }};color:{{ o.dot }}"><i class="{{ o.icon }}" style="font-size:17px"></i></span>
+                <div style="display:flex;flex-direction:column;min-width:0;flex:1">
+                  <div style="font-size:15px;font-weight:600">{{ o.title }}</div>
+                  <div style="font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.meta }}</div>
+                </div>
+                <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ o.total }}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding-top:9px;border-top:1px solid var(--line)">
+                <span style="font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;background:{{ o.badgeBg }};color:{{ o.badgeFg }}">{{ o.badge }}</span>
+                <div style="font-size:12px;color:{{ o.timeFg }};font-weight:600;font-variant-numeric:tabular-nums">{{ o.time }}</div>
+                <div style="flex:1"></div>
+                <button onClick="{{ o.act }}" style="padding:9px 15px;border-radius:10px;min-height:44px;background:{{ o.ctaBg }};color:{{ o.ctaFg }};font-size:13px;font-weight:600">{{ o.cta }}</button>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ phoneOnlineIsEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--mut);text-align:center;padding:18px 0">{{ phoneOnlineEmpty }}</div></sc-if>
+        </div>
+        <div style="flex:none;display:flex;padding:8px 12px 22px;background:var(--color-surface);border-top:1px solid var(--line)">
+          <sc-for list="{{ phoneTabs2 }}" as="n" hint-placeholder-count="4">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;font-size:10px;font-weight:600;color:{{ n.fg }}"><i class="{{ n.icon }}" style="font-size:22px"></i>{{ n.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ modsOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:46;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,46,36,.4)">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0"></div>
+    <div style="position:relative;width:min(540px,100%);max-height:88vh;overflow:auto;background:var(--color-surface);border-radius:18px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">{{ mod.name }}</div>
+          <div style="font-size:12px;color:var(--mut)">{{ mod.subtitle }}</div>
+        </div>
+        <button onClick="{{ closeSheet }}" style="width:34px;height:34px;border-radius:9px;color:var(--mut);flex:none" style-hover="background:var(--surface-2)"><i class="ph ph-x" style="font-size:17px"></i></button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:18px">
+        <sc-if value="{{ mod.hasTerm }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Término</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ mod.terms }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.pick }}" style="padding:11px 17px;border-radius:11px;font-size:14px;font-weight:600;white-space:nowrap;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Quitar</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ mod.removals }}" as="r" hint-placeholder-count="4">
+              <button onClick="{{ r.pick }}" style="padding:10px 15px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ r.bd }};background:{{ r.bg }};color:{{ r.fg }};display:flex;align-items:center;gap:7px"><i class="{{ r.icon }}"></i>{{ r.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Extras</div>
+          <sc-for list="{{ mod.extras }}" as="e" hint-placeholder-count="3">
+            <button onClick="{{ e.pick }}" style="display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;border:1px solid {{ e.bd }};background:{{ e.bg }};text-align:left">
+              <span style="width:20px;height:20px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;border:1.5px solid {{ e.boxBd }};background:{{ e.boxBg }};color:{{ e.boxFg }}"><i class="ph-fill ph-check" style="font-size:11px"></i></span>
+              <div style="flex:1;font-size:14px;font-weight:500;color:{{ e.fg }}">{{ e.label }}</div>
+              <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ e.fg }}">{{ e.price }}</div>
+            </button>
+          </sc-for>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--mut)">Nota para cocina
+          <input value="{{ mod.note }}" readonly style="font:inherit;font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--color-text);padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)">
+        </label>
+      </div>
+      <div style="padding:14px 20px 18px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Precio con extras</div>
+          <div style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ mod.total }}</div>
+        </div>
+        <div style="flex:1"></div>
+        <button onClick="{{ closeSheet }}" style="padding:12px 18px;border-radius:11px;border:1px solid var(--line);color:var(--mut);font-size:14px;font-weight:600" style-hover="color:var(--color-text)">Cancelar</button>
+        <button onClick="{{ mod.save }}" style="padding:12px 22px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">Agregar a la comanda</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ splitOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:46;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,46,36,.4)">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0"></div>
+    <div style="position:relative;width:min(600px,100%);max-height:88vh;overflow:auto;background:var(--color-surface);border-radius:18px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px">
+        <span style="width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--a4-soft);color:var(--a4)"><i class="ph ph-users-three" style="font-size:19px"></i></span>
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">Dividir la cuenta</div>
+          <div style="font-size:12px;color:var(--mut)">{{ payTitle }} · {{ splitBase }}</div>
+        </div>
+        <button onClick="{{ closeSheet }}" style="width:34px;height:34px;border-radius:9px;color:var(--mut);flex:none" style-hover="background:var(--surface-2)"><i class="ph ph-x" style="font-size:17px"></i></button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ splitModes }}" as="m" hint-placeholder-count="3">
+            <button onClick="{{ m.pick }}" style="flex:1;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};display:flex;flex-direction:column;gap:3px;text-align:left">
+              <div style="font-size:14px;font-weight:600">{{ m.label }}</div>
+              <div style="font-size:11px;opacity:.8;line-height:1.4">{{ m.hint }}</div>
+            </button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ splitIsEqual }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:var(--surface-2)">
+            <div style="font-size:14px;font-weight:500;flex:1">¿Entre cuántas personas?</div>
+            <div style="display:flex;align-items:center;gap:2px;background:var(--color-surface);border:1px solid var(--line);border-radius:10px;padding:3px">
+              <button onClick="{{ splitDec }}" style="width:38px;height:38px;border-radius:8px;color:var(--mut)" style-hover="background:var(--surface-2)"><i class="ph ph-minus"></i></button>
+              <div style="width:44px;text-align:center;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ splitN }}</div>
+              <button onClick="{{ splitInc }}" style="width:38px;height:38px;border-radius:8px;color:var(--color-accent)" style-hover="background:var(--surface-2)"><i class="ph ph-plus"></i></button>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Cada uno</div>
+              <div style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{ splitEach }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ splitIsItems }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Marca lo que paga la primera cuenta</div>
+            <sc-for list="{{ splitItems }}" as="i" hint-placeholder-count="3">
+              <button onClick="{{ i.pick }}" style="display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;border:1px solid {{ i.bd }};background:{{ i.bg }};text-align:left">
+                <span style="width:20px;height:20px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;border:1.5px solid {{ i.boxBd }};background:{{ i.boxBg }};color:{{ i.boxFg }}"><i class="ph-fill ph-check" style="font-size:11px"></i></span>
+                <div style="width:30px;font-size:13px;font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums">{{ i.qty }}×</div>
+                <div style="flex:1;font-size:14px">{{ i.name }}</div>
+                <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ i.line }}</div>
+              </button>
+            </sc-for>
+            <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line);font-size:14px">
+              <div style="color:var(--mut)">Cuenta 1 · {{ splitSelCount }}</div>
+              <div style="font-weight:600;font-variant-numeric:tabular-nums">{{ splitSelTotal }}</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:14px">
+              <div style="color:var(--mut)">Cuenta 2 · resto</div>
+              <div style="font-weight:600;font-variant-numeric:tabular-nums">{{ splitRestTotal }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ splitIsSeat }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Consumo por comensal</div>
+            <sc-for list="{{ splitSeats }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;background:var(--surface-2)">
+                <span style="width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--a4-soft);color:var(--a4-ink);font-size:12px;font-weight:700">{{ p.n }}</span>
+                <div style="flex:1;display:flex;flex-direction:column"><div style="font-size:14px;font-weight:500">{{ p.label }}</div><div style="font-size:12px;color:var(--mut)">{{ p.detail }}</div></div>
+                <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ p.total }}</div>
+              </div>
+            </sc-for>
+            <div style="font-size:12px;color:var(--mut);line-height:1.5;padding:11px 13px;border:1px dashed var(--line);border-radius:10px">Requiere capturar el comensal al tomar la comanda: cada artículo guarda un seat_number.</div>
+          </div>
+        </sc-if>
+      </div>
+      <div style="padding:14px 20px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ closeSheet }}" style="padding:12px 20px;border-radius:11px;border:1px solid var(--line);color:var(--mut);font-size:14px;font-weight:600" style-hover="color:var(--color-text)">Cancelar</button>
+        <button onClick="{{ applySplit }}" style="padding:12px 22px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">{{ splitApplyLabel }}</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ discOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:46;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,46,36,.4)">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0"></div>
+    <div style="position:relative;width:min(540px,100%);max-height:88vh;overflow:auto;background:var(--color-surface);border-radius:18px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px">
+        <span style="width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--a2-soft);color:var(--a2-ink)"><i class="ph ph-tag" style="font-size:19px"></i></span>
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">Aplicar descuento</div>
+          <div style="font-size:12px;color:var(--mut)">{{ payTitle }} · subtotal {{ discBase }}</div>
+        </div>
+        <button onClick="{{ closeSheet }}" style="width:34px;height:34px;border-radius:9px;color:var(--mut);flex:none" style-hover="background:var(--surface-2)"><i class="ph ph-x" style="font-size:17px"></i></button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ discTypes }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.pick }}" style="flex:1;min-width:130px;padding:12px 14px;border-radius:12px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-size:14px;font-weight:600">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ discValues }}" as="v" hint-placeholder-count="4">
+            <button onClick="{{ v.pick }}" style="flex:1;min-width:84px;padding:13px 10px;border-radius:11px;border:1px solid {{ v.bd }};background:{{ v.bg }};color:{{ v.fg }};font-size:16px;font-weight:600;font-variant-numeric:tabular-nums">{{ v.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">Motivo (obligatorio)</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ discReasons }}" as="r" hint-placeholder-count="4">
+              <button onClick="{{ r.pick }}" style="padding:10px 15px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ r.bd }};background:{{ r.bg }};color:{{ r.fg }}">{{ r.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:12px;background:var(--a3-soft);border:1px solid var(--a3-line)">
+          <i class="ph-fill ph-shield-check" style="font-size:20px;color:var(--a3-ink)"></i>
+          <div style="flex:1;display:flex;flex-direction:column">
+            <div style="font-size:13px;font-weight:600;color:var(--a3-ink)">Autorización de gerencia</div>
+            <div style="font-size:12px;color:var(--a3-ink);opacity:.85">{{ discAuthNote }}</div>
+          </div>
+          <input value="••••" readonly style="width:74px;font:inherit;font-size:16px;text-align:center;padding:9px;border:1px solid var(--a3-line);border-radius:9px;background:var(--color-surface);color:var(--color-text)">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:12px;background:var(--surface-2)">
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>Subtotal</span><span style="font-variant-numeric:tabular-nums">{{ discBase }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--a2-ink);font-weight:600"><span>Descuento</span><span style="font-variant-numeric:tabular-nums">− {{ discAmount }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>IVA 16%</span><span style="font-variant-numeric:tabular-nums">{{ discNewTax }}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:19px;font-weight:600"><span>Nuevo total</span><span style="font-variant-numeric:tabular-nums">{{ discNewTotal }}</span></div>
+        </div>
+      </div>
+      <div style="padding:14px 20px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ clearDiscount }}" style="padding:12px 18px;border-radius:11px;border:1px solid var(--line);color:var(--mut);font-size:14px;font-weight:600" style-hover="color:var(--a3);border-color:var(--a3)">Quitar descuento</button>
+        <button onClick="{{ applyDiscount }}" style="padding:12px 22px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">Aplicar descuento</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ actionOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:47;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,46,36,.45)">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0"></div>
+    <div style="position:relative;width:min(520px,100%);max-height:88vh;overflow:auto;background:var(--color-surface);border-radius:18px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px">
+        <span style="width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ act.soft }};color:{{ act.tint }}"><i class="{{ act.icon }}" style="font-size:19px"></i></span>
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">{{ act.title }}</div>
+          <div style="font-size:12px;color:var(--mut)">{{ act.subtitle }}</div>
+        </div>
+        <button onClick="{{ closeSheet }}" style="width:34px;height:34px;border-radius:9px;color:var(--mut);flex:none" style-hover="background:var(--surface-2)"><i class="ph ph-x" style="font-size:17px"></i></button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">{{ act.optTitle }}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ act.options }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.pick }}" style="padding:11px 16px;border-radius:11px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">{{ act.listTitle }}</div>
+          <sc-for list="{{ act.rows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)">
+              <i class="{{ r.icon }}" style="font-size:16px;color:{{ act.tint }}"></i>
+              <div style="flex:1;font-size:14px">{{ r.name }}</div>
+              <div style="font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums">{{ r.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:var(--mut);line-height:1.5;padding:12px 14px;border-radius:10px;background:{{ act.soft }};color:{{ act.tint }}">{{ act.note }}</div>
+      </div>
+      <div style="padding:14px 20px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ closeSheet }}" style="padding:12px 20px;border-radius:11px;border:1px solid var(--line);color:var(--mut);font-size:14px;font-weight:600" style-hover="color:var(--color-text)">Volver</button>
+        <button onClick="{{ act.confirm }}" style="padding:12px 22px;border-radius:11px;background:{{ act.tint }};color:{{ act.on }};font-size:14px;font-weight:600">{{ act.cta }}</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ dialogOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,46,36,.4)">
+    <div onClick="{{ closeDialog }}" style="position:absolute;inset:0"></div>
+    <div style="position:relative;width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--color-surface);border-radius:18px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px">
+        <span style="width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ dlg.soft }};color:{{ dlg.tint }}"><i class="{{ dlg.icon }}" style="font-size:19px"></i></span>
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.015em">{{ dlg.title }}</div>
+          <div style="font-size:12px;color:var(--mut)">{{ dlg.subtitle }}</div>
+        </div>
+        <button onClick="{{ closeDialog }}" style="width:34px;height:34px;border-radius:9px;color:var(--mut);flex:none" style-hover="background:var(--surface-2)"><i class="ph ph-x" style="font-size:17px"></i></button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px">
+          <sc-for list="{{ dlg.fields }}" as="fl" hint-placeholder-count="4">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--mut)">{{ fl.label }}
+              <input value="{{ fl.value }}" readonly style="font:inherit;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--color-text);padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)">
+              <div style="font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--mut)">{{ fl.hint }}</div>
+            </label>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mut)">{{ dlg.listTitle }}</div>
+          <sc-for list="{{ dlg.rows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)">
+              <i class="{{ r.icon }}" style="font-size:16px;color:{{ dlg.tint }}"></i>
+              <div style="flex:1;font-size:14px">{{ r.name }}</div>
+              <div style="font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums">{{ r.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ dlg.toggles }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.pick }}" style="padding:9px 15px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:var(--mut);line-height:1.5;padding:11px 13px;border:1px dashed var(--line);border-radius:10px">{{ dlg.note }}</div>
+      </div>
+      <div style="padding:14px 20px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ closeDialog }}" style="padding:12px 20px;border-radius:11px;border:1px solid var(--line);color:var(--mut);font-size:14px;font-weight:600" style-hover="color:var(--color-text);border-color:var(--color-text)">Cancelar</button>
+        <button onClick="{{ dlg.save }}" style="padding:12px 22px;border-radius:11px;background:var(--cta);color:var(--cta-on);font-size:14px;font-weight:600" style-hover="background:var(--cta-dark)">{{ dlg.cta }}</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:11px;padding:13px 20px;border-radius:13px;background:var(--ink);color:var(--on-ink);box-shadow:var(--shadow-lg);font-size:14px;font-weight:500">
+    <i class="{{ toastIcon }}" style="font-size:19px;color:{{ toastFg }}"></i>{{ toast }}
+    <button onClick="{{ hideToast }}" style="margin-left:6px;color:var(--on-ink-mut);font-size:12px;font-weight:600">Cerrar</button>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;olivo&quot;,&quot;madera&quot;,&quot;barro&quot;],&quot;default&quot;:&quot;olivo&quot;,&quot;tsType&quot;:&quot;'olivo' | 'madera' | 'barro'&quot;,&quot;section&quot;:&quot;Apariencia&quot;}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'mesas', variant: 'A', mobile: false, logged: true,
+    cat: 'c2', cajaCat: 'c3', input: '', tip: 10, method: 'cash', target: 'mostrador',
+    kf: 'todas', of: 'todas', invTab: 'stock', counts: {}, bills: {}, phoneChan: 'todos',
+    cChan: 'cart', pack: 'Bolsa', prep: '20 min', openOrder: null, dialog: null,
+    sheet: null, modId: null, modTerm: 'Término medio', modOut: [], modExtra: [],
+    splitMode: 'equal', splitN: 2, splitSel: [], split: null, splitIdx: 0,
+    discType: 'pct', discVal: 10, discReason: '', discount: null,
+    actOpt: '',
+    toast: '', toastKind: 'ok',
+    counter: [
+      { id: 'm7', name: 'Cerveza artesanal', qty: 2, price: 75 },
+      { id: 'm1', name: 'Guacamole', qty: 1, price: 95 }
+    ],
+    m3: [
+      { id: 'm5', name: 'Arrachera', qty: 1, price: 280 },
+      { id: 'm7', name: 'Cerveza artesanal', qty: 2, price: 75 }
+    ],
+    llevar: [
+      { id: 'm3', name: 'Tacos al pastor', qty: 3, price: 85 },
+      { id: 'm6', name: 'Agua fresca', qty: 1, price: 45 }
+    ],
+    didi: [
+      { id: 'm4', name: 'Enchiladas suizas', qty: 2, price: 145 },
+      { id: 'm8', name: 'Flan napolitano', qty: 1, price: 65 }
+    ],
+    uber: [
+      { id: 'm5', name: 'Arrachera', qty: 1, price: 280 },
+      { id: 'm1', name: 'Guacamole', qty: 1, price: 95 }
+    ],
+    cart: [
+      { id: 'm1', name: 'Guacamole', qty: 1, price: 95, notes: '' },
+      { id: 'm3', name: 'Tacos al pastor', qty: 2, price: 85, notes: 'Sin cebolla' },
+      { id: 'm6', name: 'Agua fresca', qty: 2, price: 45, notes: '' }
+    ]
+  };
+
+  mxn(n) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n || 0); }
+
+  toast(msg, kind) {
+    clearTimeout(this._t);
+    this.setState({ toast: msg, toastKind: kind || 'ok' });
+    this._t = setTimeout(() => this.setState({ toast: '' }), 3200);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  count(id, v) { this.setState(st => ({ counts: { ...st.counts, [id]: v } })); }
+
+  toggle(key, v) {
+    this.setState(st => {
+      const list = st[key].slice();
+      const i = list.indexOf(v);
+      if (i >= 0) list.splice(i, 1); else list.push(v);
+      return { [key]: list };
+    });
+  }
+
+  MODS = {
+    term: ['Término medio', 'Tres cuartos', 'Bien cocido', 'Rojo'],
+    out: { m1: ['Cebolla', 'Cilantro', 'Chile'], m3: ['Cebolla', 'Cilantro', 'Piña', 'Salsa'], m4: ['Crema', 'Cebolla'], m5: ['Guarnición', 'Chimichurri'], m2: ['Chorizo'], m6: [], m7: [], m8: [] },
+    extra: { m1: [['Totopos extra', 25], ['Queso fresco', 20]], m3: [['Tortilla extra', 12], ['Queso', 20], ['Doble carne', 45]], m4: [['Extra salsa', 15], ['Aguacate', 25]], m5: [['Papas', 45], ['Doble guarnición', 55]], m2: [['Tortillas', 15]], m6: [], m7: [], m8: [['Bola de helado', 30]] }
+  };
+
+  st(k) {
+    const m = {
+      free: { label: 'Libre', dot: 'var(--a2)', bg: 'var(--a2-soft)', fg: 'var(--a2-ink)' },
+      occupied: { label: 'Ocupada', dot: 'var(--a1)', bg: 'var(--a1)', fg: 'var(--a1-on)' },
+      bill: { label: 'Pide cuenta', dot: 'var(--a3)', bg: 'var(--a3)', fg: 'var(--a3-on)' },
+      reserved: { label: 'Reservada', dot: 'var(--a4)', bg: 'var(--a4)', fg: 'var(--a4-on)' }
+    };
+    return m[k];
+  }
+
+  tablesData() {
+    return [
+      { n: 1, zone: 'Terraza', cap: 2, s: 'free' },
+      { n: 2, zone: 'Terraza', cap: 4, s: 'occupied', w: 'Ana García', min: 8, total: 377 },
+      { n: 8, zone: 'Terraza', cap: 4, s: 'free' },
+      { n: 3, zone: 'Interior', cap: 4, s: 'bill', w: 'Carlos Ruiz', min: 25, total: 493 },
+      { n: 4, zone: 'Interior', cap: 6, s: 'free' },
+      { n: 7, zone: 'Interior', cap: 4, s: 'free' },
+      { n: 5, zone: 'Barra', cap: 2, s: 'occupied', w: 'María López', min: 14, total: 210 },
+      { n: 6, zone: 'VIP', cap: 8, s: 'reserved', w: 'Luis Hernández', min: 0, total: 0, note: '21:30' }
+    ];
+  }
+
+  card(t) {
+    const c = this.st(t.s);
+    return {
+      label: 'Mesa ' + t.n, capacity: t.cap + ' personas', status: c.label,
+      dot: c.dot, bg: c.bg, fg: c.fg,
+      metaIcon: t.s === 'free' ? 'ph ph-check-circle' : t.s === 'reserved' ? 'ph ph-clock' : 'ph ph-user',
+      meta: t.s === 'free' ? 'Disponible' : t.s === 'reserved' ? 'Reserva ' + t.note : t.w + ' · ' + t.min + ' min',
+      total: t.total ? this.mxn(t.total) : '—',
+      open: () => this.setState({ screen: t.s === 'bill' ? 'caja' : 'comanda' })
+    };
+  }
+
+  cartTotals() {
+    const sub = this.state.cart.reduce((s, i) => s + i.qty * i.price, 0);
+    return { sub, tax: Math.round(sub * 0.16 * 100) / 100, total: Math.round(sub * 1.16 * 100) / 100 };
+  }
+
+  MENU = [
+    { id: 'm1', c: 'c1', name: 'Guacamole', description: 'Con totopos artesanales', price: 95 },
+    { id: 'm2', c: 'c1', name: 'Queso fundido', description: 'Con chorizo', price: 120 },
+    { id: 'm3', c: 'c2', name: 'Tacos al pastor', description: 'Orden de 3', price: 85 },
+    { id: 'm4', c: 'c2', name: 'Enchiladas suizas', description: 'Pollo, salsa verde', price: 145 },
+    { id: 'm5', c: 'c2', name: 'Arrachera', description: 'Con guarnición', price: 280 },
+    { id: 'm6', c: 'c3', name: 'Agua fresca', description: 'Jamaica u horchata', price: 45 },
+    { id: 'm7', c: 'c3', name: 'Cerveza artesanal', description: 'IPA local', price: 75 },
+    { id: 'm8', c: 'c4', name: 'Flan napolitano', description: 'Porción individual', price: 65 }
+  ];
+
+  bucket() {
+    const t = this.state.target;
+    if (t === 'mostrador') return 'counter';
+    if (['m3', 'llevar', 'didi', 'uber'].includes(t)) return t;
+    return 'cart';
+  }
+
+  addTo(key, m) {
+    this.setState(st => {
+      const list = st[key].slice();
+      const i = list.findIndex(x => x.id === m.id);
+      if (i >= 0) list[i] = { ...list[i], qty: list[i].qty + 1 };
+      else list.push({ id: m.id, name: m.name, qty: 1, price: m.price, notes: '' });
+      return { [key]: list };
+    });
+  }
+
+  bump(key, idx, d) {
+    this.setState(st => {
+      const list = st[key].slice();
+      if (d < 0 && list[idx].qty <= 1) list.splice(idx, 1);
+      else list[idx] = { ...list[idx], qty: list[idx].qty + d };
+      return { [key]: list };
+    });
+  }
+
+  payOrderData() {
+    const titles = {
+      counter: 'Mostrador · venta rápida',
+      m3: 'Mesa 3 · Interior — pidió cuenta',
+      cart: 'Mesa 2 · Terraza',
+      llevar: 'Para llevar · #12 — Sofía R., recoge 20:05',
+      didi: 'DiDi Food · #4471 — repartidor en camino',
+      uber: 'Uber Eats · #A93 — pagado en la app'
+    };
+    const key = this.bucket();
+    return { title: titles[key], key, items: this.state[key] };
+  }
+
+  press(k) {
+    this.setState(s => {
+      if (k === 'C') return { input: '' };
+      if (k === '⌫') return { input: s.input.slice(0, -1) };
+      if (k === '.' && s.input.includes('.')) return {};
+      if (k === '.' && !s.input) return { input: '0.' };
+      const next = s.input + k;
+      const dec = next.split('.')[1];
+      if (dec && dec.length > 2) return {};
+      return { input: next.replace(/^0+(?=\d)/, '') };
+    });
+  }
+
+  renderVals() {
+    const s = this.state, mxn = n => this.mxn(n);
+    const sumOf = k => s[k].reduce((a, i) => a + i.qty * i.price, 0);
+    const CATS = [['c1', 'Entradas', 'var(--a4)', 'Entradas'], ['c2', 'Platos fuertes', 'var(--a1)', 'Fuertes'], ['c3', 'Bebidas', 'var(--a2)', 'Bebidas'], ['c4', 'Postres', 'var(--a3)', 'Postres']];
+    const CH = {
+      mesa: { label: 'Mesa', bg: 'var(--a1-soft)', fg: 'var(--a1-ink)' },
+      llevar: { label: 'Para llevar', bg: 'var(--a2-soft)', fg: 'var(--a2-ink)' },
+      didi: { label: 'DiDi', bg: 'var(--a3-soft)', fg: 'var(--a3-ink)' },
+      uber: { label: 'Uber Eats', bg: 'var(--a4-soft)', fg: 'var(--a4-ink)' }
+    };
+    const tk = (table, ch, min, sla, items) => ({ table, ch: CH[ch].label, chBg: CH[ch].bg, chFg: CH[ch].fg, dine: ch === 'mesa', min, sla, items });
+    const KRAW = [
+      { name: 'Pendiente', dot: 'var(--a3)', cta: 'Empezar preparación', done: 'Comanda en preparación', tickets: [
+        tk('Mesa 2 · Terraza', 'mesa', 8, 12, [{ qty: 1, name: 'Guacamole', notes: '' }, { qty: 2, name: 'Tacos al pastor', notes: 'Sin cebolla' }]),
+        tk('Para llevar · #12', 'llevar', 6, 15, [{ qty: 3, name: 'Tacos al pastor', notes: 'Empacar aparte' }, { qty: 1, name: 'Agua fresca', notes: '' }])
+      ] },
+      { name: 'En preparación', dot: 'var(--a1)', cta: 'Marcar lista', done: 'Comanda lista', tickets: [
+        tk('Mesa 5 · Barra', 'mesa', 4, 14, [{ qty: 1, name: 'Enchiladas suizas', notes: 'Extra salsa' }, { qty: 1, name: 'Agua fresca', notes: '' }]),
+        tk('Uber Eats · #A93', 'uber', 18, 15, [{ qty: 1, name: 'Arrachera', notes: 'Término medio' }, { qty: 1, name: 'Guacamole', notes: '' }])
+      ] },
+      { name: 'Listo para servir', dot: 'var(--cta)', cta: 'Marcar entregada', done: 'Comanda entregada', tickets: [
+        tk('DiDi Food · #4471', 'didi', 11, 15, [{ qty: 2, name: 'Enchiladas suizas', notes: 'Para llevar — empacar' }, { qty: 1, name: 'Flan napolitano', notes: '' }]),
+        tk('Mesa 3 · Interior', 'mesa', 25, 14, [{ qty: 1, name: 'Arrachera', notes: 'Término medio' }, { qty: 2, name: 'Cerveza artesanal', notes: '' }])
+      ] }
+    ];
+    const KALL = KRAW.flatMap(c => c.tickets);
+    const KLATE = KALL.filter(k => k.min > k.sla);
+    const kfMatch = k => s.kf === 'todas' || (s.kf === 'mesa' && k.dine) || (s.kf === 'online' && !k.dine) || (s.kf === 'tarde' && k.min > k.sla);
+    const KCOLS = KRAW.map(c => ({ ...c, tickets: c.tickets.filter(kfMatch) }));
+    const ORDERS = [
+      { id: '#o1', table: 'Mesa 2 · Terraza', waiter: 'Ana García', k: 'sent', f: 'cocina', min: 8, total: 377, icon: 'ph ph-grid-four' },
+      { id: '#o2', table: 'Mesa 3 · Interior', waiter: 'Carlos Ruiz', k: 'ready', f: 'lista', min: 25, total: 493, icon: 'ph ph-grid-four' },
+      { id: '#o3', table: 'Mesa 5 · Barra', waiter: 'María López', k: 'open', f: 'abierta', min: 14, total: 210, icon: 'ph ph-grid-four' },
+      { id: '#o4', table: 'Mostrador', waiter: 'Ana García', k: 'paid', f: 'pagada', min: 32, total: 245, icon: 'ph ph-storefront' },
+      { id: '#12', table: 'Para llevar · Sofía R.', waiter: 'Mostrador', k: 'sent', f: 'cocina', min: 6, total: 348, icon: 'ph ph-bag' },
+      { id: '#4471', table: 'DiDi Food', waiter: 'Automática', k: 'ready', f: 'lista', min: 11, total: 412, icon: 'ph ph-moped' },
+      { id: '#A93', table: 'Uber Eats', waiter: 'Automática', k: 'paid', f: 'pagada', min: 18, total: 435, icon: 'ph ph-moped-front' }
+    ];
+    const DIALOGS = {
+      dish: {
+        title: 'Editar platillo · Arrachera', subtitle: 'Menú · Platos fuertes', icon: 'ph ph-fork-knife',
+        tint: 'var(--a1)', soft: 'var(--a1-soft)', cta: 'Guardar platillo', done: 'Arrachera actualizada',
+        fields: [
+          { label: 'Nombre', value: 'Arrachera', hint: 'Como aparece en la comanda' },
+          { label: 'Precio', value: '$280.00', hint: 'IVA incluido' },
+          { label: 'Categoría', value: 'Platos fuertes', hint: '4 categorías activas' },
+          { label: 'Tiempo de preparación', value: '14 min', hint: 'Define el SLA en cocina' }
+        ],
+        listTitle: 'Receta — descuenta inventario al cobrar',
+        rows: [
+          { icon: 'ph ph-package', name: 'Arrachera', value: '0.30 kg' },
+          { icon: 'ph ph-package', name: 'Tortilla de maíz', value: '0.15 kg' },
+          { icon: 'ph ph-package', name: 'Guarnición mixta', value: '1 porción' }
+        ],
+        toggles: ['Disponible', 'Agotado hoy', 'Fuera de menú'],
+        note: 'El costo de receta es $118.40 — margen del 57.7% al precio actual.'
+      },
+      supply: {
+        title: 'Alta de insumo', subtitle: 'Inventario · nuevo registro', icon: 'ph ph-package',
+        tint: 'var(--a3)', soft: 'var(--a3-soft)', cta: 'Guardar insumo', done: 'Insumo agregado al inventario',
+        fields: [
+          { label: 'Nombre', value: 'Aguacate Hass', hint: 'Nombre corto para el conteo' },
+          { label: 'Unidad', value: 'pza', hint: 'kg, pza, lt' },
+          { label: 'Existencia inicial', value: '60', hint: 'Se registra como entrada' },
+          { label: 'Mínimo de alerta', value: '24', hint: 'Avisa cuando baje de aquí' },
+          { label: 'Costo unitario', value: '$18.00', hint: 'Para valuar la merma' },
+          { label: 'Proveedor', value: 'Proveedor Sierra', hint: 'Opcional' }
+        ],
+        listTitle: 'Se usa en',
+        rows: [
+          { icon: 'ph ph-fork-knife', name: 'Guacamole', value: '2 pza' },
+          { icon: 'ph ph-fork-knife', name: 'Tacos al pastor', value: '0.25 pza' }
+        ],
+        toggles: ['Descuento automático', 'Solo conteo manual'],
+        note: 'Con descuento automático, cada venta resta la cantidad de la receta y la merma se calcula contra el conteo físico.'
+      },
+      table: {
+        title: 'Editar mesa · Mesa 6', subtitle: 'Mesas · zona VIP', icon: 'ph ph-grid-four',
+        tint: 'var(--cta)', soft: 'var(--a2-soft)', cta: 'Guardar mesa', done: 'Mesa 6 actualizada',
+        fields: [
+          { label: 'Nombre', value: 'Mesa 6', hint: 'Visible en el plano' },
+          { label: 'Zona', value: 'VIP', hint: '4 zonas activas' },
+          { label: 'Capacidad', value: '8 personas', hint: 'Para sugerir asignación' },
+          { label: 'Mesero asignado', value: 'Luis Hernández', hint: 'Turno tarde' }
+        ],
+        listTitle: 'Reservas de hoy',
+        rows: [{ icon: 'ph ph-clock', name: 'Familia Torres · 8 personas', value: '21:30' }],
+        toggles: ['Activa', 'Fuera de servicio'],
+        note: 'Al desactivar una mesa desaparece del plano pero se conserva su historial de órdenes.'
+      },
+      staff: {
+        title: 'Editar usuario · Ana García', subtitle: 'Personal · 4 activos', icon: 'ph ph-users-three',
+        tint: 'var(--a4)', soft: 'var(--a4-soft)', cta: 'Guardar usuario', done: 'Permisos de Ana García guardados',
+        fields: [
+          { label: 'Nombre', value: 'Ana García', hint: '' },
+          { label: 'Rol', value: 'Mesera', hint: 'Mesero, cajero, cocina, gerente' },
+          { label: 'PIN de acceso', value: '••••', hint: 'Para abrir turno en tablet' },
+          { label: 'Zonas', value: 'Terraza y Barra', hint: 'Mesas que ve por defecto' }
+        ],
+        listTitle: 'Permisos',
+        rows: [
+          { icon: 'ph ph-check', name: 'Tomar comandas y cobrar', value: 'Sí' },
+          { icon: 'ph ph-check', name: 'Aplicar descuentos', value: 'No' },
+          { icon: 'ph ph-check', name: 'Corte de caja', value: 'No' }
+        ],
+        toggles: ['Activo', 'Suspendido'],
+        note: 'El corte de caja y los descuentos quedan reservados a gerencia.'
+      },
+      moves: {
+        title: 'Registrar movimiento', subtitle: 'Inventario · entradas, salidas y mermas', icon: 'ph ph-arrows-left-right',
+        tint: 'var(--a1)', soft: 'var(--a1-soft)', cta: 'Registrar movimiento', done: 'Movimiento registrado',
+        fields: [
+          { label: 'Tipo', value: 'Entrada de proveedor', hint: 'Entrada, merma o ajuste' },
+          { label: 'Fecha', value: '31 ago, 23:40', hint: '' },
+          { label: 'Referencia', value: 'Factura A-2214', hint: 'Opcional' },
+          { label: 'Responsable', value: 'Ana García', hint: 'Queda en la bitácora' }
+        ],
+        listTitle: 'Insumos del movimiento',
+        rows: [
+          { icon: 'ph ph-plus', name: 'Arrachera', value: '+ 12 kg' },
+          { icon: 'ph ph-plus', name: 'Aguacate', value: '+ 60 pza' }
+        ],
+        toggles: ['Entrada', 'Merma', 'Ajuste de conteo'],
+        note: 'Las mermas exigen responsable y motivo; las salidas por venta se generan solas desde las recetas.'
+      },
+      recipe: {
+        title: 'Editar recetas', subtitle: 'Consumo por platillo', icon: 'ph ph-list-checks',
+        tint: 'var(--a2)', soft: 'var(--a2-soft)', cta: 'Guardar recetas', done: 'Recetas guardadas',
+        fields: [
+          { label: 'Platillo', value: 'Guacamole', hint: 'Entradas' },
+          { label: 'Rendimiento', value: '1 porción', hint: 'Base del descuento' }
+        ],
+        listTitle: 'Insumos por porción',
+        rows: [
+          { icon: 'ph ph-package', name: 'Aguacate', value: '2 pza' },
+          { icon: 'ph ph-package', name: 'Totopos', value: '0.08 kg' },
+          { icon: 'ph ph-package', name: 'Limón', value: '1 pza' }
+        ],
+        toggles: ['Descuento al cobrar', 'Descuento al enviar a cocina'],
+        note: 'Descontar al cobrar evita restar inventario de comandas canceladas.'
+      }
+    };
+    const STEPS_TABLE = [['Orden abierta', 'Mesero en la mesa'], ['Enviada a cocina', 'Ticket impreso en barra'], ['Lista para servir', 'Cocina marcó lista'], ['Entregada', 'En la mesa'], ['Cobrada', 'Cuenta cerrada']];
+    const STEPS_ONLINE = [['Pedido recibido', 'Webhook de la plataforma'], ['Aceptado', 'Tiempo confirmado'], ['En preparación', 'Cocina'], ['Empacado', 'Listo para recolección'], ['Entregado al repartidor', '']];
+    const ODETAIL = {
+      '#o1': { opened: '19:18', at: 2, tip: 38, cta: 'Marcar entregada', done: 'Mesa 2 marcada como entregada', steps: STEPS_TABLE,
+        items: [{ qty: 1, name: 'Guacamole', price: 95 }, { qty: 2, name: 'Tacos al pastor', price: 85, notes: 'Sin cebolla' }, { qty: 2, name: 'Agua fresca', price: 45 }] },
+      '#o2': { opened: '19:01', at: 3, tip: 49, cta: 'Cobrar cuenta', done: 'Mesa 3 lista para cobro', steps: STEPS_TABLE,
+        items: [{ qty: 1, name: 'Arrachera', price: 280, notes: 'Término medio' }, { qty: 2, name: 'Cerveza artesanal', price: 75 }] },
+      '#o3': { opened: '19:12', at: 1, tip: 0, cta: 'Enviar a cocina', done: 'Comanda de Mesa 5 enviada a cocina', steps: STEPS_TABLE,
+        items: [{ qty: 1, name: 'Enchiladas suizas', price: 145, notes: 'Extra salsa' }, { qty: 1, name: 'Agua fresca', price: 45 }] },
+      '#o4': { opened: '18:54', at: 5, tip: 0, cta: 'Reabrir orden', done: 'Orden de mostrador reabierta', steps: STEPS_TABLE,
+        items: [{ qty: 2, name: 'Cerveza artesanal', price: 75 }, { qty: 1, name: 'Guacamole', price: 95 }] },
+      '#12': { opened: '19:34', at: 2, tip: 0, cta: 'Cobrar y entregar', done: 'Pedido #12 cobrado y entregado', steps: STEPS_ONLINE,
+        items: [{ qty: 3, name: 'Tacos al pastor', price: 85, notes: 'Empacar aparte' }, { qty: 1, name: 'Agua fresca', price: 45 }] },
+      '#4471': { opened: '19:29', at: 3, tip: 0, cta: 'Entregar al repartidor', done: 'Pedido #4471 entregado al repartidor', steps: STEPS_ONLINE,
+        items: [{ qty: 2, name: 'Enchiladas suizas', price: 145 }, { qty: 1, name: 'Flan napolitano', price: 65 }] },
+      '#A93': { opened: '19:22', at: 4, tip: 0, cta: 'Cerrar pedido', done: 'Pedido #A93 cerrado', steps: STEPS_ONLINE,
+        items: [{ qty: 1, name: 'Arrachera', price: 280, notes: 'Término medio' }, { qty: 1, name: 'Guacamole', price: 95 }] }
+    };
+    const STOCK = [
+      { name: 'Arrachera', u: 'kg', qty: 3.2, min: 5, cost: 320, dec: 1 },
+      { name: 'Aguacate', u: 'pza', qty: 11, min: 24, cost: 18, dec: 0 },
+      { name: 'Tortilla de maíz', u: 'kg', qty: 18, min: 10, cost: 26, dec: 1 },
+      { name: 'Cerveza IPA', u: 'pza', qty: 64, min: 36, cost: 32, dec: 0 },
+      { name: 'Queso Oaxaca', u: 'kg', qty: 6.5, min: 4, cost: 168, dec: 1 },
+      { name: 'Jamaica', u: 'kg', qty: 2.4, min: 2, cost: 140, dec: 1 }
+    ];
+    const COUNT = [
+      { id: 'arr', name: 'Arrachera (kg)', sys: 3, u: 'kg', cost: 320 },
+      { id: 'agu', name: 'Aguacate (pza)', sys: 11, u: 'pza', cost: 18 },
+      { id: 'cer', name: 'Cerveza IPA (pza)', sys: 64, u: 'pza', cost: 32 },
+      { id: 'que', name: 'Queso Oaxaca (kg)', sys: 7, u: 'kg', cost: 168 }
+    ];
+    const SHIFT = {
+      total: 8420, count: 31, tips: 962, cashSales: 3180, cashExpected: 2680,
+      methods: [
+        { label: 'Efectivo', icon: 'ph ph-money', dot: 'var(--cta)', n: 14, amount: 3180 },
+        { label: 'Terminal BBVA', icon: 'ph ph-credit-card', dot: 'var(--a1)', n: 9, amount: 2650 },
+        { label: 'Mercado Pago', icon: 'ph ph-qr-code', dot: 'var(--a2)', n: 5, amount: 1745 },
+        { label: 'Apple Pay', icon: 'ph ph-device-mobile', dot: 'var(--a4)', n: 3, amount: 845 }
+      ],
+      channels: [
+        { label: 'En mesa', dot: 'var(--a1)', n: 18, amount: 5240 },
+        { label: 'Mostrador', dot: 'var(--cta)', n: 6, amount: 1210 },
+        { label: 'Para llevar', dot: 'var(--a2)', n: 3, amount: 823 },
+        { label: 'DiDi y Uber', dot: 'var(--a3)', n: 4, amount: 1147 }
+      ]
+    };
+    const ONLINE = [
+      { ch: 'llevar', title: 'Para llevar · #12', meta: 'Sofía R. · recoge 20:05', total: 348, icon: 'ph ph-bag', dot: 'var(--cta)', soft: 'var(--a2-soft)',
+        badge: 'Empacando', badgeBg: 'var(--a2-soft)', badgeFg: 'var(--a2-ink)', time: '6 min', late: false, paid: false, cta: 'Cobrar', done: 'Pedido #12 cobrado' },
+      { ch: 'didi', title: 'DiDi Food · #4471', meta: 'Repartidor a 4 min · pagado en app', total: 412, icon: 'ph ph-moped', dot: 'var(--a3)', soft: 'var(--a3-soft)',
+        badge: 'En camino', badgeBg: 'var(--a3-soft)', badgeFg: 'var(--a3-ink)', time: '11 min', late: false, paid: true, cta: 'Entregar', done: 'Pedido #4471 entregado al repartidor' },
+      { ch: 'uber', title: 'Uber Eats · #A93', meta: 'Pagado en la app · empacado', total: 435, icon: 'ph ph-moped-front', dot: 'var(--a4)', soft: 'var(--a4-soft)',
+        badge: 'Listo', badgeBg: 'var(--a4-soft)', badgeFg: 'var(--a4-ink)', time: '18 min', late: true, paid: true, cta: 'Entregar', done: 'Pedido #A93 entregado' },
+      { ch: 'llevar', title: 'Para llevar · #13', meta: 'Diego M. · recoge 20:25', total: 190, icon: 'ph ph-bag', dot: 'var(--cta)', soft: 'var(--a2-soft)',
+        badge: 'En cocina', badgeBg: 'var(--a1-soft)', badgeFg: 'var(--a1-ink)', time: '2 min', late: false, paid: false, cta: 'Cobrar', done: 'Pedido #13 cobrado' }
+    ];
+    const locked = s.cChan === 'didi' || s.cChan === 'uber';
+    const cSub = sumOf(s.cChan), cTax = Math.round(cSub * 0.16 * 100) / 100;
+    const CKMETA = {
+      cart: { title: 'Mesa 2 · Terraza', meta: 'Ana García · abierta 19:18', act: 'Cobrar', actIcon: 'ph ph-currency-circle-dollar' },
+      llevar: { title: 'Para llevar · #12', meta: 'Sofía Ramírez · recoge 20:05 · ' + s.pack, act: 'Cobrar', actIcon: 'ph ph-currency-circle-dollar' },
+      didi: { title: 'DiDi Food · #4471', meta: 'Pagado en la app · ' + s.prep, act: 'Aceptar pedido', actIcon: 'ph ph-check' },
+      uber: { title: 'Uber Eats · #A93', meta: 'Pagado en la app · ' + s.prep, act: 'Aceptar pedido', actIcon: 'ph ph-check' }
+    }[s.cChan];
+    const DENOMS = [1000, 500, 200, 100, 50, 20];
+    const countedTotal = DENOMS.reduce((a, d) => a + d * ((s.bills && s.bills[d]) || 0), 0);
+    const tables = this.tablesData();
+    const zoneNames = ['Terraza', 'Interior', 'Barra', 'VIP'];
+
+    const pay = this.payOrderData();
+    const subBase = pay.items.reduce((a, i) => a + i.qty * i.price, 0);
+    const discAmt = s.discType === 'pct' ? Math.round(subBase * (s.discVal / 100) * 100) / 100
+                  : s.discType === 'amount' ? Math.min(s.discVal, subBase) : subBase;
+    const discApplied = s.discount ? Math.min(s.discount.amount, subBase) : 0;
+    const sub = Math.round((subBase - discApplied) * 100) / 100;
+    const tax = Math.round(sub * 0.16 * 100) / 100;
+    const tipAmount = Math.round(sub * (s.tip / 100) * 100) / 100;
+    const baseTotal = Math.round((sub + tax) * 100) / 100;
+    const splitSelSub = pay.items.reduce((a, i, idx) => a + (s.splitSel.includes(idx) ? i.qty * i.price : 0), 0);
+    const SEATS = [
+      { n: 1, label: 'Comensal 1', detail: 'Arrachera · cerveza', total: Math.round(subBase * 0.45 * 100) / 100 },
+      { n: 2, label: 'Comensal 2', detail: 'Enchiladas · agua', total: Math.round(subBase * 0.32 * 100) / 100 },
+      { n: 3, label: 'Comensal 3', detail: 'Guacamole · cerveza', total: Math.round(subBase * 0.23 * 100) / 100 }
+    ];
+    const splitAmts = s.split ? s.split.map(r => Math.round(baseTotal * r * 100) / 100) : null;
+    const dueN = splitAmts ? splitAmts[s.splitIdx] : sub + tax + tipAmount;
+    const recv = parseFloat(s.input) || 0;
+    const changeN = s.method === 'cash' && recv > 0 ? Math.max(0, recv - dueN) : 0;
+    const ct = this.cartTotals();
+
+    const on = (a, b) => (a ? b : null);
+    const navDef = [
+      ['mesas', 'Mesas', 'ph ph-grid-four'],
+      ['comanda', 'Comanda', 'ph ph-note-pencil'],
+      ['caja', 'Caja', 'ph ph-calculator'],
+      ['cocina', 'Cocina', 'ph ph-fire'],
+      ['ordenes', 'Órdenes', 'ph ph-receipt'],
+      ['inventario', 'Insumos', 'ph ph-package'],
+      ['corte', 'Corte', 'ph ph-vault'],
+      ['admin', 'Admin', 'ph ph-sliders'],
+      ['notas', 'Notas', 'ph ph-file-text']
+    ];
+    const titles = {
+      mesas: ['Mesas', 'Turno de la tarde · 8 mesas · 2 cuentas abiertas'],
+      comanda: ['Comanda — Mesa 2', 'Terraza · Ana García'],
+      caja: ['Caja', 'Cobro rápido · efectivo, terminal y billeteras'],
+      cocina: ['Cocina', 'Tiempo real · 3 comandas en curso'],
+      ordenes: ['Órdenes activas', 'Turno de hoy · 7 órdenes'],
+      inventario: ['Inventario', 'Existencias, movimientos y conteo físico'],
+      corte: ['Corte de caja', 'Turno tarde · Ana García · abierto 14:00'],
+      admin: ['Administración', 'Catálogo, mesas y personal'],
+      notas: ['Notas de implementación', 'Cómo aterrizar este rediseño en el repo']
+    };
+
+    const methodDef = [
+      ['cash', 'Efectivo', 'ph ph-money', 'Caja'],
+      ['card', 'Tarjeta', 'ph ph-credit-card', 'Terminal BBVA'],
+      ['mp', 'Mercado Pago', 'ph ph-qr-code', 'QR / link'],
+      ['apple', 'Apple Pay', 'ph ph-device-mobile', 'Contactless']
+    ];
+
+    const termCopy = {
+      card: ['ph ph-credit-card', 'Terminal BBVA vinculada — Caja 1', 'El monto se envía a la terminal por Bluetooth; la app espera el código de autorización y cierra la mesa sola.'],
+      mp: ['ph ph-qr-code', 'Mercado Pago — QR dinámico', 'El QR se genera con el monto exacto; el webhook de Mercado Pago marca la orden como pagada sin que el mesero toque nada.'],
+      apple: ['ph ph-device-mobile', 'Apple Pay — lector contactless', 'Acerca el iPhone o la tarjeta al lector; misma confirmación que la terminal física.']
+    };
+    const tc = termCopy[s.method] || termCopy.card;
+    const stepLabels = ['Monto enviado al lector', 'Cliente autoriza', 'Recibo y cierre de mesa'];
+
+    return {
+      isLogin: !s.logged,
+      isTablet: s.logged && !s.mobile,
+      isPhone: s.logged && s.mobile,
+      isMesas: s.screen === 'mesas', isComanda: s.screen === 'comanda', isCaja: s.screen === 'caja',
+      isCocina: s.screen === 'cocina', isOrdenes: s.screen === 'ordenes', isAdmin: s.screen === 'admin',
+      isNotas: s.screen === 'notas', isInv: s.screen === 'inventario', isCorte: s.screen === 'corte',
+      title: s.screen === 'comanda' ? 'Comanda — ' + CKMETA.title : titles[s.screen][0],
+      subtitle: s.screen === 'comanda' ? CKMETA.meta : titles[s.screen][1],
+      clock: '19:42',
+      pal: s.pal ?? (this.props.palette ?? 'olivo'),
+      palettes: [
+        { id: 'madera', name: 'Madera', s1: '#8C5A34', s2: '#6E7350', s3: '#C9821A' },
+        { id: 'olivo', name: 'Olivo & dorado', s1: '#4F5B34', s2: '#C09A3E', s3: '#B4643C' },
+        { id: 'barro', name: 'Barro & cobre', s1: '#B4643C', s2: '#6E7B5C', s3: '#2F4858' }
+      ].map(p => {
+        const active = (s.pal ?? (this.props.palette ?? 'olivo')) === p.id;
+        return { ...p, pick: () => this.setState({ pal: p.id }),
+          bg: active ? 'var(--color-surface)' : 'transparent',
+          fg: active ? 'var(--color-text)' : 'var(--mut)' };
+      }),
+      enter: () => this.setState({ logged: true }),
+      logout: () => this.setState({ logged: false }),
+      toggleMobile: () => this.setState({ mobile: !s.mobile }),
+      goCaja: () => this.setState({ screen: 'caja', target: 'm2' }),
+
+      nav: navDef.map(([id, label, icon]) => ({
+        label, icon,
+        bg: s.screen === id ? 'var(--cta)' : 'transparent',
+        fg: s.screen === id ? 'var(--surface-2)' : 'var(--on-ink-mut)',
+        go: () => this.setState({ screen: id, openOrder: null, dialog: null })
+      })),
+
+      isVarA: s.variant === 'A', isVarB: s.variant === 'B',
+      setVarA: () => this.setState({ variant: 'A' }), setVarB: () => this.setState({ variant: 'B' }),
+      vaBg: s.variant === 'A' ? 'var(--color-surface)' : 'transparent',
+      vaFg: s.variant === 'A' ? 'var(--color-accent)' : 'var(--mut)',
+      vbBg: s.variant === 'B' ? 'var(--color-surface)' : 'transparent',
+      vbFg: s.variant === 'B' ? 'var(--color-accent)' : 'var(--mut)',
+
+      channels: [
+        { id: 'mostrador', name: 'Mostrador', icon: 'ph ph-storefront', meta: 'Venta directa', badge: 'Abierta', dot: 'var(--a1)', bg: 'var(--a1-soft)', fg: 'var(--a1)', total: mxn(sumOf('counter') * 1.16) },
+        { id: 'llevar', name: 'Para llevar', icon: 'ph ph-bag', meta: '#12 · Sofía R. · 20:05', badge: 'Empacando', dot: 'var(--cta)', bg: 'var(--a2-soft)', fg: 'var(--a2-ink)', total: mxn(sumOf('llevar') * 1.16) },
+        { id: 'didi', name: 'DiDi Food', icon: 'ph ph-moped', meta: '#4471 · repartidor a 4 min', badge: 'En camino', dot: 'var(--a3)', bg: 'var(--a3-soft)', fg: 'var(--a3-ink)', total: mxn(sumOf('didi') * 1.16) },
+        { id: 'uber', name: 'Uber Eats', icon: 'ph ph-moped-front', meta: '#A93 · pagado en la app', badge: 'Listo', dot: 'var(--a4)', bg: 'var(--a4-soft)', fg: 'var(--a4-ink)', total: mxn(sumOf('uber') * 1.16) }
+      ].map(c => ({ ...c, open: () => this.setState({ screen: 'caja', target: c.id, input: '' }) })),
+
+      legend: ['free', 'occupied', 'bill', 'reserved'].map(k => ({
+        label: this.st(k).label, dot: this.st(k).dot, n: tables.filter(t => t.s === k).length
+      })),
+
+      zones: zoneNames.map(z => {
+        const list = tables.filter(t => t.zone === z);
+        const busy = list.filter(t => t.s !== 'free').length;
+        return { name: z, meta: busy + ' de ' + list.length + ' ocupadas', tables: list.map(t => this.card(t)) };
+      }),
+
+      columns: [
+        { name: 'Por atender', dot: 'var(--a2)', soft: 'var(--a2-soft)', line: 'var(--a2-line)', cards: [
+          { title: 'Mesa 1', detail: 'Libre · Terraza, 2 personas', time: '—', timeFg: 'var(--mut)', waiter: 'Sin asignar', cta: 'Asignar', ctaBg: 'var(--a2-soft)', ctaFg: 'var(--a2-ink)', open: () => this.setState({ screen: 'comanda' }) },
+          { title: 'Mesa 6', detail: 'Reserva 21:30 · VIP, 8 personas', time: '21:30', timeFg: 'var(--mut)', waiter: 'Luis Hernández', cta: 'Preparar', ctaBg: 'var(--a4-soft)', ctaFg: 'var(--a4-ink)', open: () => this.setState({ screen: 'comanda' }) }
+        ] },
+        { name: 'Tomando orden', dot: 'var(--a1)', soft: 'var(--a1-soft)', line: 'var(--a1-line)', cards: [
+          { title: 'Mesa 5', detail: '3 platillos en la comanda, sin enviar', time: '14 min', timeFg: 'var(--color-accent)', waiter: 'María López', cta: 'Enviar a cocina', ctaBg: 'var(--accent-soft)', ctaFg: 'var(--accent-ink)', open: () => this.setState({ screen: 'comanda' }) }
+        ] },
+        { name: 'En cocina', dot: 'var(--a3)', soft: 'var(--a3-soft)', line: 'var(--a3-line)', cards: [
+          { title: 'Mesa 2', detail: 'Guacamole · Tacos al pastor ×2 · Agua ×2', time: '8 min', timeFg: 'var(--a3)', waiter: 'Ana García', cta: 'Ver comanda', ctaBg: 'var(--a3-soft)', ctaFg: 'var(--a3-ink)', open: () => this.setState({ screen: 'comanda' }) }
+        ] },
+        { name: 'Por cobrar', dot: 'var(--a4)', soft: 'var(--a4-soft)', line: 'var(--a4-line)', cards: [
+          { title: 'Mesa 3', detail: 'Pidió la cuenta hace 4 min · ' + mxn(493), time: '25 min', timeFg: 'var(--a1)', waiter: 'Carlos Ruiz', cta: 'Cobrar', ctaBg: 'var(--ink)', ctaFg: 'var(--on-ink)', open: () => this.setState({ screen: 'caja', target: 'm3' }) }
+        ] }
+      ].map(c => ({ ...c, count: c.cards.length })),
+
+      cats: CATS.map(([id, name, c]) => ({
+        name, pick: () => this.setState({ cat: id }),
+        bg: s.cat === id ? c : 'var(--color-surface)',
+        fg: s.cat === id ? 'var(--color-surface)' : 'var(--mut)',
+        bd: s.cat === id ? c : 'var(--line)'
+      })),
+
+      menu: this.MENU.filter(m => m.c === s.cat).map(m => ({
+        name: m.name, description: m.description, price: mxn(m.price),
+        add: () => { if (locked) this.toast('Los pedidos de plataforma no se editan desde el POS', 'warn'); else this.addTo(s.cChan, m); },
+        mods: () => { if (locked) this.toast('Los pedidos de plataforma no se editan desde el POS', 'warn'); else this.setState({ sheet: 'mods', modId: m.id, modOut: [], modExtra: [], modTerm: 'Término medio' }); }
+      })),
+
+      closeSheet: () => this.setState({ sheet: null }),
+      modsOpen: s.sheet === 'mods',
+      mod: (() => {
+        const m = this.MENU.find(x => x.id === s.modId) || this.MENU[0];
+        const outs = this.MODS.out[m.id] || [];
+        const extras = this.MODS.extra[m.id] || [];
+        const extraSum = extras.filter(e => s.modExtra.includes(e[0])).reduce((a, e) => a + e[1], 0);
+        const hasTerm = m.id === 'm5';
+        const noteBits = [];
+        if (hasTerm) noteBits.push(s.modTerm);
+        s.modOut.forEach(o => noteBits.push('Sin ' + o.toLowerCase()));
+        s.modExtra.forEach(e => noteBits.push('+ ' + e));
+        return {
+          name: m.name, subtitle: m.description + ' · ' + mxn(m.price),
+          hasTerm,
+          terms: this.MODS.term.map(t => ({
+            label: t, pick: () => this.setState({ modTerm: t }),
+            bg: s.modTerm === t ? 'var(--a1)' : 'var(--color-surface)',
+            fg: s.modTerm === t ? 'var(--a1-on)' : 'var(--mut)',
+            bd: s.modTerm === t ? 'var(--a1)' : 'var(--line)'
+          })),
+          removals: (outs.length ? outs : ['Sin modificadores para este platillo']).map(o => {
+            const on = s.modOut.includes(o);
+            return {
+              label: outs.length ? 'Sin ' + o.toLowerCase() : o,
+              icon: on ? 'ph-fill ph-x-circle' : 'ph ph-circle',
+              pick: () => { if (outs.length) this.toggle('modOut', o); },
+              bg: on ? 'var(--a3)' : 'var(--color-surface)',
+              fg: on ? 'var(--a3-on)' : 'var(--mut)',
+              bd: on ? 'var(--a3)' : 'var(--line)'
+            };
+          }),
+          extras: extras.map(e => {
+            const on = s.modExtra.includes(e[0]);
+            return {
+              label: e[0], price: '+ ' + mxn(e[1]), pick: () => this.toggle('modExtra', e[0]),
+              bg: on ? 'var(--a2-soft)' : 'var(--color-surface)',
+              bd: on ? 'var(--cta)' : 'var(--line)',
+              fg: on ? 'var(--a2-ink)' : 'var(--color-text)',
+              boxBd: on ? 'var(--cta)' : 'var(--line)',
+              boxBg: on ? 'var(--cta)' : 'transparent',
+              boxFg: on ? 'var(--cta-on)' : 'transparent'
+            };
+          }),
+          note: noteBits.length ? noteBits.join(' · ') : 'Sin notas',
+          total: mxn(m.price + extraSum),
+          save: () => {
+            this.addTo(s.cChan, { id: m.id + ':' + noteBits.join('|'), name: m.name, price: m.price + extraSum });
+            this.setState(st => {
+              const list = st[st.cChan].slice();
+              const i = list.length - 1;
+              if (i >= 0) list[i] = { ...list[i], notes: noteBits.join(' · ') };
+              return { [st.cChan]: list, sheet: null };
+            });
+            this.toast(m.name + ' agregado' + (noteBits.length ? ' · ' + noteBits.join(' · ') : ''), 'ok');
+          }
+        };
+      })(),
+
+      cart: s[s.cChan].map((i, idx) => ({
+        name: i.name, qty: i.qty, notes: i.notes, line: mxn(i.qty * i.price),
+        inc: () => { if (locked) this.toast('Los pedidos de plataforma no se editan desde el POS', 'warn'); else this.bump(s.cChan, idx, 1); },
+        dec: () => { if (locked) this.toast('Los pedidos de plataforma no se editan desde el POS', 'warn'); else this.bump(s.cChan, idx, -1); }
+      })),
+      cartIsEmpty: s[s.cChan].length === 0,
+      cartEmpty: 'La comanda está vacía. Toca un platillo del menú para agregarlo.',
+      comandaChans: [
+        { id: 'cart', label: 'Mesa 2 · Terraza', meta: 'Ana García · abierta 19:18', icon: 'ph ph-grid-four' },
+        { id: 'llevar', label: 'Para llevar · #12', meta: 'Sofía R. · recoge 20:05', icon: 'ph ph-bag' },
+        { id: 'didi', label: 'DiDi Food · #4471', meta: 'Pagado en la app', icon: 'ph ph-moped' },
+        { id: 'uber', label: 'Uber Eats · #A93', meta: 'Pagado en la app', icon: 'ph ph-moped-front' }
+      ].map(c => ({
+        ...c, pick: () => this.setState({ cChan: c.id }),
+        bg: s.cChan === c.id ? 'var(--cta)' : 'var(--color-surface)',
+        fg: s.cChan === c.id ? 'var(--cta-on)' : 'var(--color-text)',
+        bd: s.cChan === c.id ? 'var(--cta)' : 'var(--line)'
+      })),
+      comandaIsTakeaway: s.cChan === 'llevar',
+      comandaIsPlatform: s.cChan === 'didi' || s.cChan === 'uber',
+      comandaTitle: CKMETA.title, comandaMeta: CKMETA.meta,
+      platformTitle: s.cChan === 'uber' ? 'Uber Eats · #A93 — llegó por integración' : 'DiDi Food · #4471 — llegó por integración',
+      platformNote: 'El pedido y el pago vienen de la plataforma; solo confirmas el tiempo de preparación. Los artículos no se editan desde el POS.',
+      prepTimes: ['15 min', '20 min', '30 min'].map(p => ({
+        label: p, pick: () => this.setState({ prep: p }),
+        bg: s.prep === p ? 'var(--a4)' : 'var(--color-surface)',
+        fg: s.prep === p ? 'var(--a4-on)' : 'var(--a4-ink)',
+        bd: s.prep === p ? 'var(--a4)' : 'var(--a4-line)'
+      })),
+      packOpts: ['Bolsa', 'Caja', 'Sin cubiertos'].map(p => ({
+        label: p, pick: () => this.setState({ pack: p }),
+        bg: s.pack === p ? 'var(--a2-soft)' : 'var(--color-surface)',
+        fg: s.pack === p ? 'var(--a2-ink)' : 'var(--mut)',
+        bd: s.pack === p ? 'var(--cta)' : 'var(--line)'
+      })),
+      comandaActLabel: CKMETA.act, comandaActIcon: CKMETA.actIcon,
+      comandaAct: () => {
+        if (s.cChan === 'didi' || s.cChan === 'uber') this.toast('Pedido aceptado · ' + s.prep + ' de preparación', 'ok');
+        else this.setState({ screen: 'caja', target: s.cChan === 'cart' ? 'm2' : s.cChan });
+      },
+      sendKitchen: () => this.toast(s[s.cChan].length ? 'Comanda enviada a cocina · ' + CKMETA.title : 'Agrega al menos un platillo antes de enviar', s[s.cChan].length ? 'ok' : 'warn'),
+      cartCount: s[s.cChan].reduce((a, i) => a + i.qty, 0) + ' artículos',
+      cartTime: '19:18',
+      cartSubtotal: mxn(cSub), cartTax: mxn(cTax), cartTotal: mxn(cSub + cTax),
+
+      tabs: [
+        { id: 'mostrador', label: 'Mostrador', total: mxn(sumOf('counter') * 1.16) },
+        { id: 'llevar', label: 'Para llevar · #12', total: mxn(sumOf('llevar') * 1.16) },
+        { id: 'didi', label: 'DiDi Food · #4471', total: mxn(sumOf('didi') * 1.16) },
+        { id: 'uber', label: 'Uber Eats · #A93', total: mxn(sumOf('uber') * 1.16) },
+        { id: 'm3', label: 'Mesa 3 · pide cuenta', total: mxn(sumOf('m3') * 1.16) },
+        { id: 'm2', label: 'Mesa 2 · Terraza', total: mxn(ct.total) }
+      ].map(t => ({
+        label: t.label, total: t.total, pick: () => this.setState({ target: t.id, input: '' }),
+        bg: s.target === t.id ? 'var(--color-accent)' : 'var(--color-surface)',
+        fg: s.target === t.id ? '#fff' : 'var(--color-text)',
+        bd: s.target === t.id ? 'var(--color-accent)' : 'var(--line)'
+      })),
+      payTitle: pay.title + (s.split ? ' · cuenta ' + (s.splitIdx + 1) + ' de ' + s.split.length : ''),
+      hasDiscount: !!s.discount,
+      discountRow: s.discount ? 'Descuento ' + s.discount.label + ' · ' + s.discount.reason : '',
+      discountAmt: mxn(discApplied),
+      payItems: pay.items.map((i, idx) => ({
+        qty: i.qty, name: i.name, line: mxn(i.qty * i.price),
+        inc: () => this.bump(pay.key, idx, 1), dec: () => this.bump(pay.key, idx, -1)
+      })),
+      payIsEmpty: pay.items.length === 0,
+      payEmpty: 'Cuenta vacía — agrega del menú de venta rápida.',
+      cajaCats: CATS.map(([id, name, c, short]) => ({
+        name: short, pick: () => this.setState({ cajaCat: id }),
+        bg: s.cajaCat === id ? c : 'var(--color-surface)',
+        fg: s.cajaCat === id ? 'var(--color-surface)' : 'var(--mut)',
+        bd: s.cajaCat === id ? c : 'var(--line)'
+      })),
+      cajaMenu: this.MENU.filter(m => m.c === s.cajaCat).map(m => ({
+        name: m.name, price: mxn(m.price), add: () => this.addTo(pay.key, m)
+      })),
+      tips: [0, 10, 15, 20].map(p => ({
+        label: p + '%', pick: () => this.setState({ tip: p }),
+        bg: s.tip === p ? 'var(--accent-soft)' : 'var(--color-surface)',
+        fg: s.tip === p ? 'var(--accent-ink)' : 'var(--mut)',
+        bd: s.tip === p ? 'var(--color-accent)' : 'var(--line)'
+      })),
+      tipAmount: '+ ' + mxn(tipAmount),
+      methods: methodDef.map(([id, label, icon, tag]) => ({
+        label, icon, tag, pick: () => this.setState({ method: id, input: '' }),
+        bg: s.method === id ? 'var(--accent-soft)' : 'var(--color-surface)',
+        fg: s.method === id ? 'var(--accent-ink)' : 'var(--color-text)',
+        bd: s.method === id ? 'var(--color-accent)' : 'var(--line)',
+        tagFg: s.method === id ? 'var(--color-accent)' : 'var(--mut)'
+      })),
+      openSplit: () => this.setState({ sheet: 'split' }),
+      openDiscount: () => this.setState({ sheet: 'discount' }),
+      splitOpen: s.sheet === 'split', discOpen: s.sheet === 'discount',
+      splitLabel: s.split ? 'Cuenta dividida en ' + s.split.length : 'Dividir cuenta',
+      splitBg: s.split ? 'var(--a4-soft)' : 'var(--color-surface)',
+      splitFg: s.split ? 'var(--a4-ink)' : 'var(--color-text)',
+      splitBd: s.split ? 'var(--a4)' : 'var(--line)',
+      discLabel: s.discount ? 'Descuento ' + s.discount.label : 'Descuento',
+      discBg: s.discount ? 'var(--a2-soft)' : 'var(--color-surface)',
+      discFg: s.discount ? 'var(--a2-ink)' : 'var(--color-text)',
+      discBd: s.discount ? 'var(--cta)' : 'var(--line)',
+      splitActive: !!s.split,
+      clearSplit: () => this.setState({ split: null, splitIdx: 0 }),
+      splitChecks: (splitAmts || []).map((amt, i) => ({
+        label: 'Cuenta ' + (i + 1), amount: mxn(amt),
+        icon: i < s.splitIdx ? 'ph-fill ph-check-circle' : 'ph ph-receipt',
+        pick: () => this.setState({ splitIdx: i, input: '' }),
+        bg: s.splitIdx === i ? 'var(--a4)' : i < s.splitIdx ? 'var(--a2-soft)' : 'var(--surface-2)',
+        fg: s.splitIdx === i ? 'var(--a4-on)' : i < s.splitIdx ? 'var(--a2-ink)' : 'var(--mut)',
+        bd: s.splitIdx === i ? 'var(--a4)' : 'var(--line)'
+      })),
+      splitBase: mxn(baseTotal),
+      splitModes: [
+        ['equal', 'En partes iguales', 'Divide el total entre N personas'],
+        ['items', 'Por artículo', 'Marca qué paga cada cuenta'],
+        ['seat', 'Por comensal', 'Usa el comensal capturado en la comanda']
+      ].map(([id, label, hint]) => ({
+        label, hint, pick: () => this.setState({ splitMode: id }),
+        bg: s.splitMode === id ? 'var(--a4)' : 'var(--color-surface)',
+        fg: s.splitMode === id ? 'var(--a4-on)' : 'var(--color-text)',
+        bd: s.splitMode === id ? 'var(--a4)' : 'var(--line)'
+      })),
+      splitIsEqual: s.splitMode === 'equal', splitIsItems: s.splitMode === 'items', splitIsSeat: s.splitMode === 'seat',
+      splitN: s.splitN,
+      splitEach: mxn(Math.round(baseTotal / s.splitN * 100) / 100),
+      splitInc: () => this.setState({ splitN: Math.min(12, s.splitN + 1) }),
+      splitDec: () => this.setState({ splitN: Math.max(2, s.splitN - 1) }),
+      splitItems: pay.items.map((i, idx) => {
+        const on = s.splitSel.includes(idx);
+        return {
+          qty: i.qty, name: i.name, line: mxn(i.qty * i.price),
+          pick: () => this.toggle('splitSel', idx),
+          bg: on ? 'var(--a4-soft)' : 'var(--color-surface)',
+          bd: on ? 'var(--a4)' : 'var(--line)',
+          boxBd: on ? 'var(--a4)' : 'var(--line)',
+          boxBg: on ? 'var(--a4)' : 'transparent',
+          boxFg: on ? 'var(--a4-on)' : 'transparent'
+        };
+      }),
+      splitSelCount: s.splitSel.length + (s.splitSel.length === 1 ? ' artículo' : ' artículos'),
+      splitSelTotal: mxn(splitSelSub * 1.16),
+      splitRestTotal: mxn((subBase - splitSelSub) * 1.16),
+      splitSeats: SEATS.map(p => ({ n: p.n, label: p.label, detail: p.detail, total: mxn(p.total) })),
+      splitApplyLabel: s.splitMode === 'equal' ? 'Dividir en ' + s.splitN : s.splitMode === 'items' ? 'Crear 2 cuentas' : 'Crear ' + SEATS.length + ' cuentas',
+      applySplit: () => {
+        let parts;
+        if (s.splitMode === 'equal') parts = Array.from({ length: s.splitN }, () => 1 / s.splitN);
+        else if (s.splitMode === 'items') {
+          const r = subBase ? splitSelSub / subBase : 0.5;
+          parts = [r, 1 - r];
+        } else parts = SEATS.map(p => (subBase ? p.total / subBase : 1 / SEATS.length));
+        this.setState({ split: parts, splitIdx: 0, sheet: null, input: '' });
+        this.toast('Cuenta dividida en ' + parts.length + ' — cobra una por una', 'ok');
+      },
+      discBase: mxn(subBase),
+      discTypes: [['pct', 'Porcentaje'], ['amount', 'Monto fijo'], ['comp', 'Cortesía total']].map(([id, label]) => ({
+        label, pick: () => this.setState({ discType: id, discVal: id === 'pct' ? 10 : id === 'amount' ? 50 : 100 }),
+        bg: s.discType === id ? 'var(--cta)' : 'var(--color-surface)',
+        fg: s.discType === id ? 'var(--cta-on)' : 'var(--color-text)',
+        bd: s.discType === id ? 'var(--cta)' : 'var(--line)'
+      })),
+      discValues: (s.discType === 'pct' ? [5, 10, 15, 20] : s.discType === 'amount' ? [50, 100, 200, 500] : [100]).map(v => ({
+        label: s.discType === 'pct' ? v + '%' : s.discType === 'amount' ? '$' + v : 'Cuenta completa',
+        pick: () => this.setState({ discVal: v }),
+        bg: s.discVal === v ? 'var(--a2-soft)' : 'var(--color-surface)',
+        fg: s.discVal === v ? 'var(--a2-ink)' : 'var(--color-text)',
+        bd: s.discVal === v ? 'var(--cta)' : 'var(--line)'
+      })),
+      discReasons: ['Cortesía de la casa', 'Cliente frecuente', 'Error de cocina', 'Promoción del día', 'Personal'].map(r => ({
+        label: r, pick: () => this.setState({ discReason: r }),
+        bg: s.discReason === r ? 'var(--a3)' : 'var(--color-surface)',
+        fg: s.discReason === r ? 'var(--a3-on)' : 'var(--mut)',
+        bd: s.discReason === r ? 'var(--a3)' : 'var(--line)'
+      })),
+      discAuthNote: s.discType === 'comp' || discAmt > subBase * 0.15 ? 'Requiere PIN de gerente: supera el 15% del subtotal' : 'Ana García puede aplicar hasta 15% sin PIN',
+      discAmount: mxn(discAmt),
+      discNewTax: mxn(Math.round((subBase - discAmt) * 0.16 * 100) / 100),
+      discNewTotal: mxn(Math.round((subBase - discAmt) * 1.16 * 100) / 100),
+      applyDiscount: () => {
+        if (!s.discReason) { this.toast('Elige un motivo antes de aplicar el descuento', 'warn'); return; }
+        const label = s.discType === 'pct' ? s.discVal + '%' : s.discType === 'amount' ? mxn(s.discVal) : 'cortesía';
+        this.setState({ discount: { amount: discAmt, label, reason: s.discReason }, sheet: null, input: '' });
+        this.toast('Descuento de ' + label + ' aplicado · ' + s.discReason, 'ok');
+      },
+      clearDiscount: () => { this.setState({ discount: null, sheet: null }); this.toast('Descuento retirado', 'ok'); },
+
+      openCancel: () => this.setState({ sheet: 'cancel', actOpt: '' }),
+      openTransfer: () => this.setState({ sheet: 'transfer', actOpt: '' }),
+      actionOpen: s.sheet === 'cancel' || s.sheet === 'transfer',
+      act: (() => {
+        const o = ORDERS.find(x => x.id === s.openOrder) || ORDERS[0];
+        if (s.sheet === 'transfer') {
+          const opts = ['Mesa 1', 'Mesa 4', 'Mesa 7', 'Mesa 8', 'Unir con Mesa 5'];
+          return {
+            title: 'Transferir ' + o.id, subtitle: o.table + ' · ' + o.waiter,
+            icon: 'ph ph-arrows-left-right', tint: 'var(--a4)', soft: 'var(--a4-soft)', on: 'var(--a4-on)',
+            optTitle: 'Mover a', cta: s.actOpt.startsWith('Unir') ? 'Unir cuentas' : 'Transferir',
+            options: opts.map(x => ({
+              label: x, pick: () => this.setState({ actOpt: x }),
+              bg: s.actOpt === x ? 'var(--a4)' : 'var(--color-surface)',
+              fg: s.actOpt === x ? 'var(--a4-on)' : 'var(--color-text)',
+              bd: s.actOpt === x ? 'var(--a4)' : 'var(--line)'
+            })),
+            listTitle: 'Se mueve con la orden',
+            rows: [
+              { icon: 'ph ph-receipt', name: 'Artículos y notas de cocina', value: 'Sí' },
+              { icon: 'ph ph-user', name: 'Mesero asignado', value: o.waiter },
+              { icon: 'ph ph-clock', name: 'Tiempo transcurrido', value: o.min + ' min' }
+            ],
+            note: 'Al unir cuentas se suman los artículos en la mesa destino y la de origen queda libre. La cocina recibe un aviso con el nuevo número de mesa.',
+            confirm: () => {
+              if (!s.actOpt) { this.toast('Elige la mesa destino', 'warn'); return; }
+              this.toast(o.id + ' movida a ' + s.actOpt.replace('Unir con ', ''), 'ok');
+              this.setState({ sheet: null, openOrder: null });
+            }
+          };
+        }
+        const opts = ['Cliente canceló', 'Error de captura', 'Sin insumo', 'Demora en cocina', 'Duplicada'];
+        return {
+          title: 'Cancelar ' + o.id, subtitle: o.table + ' · ' + mxn(o.total),
+          icon: 'ph ph-prohibit', tint: 'var(--a3)', soft: 'var(--a3-soft)', on: 'var(--a3-on)',
+          optTitle: 'Motivo de cancelación', cta: 'Cancelar orden',
+          options: opts.map(x => ({
+            label: x, pick: () => this.setState({ actOpt: x }),
+            bg: s.actOpt === x ? 'var(--a3)' : 'var(--color-surface)',
+            fg: s.actOpt === x ? 'var(--a3-on)' : 'var(--color-text)',
+            bd: s.actOpt === x ? 'var(--a3)' : 'var(--line)'
+          })),
+          listTitle: 'Consecuencias',
+          rows: [
+            { icon: 'ph ph-package', name: 'Insumos devueltos al inventario', value: s.actOpt === 'Sin insumo' ? 'No' : 'Sí' },
+            { icon: 'ph ph-fire', name: 'Aviso a cocina', value: 'Inmediato' },
+            { icon: 'ph ph-shield-check', name: 'Autorización de gerencia', value: 'PIN' }
+          ],
+          note: 'La cancelación no borra la orden: queda con estado cancelado, motivo y responsable para el corte del turno.',
+          confirm: () => {
+            if (!s.actOpt) { this.toast('Elige el motivo de la cancelación', 'warn'); return; }
+            this.toast(o.id + ' cancelada · ' + s.actOpt, 'warn');
+            this.setState({ sheet: null, openOrder: null });
+          }
+        };
+      })(),
+
+      isCash: s.method === 'cash', isTerminal: s.method !== 'cash',
+      due: mxn(dueN), received: s.input ? mxn(recv) : '$0.00',
+      change: mxn(changeN), changeFg: changeN > 0 ? 'var(--on-ink)' : 'var(--mut)',
+      quick: ['Exacto', '$200', '$500', '$1000'].map(q => ({
+        label: q,
+        press: () => this.setState({ input: q === 'Exacto' ? dueN.toFixed(2) : q.replace('$', '') })
+      })),
+      keys: ['7', '8', '9', '4', '5', '6', '1', '2', '3', 'C', '0', '⌫'].map(k => ({
+        label: k, fg: k === 'C' || k === '⌫' ? 'var(--a1)' : 'var(--color-text)',
+        press: () => this.press(k)
+      })),
+      termIcon: tc[0], termLabel: tc[1], termNote: tc[2],
+      termSteps: stepLabels.map((l, i) => ({
+        n: i + 1, label: l,
+        fg: i === 0 ? 'var(--color-text)' : 'var(--mut)',
+        bg: i === 0 ? 'var(--color-accent)' : 'var(--surface-2)',
+        numFg: i === 0 ? '#fff' : 'var(--mut)'
+      })),
+      pay: () => {
+        if (s.split && s.splitIdx < s.split.length - 1) {
+          this.toast('Cuenta ' + (s.splitIdx + 1) + ' cobrada · sigue la ' + (s.splitIdx + 2), 'ok');
+          this.setState({ splitIdx: s.splitIdx + 1, input: '' });
+          return;
+        }
+        this.toast(s.method === 'cash' ? 'Cobro registrado · cambio ' + mxn(changeN) : 'Pago autorizado — cuenta cerrada', 'ok');
+        this.setState({ input: '', screen: 'mesas', split: null, splitIdx: 0, discount: null });
+      },
+      payIcon: s.method === 'cash' ? 'ph ph-money' : 'ph ph-paper-plane-tilt',
+      payLabel: s.method === 'cash' ? 'Cobrar ' + mxn(dueN) : 'Enviar ' + mxn(dueN) + ' al lector',
+      payHint: s.method === 'cash'
+        ? (recv >= dueN ? 'Listo — entrega ' + mxn(changeN) + ' de cambio' : 'Teclea lo recibido o toca Exacto')
+        : 'La mesa se cierra sola al confirmar el pago',
+
+      kitchen: KCOLS.map(c => ({
+        name: c.name, dot: c.dot, soft: c.soft,
+        count: c.tickets.length + (c.tickets.length === 1 ? ' comanda' : ' comandas'),
+        isEmpty: c.tickets.length === 0,
+        empty: 'Sin comandas en esta etapa',
+        tickets: c.tickets.map(k => {
+          const late = k.min > k.sla, warn = !late && k.min > k.sla * 0.7;
+          const fg = late ? 'var(--a3)' : warn ? 'var(--a1)' : 'var(--cta)';
+          return {
+            table: k.table, items: k.items, dot: c.dot, cta: c.cta,
+            channel: k.ch, chBg: k.chBg, chFg: k.chFg,
+            time: k.min + ' min', timeFg: fg,
+            pct: Math.min(100, Math.round(k.min / k.sla * 100)) + '%',
+            slaLabel: late ? 'Retrasada ' + (k.min - k.sla) + ' min sobre la meta de ' + k.sla
+                    : warn ? 'Cerca del límite · meta ' + k.sla + ' min'
+                    : 'En tiempo · meta ' + k.sla + ' min',
+            advance: () => this.toast(c.done + ' — ' + k.table, late ? 'warn' : 'ok')
+          };
+        })
+      })),
+      kFilters: [['todas', 'Todas'], ['mesa', 'En mesa'], ['online', 'Para llevar y online'], ['tarde', 'Retrasadas']].map(([id, label]) => ({
+        label, n: id === 'todas' ? KALL.length : id === 'tarde' ? KLATE.length : KALL.filter(k => (id === 'mesa') === k.dine).length,
+        pick: () => this.setState({ kf: id }),
+        bg: s.kf === id ? 'var(--color-surface)' : 'transparent',
+        fg: s.kf === id ? 'var(--color-text)' : 'var(--mut)'
+      })),
+      kAlert: KLATE.length ? KLATE.length + ' comanda' + (KLATE.length > 1 ? 's' : '') + ' sobre el tiempo meta' : 'Todo en tiempo',
+      kAvg: Math.round(KALL.reduce((a, k) => a + k.min, 0) / KALL.length) + ' min',
+
+      oFilters: [['todas', 'Todas'], ['abierta', 'Abiertas'], ['cocina', 'En cocina'], ['lista', 'Listas'], ['pagada', 'Pagadas']].map(([id, label]) => ({
+        label, n: id === 'todas' ? ORDERS.length : ORDERS.filter(o => o.f === id).length,
+        pick: () => this.setState({ of: id }),
+        bg: s.of === id ? 'var(--cta)' : 'var(--color-surface)',
+        fg: s.of === id ? 'var(--cta-on)' : 'var(--mut)',
+        bd: s.of === id ? 'var(--cta)' : 'var(--line)'
+      })),
+      oStats: [
+        { label: 'Ventas del turno', value: mxn(ORDERS.reduce((a, o) => a + o.total, 0)), fg: 'var(--color-text)' },
+        { label: 'Ticket promedio', value: mxn(Math.round(ORDERS.reduce((a, o) => a + o.total, 0) / ORDERS.length)), fg: 'var(--color-text)' },
+        { label: 'Retrasadas', value: String(ORDERS.filter(o => o.min > 20 && o.f !== 'pagada').length), fg: 'var(--a3)' }
+      ],
+      orders: ORDERS.filter(o => s.of === 'todas' || o.f === s.of).map(o => {
+        const m = {
+          open: ['Abierta', 'var(--a1)', 'var(--a1-on)'], sent: ['En cocina', 'var(--a3)', 'var(--a3-on)'],
+          ready: ['Lista', 'var(--a2)', 'var(--a2-on)'], paid: ['Pagada', 'var(--a4-soft)', 'var(--a4-ink)']
+        }[o.k];
+        const late = o.min > 20 && o.k !== 'paid';
+        return {
+          id: o.id, table: o.table, waiter: o.waiter, icon: o.icon, total: mxn(o.total),
+          status: m[0], bg: m[1], fg: m[2],
+          time: o.min + ' min', timeFg: late ? 'var(--a3)' : 'var(--mut)',
+          timeW: late ? '700' : '400', timeIcon: late ? 'ph-fill ph-warning-circle' : 'ph ph-clock',
+          rowBg: s.openOrder === o.id ? 'var(--surface-2)' : 'transparent',
+          open: () => this.setState({ openOrder: o.id })
+        };
+      }),
+      orderOpen: s.screen === 'ordenes' && !!s.openOrder,
+      closeOrder: () => this.setState({ openOrder: null }),
+      od: (() => {
+        const o = ORDERS.find(x => x.id === s.openOrder) || ORDERS[0];
+        const det = ODETAIL[o.id] || ODETAIL['#o1'];
+        const m = {
+          open: ['Abierta', 'var(--a1)', 'var(--a1-on)'], sent: ['En cocina', 'var(--a3)', 'var(--a3-on)'],
+          ready: ['Lista', 'var(--a2)', 'var(--a2-on)'], paid: ['Pagada', 'var(--a4-soft)', 'var(--a4-ink)']
+        }[o.k];
+        const sub = det.items.reduce((a, i) => a + i.qty * i.price, 0);
+        const tax = Math.round(sub * 0.16 * 100) / 100;
+        const tip = det.tip || 0;
+        return {
+          title: o.id + ' · ' + o.table, status: m[0], bg: m[1], fg: m[2],
+          meta: o.waiter + ' · abierta ' + det.opened + ' · ' + o.min + ' min',
+          items: det.items.map(i => ({ qty: i.qty, name: i.name, notes: i.notes || '', line: mxn(i.qty * i.price) })),
+          timeline: det.steps.map((st, i) => {
+            const done = i < det.at;
+            const now = i === det.at;
+            return {
+              label: st[0], meta: st[1],
+              icon: done ? 'ph-fill ph-check' : now ? 'ph-fill ph-circle' : 'ph ph-circle',
+              bg: done ? 'var(--cta)' : now ? 'var(--a3)' : 'var(--surface-2)',
+              iconFg: done || now ? 'var(--cta-on)' : 'var(--mut)',
+              fg: done || now ? 'var(--color-text)' : 'var(--mut)'
+            };
+          }),
+          totals: [
+            { label: 'Subtotal', value: mxn(sub), size: '13px', fg: 'var(--mut)', w: '400' },
+            { label: 'IVA 16%', value: mxn(tax), size: '13px', fg: 'var(--mut)', w: '400' },
+            { label: 'Propina', value: mxn(tip), size: '13px', fg: 'var(--mut)', w: '400' },
+            { label: 'Total', value: mxn(sub + tax + tip), size: '20px', fg: 'var(--color-text)', w: '600' }
+          ],
+          cta: det.cta,
+          print: () => this.toast('Ticket reimpreso · ' + o.id, 'ok'),
+          act: () => { this.toast(det.done, 'ok'); this.setState({ openOrder: null }); }
+        };
+      })(),
+      ordersIsEmpty: ORDERS.filter(o => s.of === 'todas' || o.f === s.of).length === 0,
+      ordersEmpty: 'Ninguna orden en este filtro.',
+
+      invTabs: [['stock', 'Existencias'], ['moves', 'Movimientos'], ['count', 'Conteo físico']].map(([id, label]) => ({
+        label, pick: () => this.setState({ invTab: id }),
+        bg: s.invTab === id ? 'var(--color-surface)' : 'transparent',
+        fg: s.invTab === id ? 'var(--color-text)' : 'var(--mut)'
+      })),
+      invIsStock: s.invTab === 'stock', invIsMoves: s.invTab === 'moves', invIsCount: s.invTab === 'count',
+      invCta: s.invTab === 'moves' ? 'Registrar movimiento' : s.invTab === 'count' ? 'Nuevo conteo' : 'Agregar insumo',
+      invAdd: () => this.setState({ dialog: s.invTab === 'moves' ? 'moves' : 'supply' }),
+      invAlert: STOCK.filter(r => r.qty <= r.min).length + ' insumos bajo mínimo',
+      invStock: STOCK.map(r => {
+        const low = r.qty <= r.min, near = !low && r.qty <= r.min * 1.5;
+        return {
+          name: r.name, qty: r.qty.toFixed(r.dec) + ' ' + r.u, min: r.min.toFixed(r.dec) + ' ' + r.u, cost: mxn(r.cost),
+          fg: low ? 'var(--a3)' : 'var(--color-text)',
+          status: low ? 'Reponer' : near ? 'Al límite' : 'Suficiente',
+          bg: low ? 'var(--a3)' : near ? 'var(--a3-soft)' : 'var(--a2-soft)',
+          chipFg: low ? 'var(--a3-on)' : near ? 'var(--a3-ink)' : 'var(--a2-ink)',
+          open: () => this.setState({ dialog: 'supply' })
+        };
+      }),
+      invMoves: [
+        { kind: 'Entrada · Proveedor Sierra', meta: 'Hoy 08:10 · factura A-2214', delta: '+ ' + mxn(4820), dot: 'var(--cta)', soft: 'var(--a2-soft)', icon: 'ph ph-arrow-down-left',
+          lines: [{ name: 'Arrachera', qty: '+ 12 kg' }, { name: 'Aguacate', qty: '+ 60 pza' }] },
+        { kind: 'Merma registrada', meta: 'Ayer 22:40 · María López', delta: '− ' + mxn(96), dot: 'var(--a3)', soft: 'var(--a3-soft)', icon: 'ph ph-trash',
+          lines: [{ name: 'Aguacate maduro', qty: '− 2 pza' }, { name: 'Tortilla', qty: '− 0.5 kg' }] },
+        { kind: 'Salida por ventas', meta: 'Turno tarde · automática', delta: '− ' + mxn(1310), dot: 'var(--a1)', soft: 'var(--a1-soft)', icon: 'ph ph-arrow-up-right',
+          lines: [{ name: 'Arrachera (2 platos)', qty: '− 0.6 kg' }, { name: 'Cerveza IPA', qty: '− 6 pza' }] }
+      ],
+      invCount: COUNT.map((c, idx) => {
+        const real = (s.counts && s.counts[c.id] !== undefined) ? s.counts[c.id] : c.sys;
+        const d = real - c.sys;
+        return {
+          name: c.name, sys: c.sys + ' ' + c.u, real,
+          diff: d === 0 ? '0' : (d > 0 ? '+' : '') + d,
+          fg: d === 0 ? 'var(--mut)' : d < 0 ? 'var(--a3)' : 'var(--cta)',
+          inc: () => this.count(c.id, real + 1), dec: () => this.count(c.id, Math.max(0, real - 1))
+        };
+      }),
+      invSummary: (() => {
+        let short = 0, over = 0, cost = 0;
+        COUNT.forEach(c => {
+          const real = (s.counts && s.counts[c.id] !== undefined) ? s.counts[c.id] : c.sys;
+          const d = real - c.sys;
+          if (d < 0) { short += -d; cost += -d * c.cost; } else over += d;
+        });
+        return [
+          { label: 'Faltantes', value: String(short), fg: short ? 'var(--a3)' : 'var(--mut)' },
+          { label: 'Sobrantes', value: String(over), fg: over ? 'var(--cta)' : 'var(--mut)' },
+          { label: 'Costo de la merma', value: mxn(cost), fg: cost ? 'var(--a3)' : 'var(--mut)' }
+        ];
+      })(),
+      closeCount: () => this.toast('Conteo cerrado — existencias ajustadas', 'ok'),
+
+      shiftKpis: [
+        { label: 'Ventas', value: mxn(SHIFT.total), meta: SHIFT.count + ' órdenes cobradas', dot: 'var(--cta)' },
+        { label: 'Ticket promedio', value: mxn(Math.round(SHIFT.total / SHIFT.count)), meta: 'vs. ' + mxn(268) + ' ayer', dot: 'var(--a2)' },
+        { label: 'Propinas', value: mxn(SHIFT.tips), meta: 'Repartir entre 4', dot: 'var(--a4)' },
+        { label: 'Cuentas abiertas', value: '2', meta: 'Mesa 2 y Mesa 5', dot: 'var(--a3)' }
+      ],
+      shiftMethods: SHIFT.methods.map(m => ({
+        label: m.label, icon: m.icon, dot: m.dot, count: m.n + ' pagos', total: mxn(m.amount),
+        pct: Math.round(m.amount / SHIFT.total * 100) + '%'
+      })),
+      shiftChannels: SHIFT.channels.map(c => ({ label: c.label, dot: c.dot, count: c.n + ' órdenes', total: mxn(c.amount) })),
+      cashExpected: mxn(SHIFT.cashExpected),
+      cashRows: [
+        { label: 'Fondo inicial', value: mxn(1500), fg: 'var(--on-ink)' },
+        { label: 'Ventas en efectivo', value: '+ ' + mxn(SHIFT.cashSales), fg: 'var(--on-ink)' },
+        { label: 'Retiros parciales', value: '− ' + mxn(2000), fg: 'var(--on-ink-mut)' }
+      ],
+      denoms: DENOMS.map(d => ({
+        label: '$' + d, n: (s.bills && s.bills[d]) || 0,
+        add: () => this.setState(st => ({ bills: { ...(st.bills || {}), [d]: ((st.bills || {})[d] || 0) + 1 } }))
+      })),
+      counted: mxn(countedTotal),
+      diff: (countedTotal - SHIFT.cashExpected === 0 ? '' : countedTotal > SHIFT.cashExpected ? '+ ' : '− ') + mxn(Math.abs(countedTotal - SHIFT.cashExpected)),
+      diffFg: countedTotal === SHIFT.cashExpected ? 'var(--cta)' : 'var(--a3)',
+      resetCount: () => this.setState({ bills: {} }),
+      closeShift: () => this.toast(countedTotal === SHIFT.cashExpected ? 'Turno cerrado y cuadrado' : 'Turno cerrado con diferencia de ' + mxn(Math.abs(countedTotal - SHIFT.cashExpected)), countedTotal === SHIFT.cashExpected ? 'ok' : 'warn'),
+      shiftHint: countedTotal === 0 ? 'Toca las denominaciones para contar el efectivo' : countedTotal === SHIFT.cashExpected ? 'La caja cuadra con lo esperado' : 'Revisa retiros y propinas antes de cerrar',
+
+      adminCards: [
+        { bg: 'var(--a1-soft)', fg: 'var(--a1)', dlg: 'dish', icon: 'ph ph-fork-knife', title: 'Menú', meta: '8 platillos · 4 categorías', cta: 'Agregar platillo', rows: [
+          { name: 'Arrachera', value: mxn(280) }, { name: 'Enchiladas suizas', value: mxn(145) }, { name: 'Tacos al pastor', value: mxn(85) }
+        ] },
+        { bg: 'var(--a2-soft)', fg: 'var(--cta)', dlg: 'table', icon: 'ph ph-grid-four', title: 'Mesas', meta: '8 mesas · 4 zonas', cta: 'Agregar mesa', rows: [
+          { name: 'Terraza', value: '3 mesas' }, { name: 'Interior', value: '3 mesas' }, { name: 'Barra · VIP', value: '2 mesas' }
+        ] },
+        { bg: 'var(--a4-soft)', fg: 'var(--a4)', dlg: 'staff', icon: 'ph ph-users-three', title: 'Personal', meta: '4 activos', cta: 'Invitar usuario', rows: [
+          { name: 'Ana García', value: 'Mesera' }, { name: 'Carlos Ruiz', value: 'Mesero' }, { name: 'Luis Hernández', value: 'Gerente' }
+        ] },
+        { bg: 'var(--a3-soft)', fg: 'var(--a3)', dlg: 'supply', icon: 'ph ph-package', title: 'Inventario de insumos', meta: '24 insumos · 2 bajo mínimo', cta: 'Agregar insumo', rows: [
+          { name: 'Arrachera (kg)', value: '3.2 · bajo', fg: 'var(--a1)' },
+          { name: 'Aguacate (pza)', value: '11 · bajo', fg: 'var(--a1)' },
+          { name: 'Tortilla maíz (kg)', value: '18.0' },
+          { name: 'Cerveza IPA (pza)', value: '64' }
+        ] },
+        { bg: 'var(--a1-soft)', fg: 'var(--a1)', dlg: 'moves', icon: 'ph ph-arrows-left-right', title: 'Movimientos', meta: 'Entradas, salidas y mermas', cta: 'Registrar movimiento', rows: [
+          { name: 'Entrada · Proveedor Sierra', value: 'Hoy 08:10' },
+          { name: 'Merma · Aguacate 2 pza', value: 'Ayer 22:40', fg: 'var(--a3)' },
+          { name: 'Salida por venta', value: 'Automática' }
+        ] },
+        { bg: 'var(--a2-soft)', fg: 'var(--a2)', dlg: 'recipe', icon: 'ph ph-list-checks', title: 'Recetas y descuento', meta: 'Consumo por platillo', cta: 'Editar recetas', rows: [
+          { name: 'Arrachera', value: '0.3 kg + guarnición' },
+          { name: 'Guacamole', value: '2 aguacates' },
+          { name: 'Descuento al cobrar', value: 'Activo', fg: 'var(--a2-ink)' }
+        ] }
+      ].map(c => ({
+        ...c, open: () => this.setState({ dialog: c.dlg }),
+        rows: c.rows.map(r => ({ ...r, fg: r.fg || 'var(--mut)', open: () => this.setState({ dialog: c.dlg }) }))
+      })),
+
+      dialogOpen: !!s.dialog,
+      closeDialog: () => this.setState({ dialog: null }),
+      dlg: (() => {
+        const d = DIALOGS[s.dialog] || DIALOGS.dish;
+        return {
+          title: d.title, subtitle: d.subtitle, icon: d.icon, tint: d.tint, soft: d.soft,
+          fields: d.fields, listTitle: d.listTitle, rows: d.rows, note: d.note, cta: d.cta,
+          toggles: d.toggles.map(t => ({
+            label: t, pick: () => this.setState({ dlgOpt: t }),
+            bg: (s.dlgOpt || d.toggles[0]) === t ? 'var(--a2-soft)' : 'var(--color-surface)',
+            fg: (s.dlgOpt || d.toggles[0]) === t ? 'var(--a2-ink)' : 'var(--mut)',
+            bd: (s.dlgOpt || d.toggles[0]) === t ? 'var(--cta)' : 'var(--line)'
+          })),
+          save: () => { this.toast(d.done, 'ok'); this.setState({ dialog: null }); }
+        };
+      })(),
+
+      notes: [
+        { kicker: 'Tokens', title: 'Tres paletas sobre los mismos tokens', bullets: [
+          'Cuatro acentos con rol fijo (a1 principal, a2 verde, a3 dorado, a4 frío) y cuatro variantes cada uno: sólido, soft para fondos, ink para texto sobre soft y on para texto sobre sólido. Estados, canales, categorías y columnas leen de esos tokens.',
+          'Paleta elegida — Olivo & dorado: oliva profundo #4F5B34 (acción principal y a1), dorado #C09A3E (a2), terracota #B4643C (a3) y pizarra #3E5A6B (a4), sobre crema #F7F4E9, superficie #FFFDF6, texto #2B2E24 y riel verde oscuro #2E3327.',
+          'Alternativa Madera: café #8C5A34, oliva #6E7350, ocre #C9821A, pino #37605B sobre arena #F1E8DB.',
+          'Barro & cobre: cobre #B4643C, salvia #6E7B5C, dorado #CFA347 y azul noche #2F4858 sobre #F7F0E6; acción principal en verde #55654A.',
+          'En React Native son tres objetos en constants/theme.ts detrás de un ThemeProvider; ningún componente cambia al alternar.',
+          'Estados como color funcional: libre oliva, ocupada en el acento principal sólido, pide cuenta dorado sólido, reservada frío sólido.',
+          'Radios 12–16 y sombras suaves (0 1px 2px / 0 4px 14px). Fuera los bordes de 3px del numpad y las sombras acumuladas.',
+          'Tipografía Inter en 400/500/600. Ningún peso 800: la jerarquía es tamaño y espacio.'
+        ] },
+        { kicker: 'Mesas', title: 'Dos variantes para app/(app)/(tabs)/index.tsx', bullets: [
+          'A · Plano por zona: mantiene el mapa mental del salón. Franja de estado a la izquierda, número grande, mesero y tiempo abajo, total a la derecha.',
+          'B · Cola de servicio: columnas por acción pendiente (atender, tomando orden, en cocina, por cobrar). Elimina el paso de "buscar qué mesa necesita algo".',
+          'Sugerencia: A como vista por defecto en tablet fija, B como vista del gerente y en horas pico.'
+        ] },
+        { kicker: 'Caja', title: 'Menos toques por venta', bullets: [
+          'Un solo panel derecho: display negro con total, recibido y cambio; abajo atajos Exacto / $200 / $500 / $1000 que resuelven el 80% de los pagos en efectivo con un toque.',
+          'Teclas de 62px con ⌫ además de C, para corregir sin borrar todo.',
+          'Propina y método viven a la izquierda junto al detalle de la cuenta; nunca compiten con el numpad.',
+          'El botón de cobro cambia de texto según el método: "Cobrar $X" en efectivo, "Enviar $X al lector" en terminal.'
+        ] },
+        { kicker: 'Pagos con tarjeta', title: 'Camino de integración', bullets: [
+          'El estado paymentMethod ya existe en PosCashRegister; agrega los ids "mp" y "apple" y una capa lib/payments/ con una interfaz común: createIntent(amount, orderId) → status stream → confirm.',
+          'Mercado Pago: QR dinámico o Point SDK. El webhook marca la orden como pagada en Supabase; la UI solo escucha el cambio de estado.',
+          'BBVA / Apple Pay: terminal contactless vía SDK del adquirente. La app envía el monto y espera código de autorización; guarda auth_code y last4 en la orden.',
+          'En los tres casos el flujo visual es el mismo panel de tres pasos: monto enviado, cliente autoriza, recibo y cierre de mesa.'
+        ] },
+        { kicker: 'Canales', title: 'Para llevar y venta online', bullets: [
+          'La tira de canales arriba del plano concentra mostrador, para llevar, DiDi Food y Uber Eats: el mismo POS, sin pantalla aparte.',
+          'Modela el canal como campo de la orden (channel: dine_in | takeaway | didi | uber) en lugar de una mesa falsa; el mostrador y el para llevar ya no compiten por t-counter.',
+          'DiDi y Uber llegan pagados: la orden entra por webhook con estado paid, solo pasa por cocina y se marca entregada. El botón de cobro se oculta en esos canales.',
+          'Para llevar sí cobra en caja, con nombre y hora de recolección visibles en el ticket. Verde olivo marca los canales que no ocupan mesa.'
+        ] },
+        { kicker: 'Comanda', title: 'Un solo capturador para los cuatro canales', bullets: [
+          'La tira superior cambia el destino de la comanda: mesa, para llevar, DiDi o Uber. El menú y el resumen son los mismos; cambia el contexto y la acción final.',
+          'Para llevar agrega nombre, hora de recolección y empaque, datos que el ticket de cocina necesita imprimir.',
+          'DiDi y Uber llegan por integración: los artículos quedan bloqueados (intentar editarlos avisa en el toast) y la única decisión del POS es el tiempo de preparación.',
+          'La acción principal es contextual: Cobrar en mesa y para llevar, Aceptar pedido en plataformas.'
+        ] },
+        { kicker: 'Detalle de orden', title: 'Panel lateral, no pantalla aparte', bullets: [
+          'Cualquier fila de Órdenes abre un panel con artículos, línea de tiempo del pedido, totales con propina y dos acciones: reimprimir ticket y avanzar el estado.',
+          'La línea de tiempo tiene dos variantes: mesa (abierta, a cocina, lista, entregada, cobrada) y plataforma (recibido, aceptado, en preparación, empacado, entregado).',
+          'Como panel, no rompe el contexto de la lista ni pierde el filtro activo.'
+        ] },
+        { kicker: 'Admin', title: 'Formularios en diálogo', bullets: [
+          'Seis diálogos sobre el mismo esqueleto: platillo, mesa, usuario, insumo, movimiento y receta. Campos arriba, lista relacionada en medio, estado como pastillas y una nota que explica la consecuencia.',
+          'Editar platillo muestra su receta y calcula margen contra el costo de insumos; el alta de insumo pide mínimo de alerta y costo unitario porque de ahí salen las alertas y la valuación de merma.',
+          'Cada tarjeta y cada fila de Admin abre su diálogo, igual que las filas de existencias en Inventario.'
+        ] },
+        { kicker: 'Modificadores', title: 'Capturar el término y el sin cebolla', bullets: [
+          'Cada tarjeta del menú tiene dos acciones: el botón + agrega tal cual, y el ícono de controles abre la hoja de modificadores. Lo rápido sigue siendo un toque.',
+          'La hoja tiene tres bloques: término (solo en platillos que lo piden), quitar ingredientes y extras con precio. La nota de cocina se arma sola con lo seleccionado.',
+          'Los extras suman al precio de la línea; el nombre del platillo no cambia, la nota viaja al ticket de cocina.',
+          'En datos: order_items.modifiers como jsonb {term, removed[], extras[{name,price}]}, y notes derivado para imprimir.'
+        ] },
+        { kicker: 'Dividir cuenta', title: 'Tres formas, una sola caja', bullets: [
+          'En partes iguales (N personas), por artículo (marcas qué paga la primera cuenta y el resto queda en la segunda) y por comensal, que requiere capturar seat_number en la comanda.',
+          'Al aplicar, la caja muestra pastillas de cuenta 1, 2, 3 con su monto; cobrar una avanza automáticamente a la siguiente y las cobradas se marcan.',
+          'Cada cuenta puede pagarse con método distinto, que es la razón principal por la que la gente pide dividir.'
+        ] },
+        { kicker: 'Descuentos', title: 'Con motivo y con techo', bullets: [
+          'Tres tipos: porcentaje, monto fijo y cortesía total. El motivo es obligatorio y se guarda con la orden.',
+          'Regla de autorización: hasta 15% del subtotal lo aplica el cajero; arriba de eso, o cortesía total, pide PIN de gerencia.',
+          'El descuento se aplica antes de IVA y de propina, y aparece como línea en el ticket para que el corte del turno cuadre.'
+        ] },
+        { kicker: 'Cancelar y transferir', title: 'Desde el detalle de la orden', bullets: [
+          'Cancelar pide motivo de una lista corta (cliente canceló, error de captura, sin insumo, demora, duplicada) y muestra las consecuencias antes de confirmar: devolución de insumos, aviso a cocina y PIN.',
+          'La orden no se borra: queda con estado cancelado, motivo y responsable, para que el corte de caja explique la diferencia.',
+          'Transferir mueve artículos, notas, mesero y tiempo transcurrido a otra mesa; unir suma los artículos en la mesa destino y libera la de origen. Cocina recibe el nuevo número.'
+        ] },
+        { kicker: 'Cocina y órdenes', title: 'Tiempos como señal, no como dato', bullets: [
+          'Cada comanda lleva un SLA por canal (mesa 12–14 min, para llevar y plataformas 15). La barra de progreso y el color salen de min/sla, no de un umbral fijo por pantalla.',
+          'Tres estados de color: en tiempo (verde), cerca del límite a partir del 70% del SLA (terracota) y retrasada (dorado sólido). El banner superior cuenta cuántas van tarde.',
+          'Filtros de cocina por canal (mesa, para llevar y online, retrasadas) para que el cocinero aísle lo urgente en horas pico.',
+          'Órdenes: filtros por estado con conteo, ventas del turno y ticket promedio en la cabecera, e ícono de canal por fila.'
+        ] },
+        { kicker: 'Inventario', title: 'Existencias, movimientos y conteo', bullets: [
+          'Existencias con mínimo por insumo: reponer cuando qty ≤ mínimo, al límite hasta 1.5× el mínimo. Ese umbral relativo evita alertas fijas que no aplican a todos los insumos.',
+          'Movimientos tipificados: entrada de proveedor con factura, merma con responsable y hora, y salida automática por venta descontada con la receta.',
+          'Conteo físico comparando sistema contra contado; la diferencia se valúa a costo y se convierte en el costo de merma del turno.',
+          'En Supabase: tablas supplies, supply_moves (kind, qty, cost, user_id, ref) y recipes (menu_item_id, supply_id, qty). El descuento por venta es un trigger sobre order_items.'
+        ] },
+        { kicker: 'Corte de caja', title: 'Cierre de turno en una pantalla', bullets: [
+          'Cuatro KPIs arriba (ventas, ticket promedio, propinas, cuentas abiertas) y desglose por método y por canal con barras proporcionales.',
+          'Efectivo esperado = fondo inicial + ventas en efectivo − retiros. El conteo por denominación evita teclear y calcula la diferencia sola.',
+          'No se puede cerrar con mesas abiertas: el KPI de cuentas abiertas es el bloqueo natural antes de confirmar.'
+        ] },
+        { kicker: 'Estados', title: 'Vacíos, errores y confirmaciones', bullets: [
+          'Toast oscuro abajo al centro para toda confirmación: cobro, envío a cocina, cierre de conteo y cierre de turno. Verde para éxito, dorado para advertencia.',
+          'Cada lista tiene su vacío escrito en la voz del oficio: comanda vacía, sin comandas en esta etapa, ninguna orden en este filtro.',
+          'Los errores se previenen en vez de anunciarse: enviar a cocina sin platillos advierte en el mismo toast, y el botón de cobro cambia de texto según el método.'
+        ] },
+        { kicker: 'Móvil', title: 'Mesero en el piso', bullets: [
+          'Tercera pantalla: para llevar y online en una sola lista con filtro por canal; los pedidos de DiDi y Uber llegan pagados, así que su acción es Entregar, no Cobrar.',
+          'Botones de acción de 44px de alto mínimo, pensados para usarse de pie y con una mano.',
+          'La tablet manda en caja y cocina; el móvil solo necesita mis mesas y cobro rápido.',
+          'Objetivos táctiles de 44px mínimo; tarjetas de mesa en lista de una columna, no grid.',
+          'Barra inferior de 4 destinos: Mesas, Comanda, Cobro, Cuenta.'
+        ] }
+      ],
+
+      phoneTables: tables.filter(t => ['Terraza', 'Barra'].includes(t.zone)).map(t => {
+        const c = this.st(t.s);
+        return {
+          label: 'Mesa ' + t.n, status: c.label, dot: c.dot, bg: c.bg, fg: c.fg,
+          meta: t.s === 'free' ? t.zone + ' · ' + t.cap + ' personas' : t.zone + ' · ' + t.min + ' min',
+          total: t.total ? mxn(t.total) : '—'
+        };
+      }),
+      toast: s.toast,
+      toastIcon: s.toastKind === 'warn' ? 'ph-fill ph-warning-circle' : 'ph-fill ph-check-circle',
+      toastFg: s.toastKind === 'warn' ? 'var(--a3)' : 'var(--a2)',
+      hideToast: () => this.setState({ toast: '' }),
+
+      phoneOnlineCount: ONLINE.length + ' activos',
+      phoneChanFilters: [['todos', 'Todos'], ['llevar', 'Llevar'], ['didi', 'DiDi'], ['uber', 'Uber']].map(([id, label]) => ({
+        label, pick: () => this.setState({ phoneChan: id }),
+        bg: s.phoneChan === id ? 'var(--cta)' : 'var(--color-surface)',
+        fg: s.phoneChan === id ? 'var(--cta-on)' : 'var(--mut)',
+        bd: s.phoneChan === id ? 'var(--cta)' : 'var(--line)'
+      })),
+      phoneOnline: ONLINE.filter(o => s.phoneChan === 'todos' || o.ch === s.phoneChan).map(o => ({
+        title: o.title, meta: o.meta, total: mxn(o.total), icon: o.icon, dot: o.dot, soft: o.soft,
+        badge: o.badge, badgeBg: o.badgeBg, badgeFg: o.badgeFg,
+        time: o.time, timeFg: o.late ? 'var(--a3)' : 'var(--mut)',
+        cta: o.cta, ctaBg: o.paid ? 'var(--cta)' : 'var(--a1)', ctaFg: o.paid ? 'var(--cta-on)' : 'var(--a1-on)',
+        act: () => this.toast(o.done, 'ok')
+      })),
+      phoneOnlineIsEmpty: ONLINE.filter(o => s.phoneChan === 'todos' || o.ch === s.phoneChan).length === 0,
+      phoneOnlineEmpty: 'Sin pedidos en este canal.',
+      phoneTabs2: [
+        { label: 'Mesas', icon: 'ph ph-grid-four', fg: 'var(--mut)' },
+        { label: 'Llevar', icon: 'ph-fill ph-bag', fg: 'var(--cta)' },
+        { label: 'Cobro', icon: 'ph ph-calculator', fg: 'var(--mut)' },
+        { label: 'Cuenta', icon: 'ph ph-user', fg: 'var(--mut)' }
+      ],
+      phoneTabs: [
+        { label: 'Mesas', icon: 'ph-fill ph-grid-four', fg: 'var(--color-accent)' },
+        { label: 'Comanda', icon: 'ph ph-note-pencil', fg: 'var(--mut)' },
+        { label: 'Cobro', icon: 'ph ph-calculator', fg: 'var(--mut)' },
+        { label: 'Cuenta', icon: 'ph ph-user', fg: 'var(--mut)' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

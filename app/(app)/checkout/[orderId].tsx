@@ -7,7 +7,7 @@ import { Breadcrumb } from '@/components/navigation/Breadcrumb';
 import { Button } from '@/components/ui/Button';
 import { Screen } from '@/components/ui/Screen';
 import { formatCurrency } from '@/lib/demo-data';
-import { colors, headerStyle, radius, shadows, typography } from '@/constants/theme';
+import { colors, headerStyle, radius, shadows, typography } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import type { PaymentMethod } from '@/types';
 

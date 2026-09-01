@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, type PressableProps, ActivityIndicator, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors, radius, shadows, typography } from '@/constants/theme';
+import { colors, radius, shadows, typography } from '@/constants/legacyTheme';
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 

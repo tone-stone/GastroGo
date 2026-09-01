@@ -3,7 +3,7 @@ import { memo, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { OrderStatusBadge } from '@/components/ui/Badge';
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 import { COUNTER_TABLE_ID, formatCurrency } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
 import type { Order, Table } from '@/types';

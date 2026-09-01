@@ -5,7 +5,7 @@ import { AdminListRow } from '@/components/admin/AdminListRow';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/ui/Screen';
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 import { formatCurrency } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';

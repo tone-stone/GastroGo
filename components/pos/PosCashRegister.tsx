@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, isCounterTable } from '@/lib/demo-data';
-import { colors, kitchenAccent, palette, radius, shadows } from '@/constants/theme';
+import { colors, kitchenAccent, palette, radius, shadows } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import type { Order, PaymentMethod } from '@/types';

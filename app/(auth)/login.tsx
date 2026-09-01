@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LOGIN_MODES, getLoginModeAccent, type LoginMode } from '@/constants/auth';
-import { colors, kitchenAccent, radius, shadows, typography, brandGradient } from '@/constants/theme';
+import { colors, kitchenAccent, radius, shadows, typography, brandGradient } from '@/constants/legacyTheme';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { useSessionStore } from '@/stores/sessionStore';
 

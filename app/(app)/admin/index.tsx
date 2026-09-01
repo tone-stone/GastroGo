@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AdminSectionCard } from '@/components/admin/AdminSectionCard';
 import { AppHeader } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 import { isAdminRole, ROLE_LABELS } from '@/lib/roles';
 import { useAdminStore } from '@/stores/adminStore';
 import { usePosStore } from '@/stores/posStore';

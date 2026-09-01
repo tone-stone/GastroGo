@@ -14,7 +14,7 @@ import { TableStatusBadge } from '@/components/ui/Badge';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveStepFromOrder } from '@/constants/serviceFlow';
 import { tableStatusConfig } from '@/constants/status';
-import { colors, headerStyle, radius } from '@/constants/theme';
+import { colors, headerStyle, radius } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import type { MenuItem } from '@/types';

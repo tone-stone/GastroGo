@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
 import { tableStatusConfig } from '@/constants/status';
-import { colors, radius, shadows } from '@/constants/theme';
+import { radius, shadow, space, theme } from '@/constants/theme';
 import { COUNTER_TABLE_ID } from '@/lib/demo-data';
 import { isAdminRole } from '@/lib/roles';
 import { usePosStore } from '@/stores/posStore';
@@ -115,12 +115,12 @@ export default function WaiterScreen() {
         <View style={styles.heroTop}>
           <View style={styles.titleBlock}>
             <View style={styles.badge}>
-              <Ionicons name="restaurant-outline" size={14} color={colors.primary} />
+              <Ionicons name="restaurant-outline" size={14} color={theme.cta} />
               <Text style={styles.badgeText}>Mesero</Text>
             </View>
             <Text style={styles.title}>Atender y tomar orden</Text>
             <View style={styles.locationRow}>
-              <Ionicons name="storefront-outline" size={14} color={colors.textMuted} />
+              <Ionicons name="storefront-outline" size={14} color={theme.mut} />
               <Text style={styles.locationName} numberOfLines={1}>
                 {restaurant?.name ?? 'GastroGo'}
               </Text>
@@ -187,7 +187,7 @@ export default function WaiterScreen() {
                   <Text style={styles.quickNum}>{table.number}</Text>
                   <Text style={styles.quickZone}>{table.zone}</Text>
                   <View style={styles.quickMeta}>
-                    <Ionicons name="people-outline" size={11} color={colors.textMuted} />
+                    <Ionicons name="people-outline" size={11} color={theme.mut} />
                     <Text style={styles.quickCap}>{table.capacity}</Text>
                   </View>
                 </Pressable>
@@ -202,19 +202,19 @@ export default function WaiterScreen() {
         <StatusFilterBar filter={filter} counts={counts} onChange={setFilter} />
         <View style={styles.kitchenLegend}>
           <View style={styles.legendItem}>
-            <Ionicons name="create-outline" size={13} color={colors.coffee} />
+            <Ionicons name="create-outline" size={13} color={theme.mut} />
             <Text style={styles.legendText}>Sin enviar</Text>
           </View>
           <View style={styles.legendItem}>
-            <Ionicons name="flame" size={13} color={colors.info} />
+            <Ionicons name="flame" size={13} color={theme.a4.ink} />
             <Text style={styles.legendText}>En cocina</Text>
           </View>
           <View style={styles.legendItem}>
-            <Ionicons name="checkmark-circle" size={13} color={colors.success} />
+            <Ionicons name="checkmark-circle" size={13} color={theme.a2.ink} />
             <Text style={styles.legendText}>Listo</Text>
           </View>
           <View style={styles.legendItem}>
-            <Ionicons name="receipt-outline" size={13} color={colors.warning} />
+            <Ionicons name="receipt-outline" size={13} color={theme.a3.ink} />
             <Text style={styles.legendText}>Cuenta</Text>
           </View>
         </View>
@@ -248,7 +248,7 @@ export default function WaiterScreen() {
       {canReassign ? (
         <Pressable style={styles.assignBar} onPress={() => openAssign()}>
           <View style={styles.assignBarIcon}>
-            <Ionicons name="people" size={20} color={colors.primary} />
+            <Ionicons name="people" size={20} color={theme.cta} />
           </View>
           <View style={styles.assignBarText}>
             <Text style={styles.assignBarTitle}>Reasignar mesas</Text>
@@ -256,7 +256,7 @@ export default function WaiterScreen() {
               {diningTables.filter((t) => t.assigned_waiter_id).length}/{diningTables.length} asignadas
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+          <Ionicons name="chevron-forward" size={20} color={theme.mut} />
         </Pressable>
       ) : null}
 
@@ -277,71 +277,71 @@ export default function WaiterScreen() {
 
 const styles = StyleSheet.create({
   hero: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    padding: 16,
-    marginBottom: 12,
-    gap: 14,
+    backgroundColor: theme.surface,
+    borderRadius: radius.panel,
+    padding: space.lg,
+    marginBottom: space.md,
+    gap: space.md + 2,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    ...shadows.sm,
+    borderColor: theme.line,
+    ...shadow.sm,
   },
   heroTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: space.md,
   },
-  titleBlock: { flex: 1, gap: 6 },
+  titleBlock: { flex: 1, gap: space.xs },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: space.xs,
     alignSelf: 'flex-start',
-    backgroundColor: colors.primaryMuted,
-    paddingHorizontal: 10,
+    backgroundColor: theme.a1.soft,
+    paddingHorizontal: space.sm + 2,
     paddingVertical: 4,
-    borderRadius: radius.full,
+    borderRadius: radius.pill,
   },
   badgeText: {
     fontSize: 11,
-    fontWeight: '800',
-    color: colors.primary,
+    fontWeight: '700',
+    color: theme.a1.ink,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
-  title: { fontSize: 22, fontWeight: '800', color: colors.text },
-  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  locationName: { fontSize: 13, color: colors.textSecondary, flex: 1 },
+  title: { fontSize: 22, fontWeight: '600', color: theme.text, letterSpacing: -0.3 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  locationName: { fontSize: 13, color: theme.mut, flex: 1 },
   flowCard: {
-    backgroundColor: colors.primaryMuted,
+    backgroundColor: theme.surface2,
     borderRadius: radius.lg,
-    padding: 12,
-    gap: 8,
+    padding: space.md,
+    gap: space.sm,
     borderWidth: 1,
-    borderColor: colors.borderLight,
+    borderColor: theme.line,
   },
-  flowHint: { fontSize: 12, color: colors.textSecondary, textAlign: 'center', fontWeight: '600' },
-  statsRow: { flexDirection: 'row', gap: 10 },
+  flowHint: { fontSize: 12, color: theme.mut, textAlign: 'center', fontWeight: '600' },
+  statsRow: { flexDirection: 'row', gap: space.sm + 2 },
   statCard: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: space.sm + 2,
     borderRadius: radius.lg,
-    backgroundColor: colors.background,
+    backgroundColor: theme.bg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.line,
   },
-  statCardFree: { backgroundColor: colors.successBg, borderColor: colors.success },
-  statNum: { fontSize: 22, fontWeight: '800', color: colors.text },
-  statNumMine: { color: colors.primary },
-  statLabel: { fontSize: 10, fontWeight: '700', color: colors.textMuted, marginTop: 2 },
+  statCardFree: { backgroundColor: theme.a1.soft, borderColor: theme.a1.line },
+  statNum: { fontSize: 22, fontWeight: '600', color: theme.text },
+  statNumMine: { color: theme.cta },
+  statLabel: { fontSize: 10, fontWeight: '700', color: theme.mut, marginTop: 2 },
   waiterStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: colors.background,
-    padding: 12,
+    gap: space.md,
+    backgroundColor: theme.bg,
+    padding: space.md,
     borderRadius: radius.lg,
     borderWidth: 1.5,
     borderLeftWidth: 4,
@@ -353,88 +353,88 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  waiterInitials: { fontSize: 13, fontWeight: '800', color: '#FFF' },
+  waiterInitials: { fontSize: 13, fontWeight: '700', color: '#FFF' },
   waiterInfo: { flex: 1 },
   waiterLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: colors.textMuted,
+    color: theme.mut,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
-  waiterName: { fontSize: 16, fontWeight: '800', color: colors.text, marginTop: 1 },
-  quickSection: { marginBottom: 16, gap: 10 },
-  quickRow: { gap: 10, paddingVertical: 2 },
+  waiterName: { fontSize: 16, fontWeight: '600', color: theme.text, marginTop: 1 },
+  quickSection: { marginBottom: space.lg, gap: space.sm + 2 },
+  quickRow: { gap: space.sm + 2, paddingVertical: 2 },
   quickCard: {
     width: 80,
-    padding: 12,
+    padding: space.md,
     borderRadius: radius.lg,
     borderWidth: 1.5,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.surface,
     alignItems: 'center',
     gap: 3,
-    ...shadows.sm,
+    ...shadow.sm,
   },
-  quickNum: { fontSize: 22, fontWeight: '800', color: colors.primary },
-  quickZone: { fontSize: 10, color: colors.textMuted },
+  quickNum: { fontSize: 22, fontWeight: '600', color: theme.cta },
+  quickZone: { fontSize: 10, color: theme.mut },
   quickMeta: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 2 },
-  quickCap: { fontSize: 10, color: colors.textMuted },
-  section: { gap: 12, marginBottom: 16 },
+  quickCap: { fontSize: 10, color: theme.mut },
+  section: { gap: space.md, marginBottom: space.lg },
   kitchenLegend: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    backgroundColor: colors.background,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    gap: space.sm + 2,
+    backgroundColor: theme.bg,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.borderLight,
+    borderColor: theme.line,
   },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  legendText: { fontSize: 11, fontWeight: '600', color: colors.textSecondary },
+  legendText: { fontSize: 11, fontWeight: '600', color: theme.mut },
   sectionTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.coffee,
+    color: theme.mut,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
-  myTablesSection: { marginBottom: 16, gap: 10 },
-  myTablesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  myTablesSection: { marginBottom: space.lg, gap: space.sm + 2 },
+  myTablesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   myTableChip: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.surface,
     borderWidth: 1.5,
-    borderColor: colors.primaryLight,
+    borderColor: theme.a1.line,
     borderRadius: radius.lg,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: space.sm + 2,
+    paddingHorizontal: space.md + 2,
     alignItems: 'center',
     minWidth: 64,
-    ...shadows.sm,
+    ...shadow.sm,
   },
-  myTableNum: { fontSize: 20, fontWeight: '800', color: colors.primary },
-  myTableZone: { fontSize: 10, color: colors.textMuted, marginTop: 2 },
+  myTableNum: { fontSize: 20, fontWeight: '600', color: theme.cta },
+  myTableZone: { fontSize: 10, color: theme.mut, marginTop: 2 },
   assignBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: colors.surface,
-    padding: 12,
+    gap: space.md,
+    backgroundColor: theme.surface,
+    padding: space.md,
     borderRadius: radius.lg,
-    marginBottom: 8,
+    marginBottom: space.sm,
     borderWidth: 1,
-    borderColor: colors.goldLight,
+    borderColor: theme.a2.line,
   },
   assignBarIcon: {
     width: 40,
     height: 40,
     borderRadius: radius.md,
-    backgroundColor: colors.primaryMuted,
+    backgroundColor: theme.a1.soft,
     alignItems: 'center',
     justifyContent: 'center',
   },
   assignBarText: { flex: 1 },
-  assignBarTitle: { fontSize: 15, fontWeight: '700', color: colors.text },
-  assignBarSub: { fontSize: 12, color: colors.textSecondary, marginTop: 1 },
+  assignBarTitle: { fontSize: 15, fontWeight: '600', color: theme.text },
+  assignBarSub: { fontSize: 12, color: theme.mut, marginTop: 1 },
 });

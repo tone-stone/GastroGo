@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { SERVICE_FLOW_STEPS, type ServiceFlowStepId } from '@/constants/serviceFlow';
-import { colors, radius } from '@/constants/theme';
+import { colors, radius } from '@/constants/legacyTheme';
 
 interface ServiceFlowStepsProps {
   activeStep: ServiceFlowStepId;

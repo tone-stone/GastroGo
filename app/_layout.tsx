@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { colors } from '@/constants/theme';
+import { colors } from '@/constants/legacyTheme';
 import { isAdminRole } from '@/lib/roles';
 import { useSessionStore } from '@/stores/sessionStore';
 

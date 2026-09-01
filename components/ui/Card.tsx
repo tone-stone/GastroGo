@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, type ViewProps } from 'react-native';
 
-import { colors, radius, shadows } from '@/constants/theme';
+import { colors, radius, shadows } from '@/constants/legacyTheme';
 
 interface CardProps extends ViewProps {
   title?: string;

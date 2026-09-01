@@ -1,4 +1,4 @@
-import { palette } from '@/constants/theme';
+import { palette } from '@/constants/legacyTheme';
 
 const tintColorLight = palette.olive;
 

@@ -8,7 +8,7 @@ import { useSignOut } from '@/components/navigation/NavButtons';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
-import { colors, kitchenAccent, radius, shadows } from '@/constants/theme';
+import { colors, kitchenAccent, radius, shadows } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import type { Order, OrderItem, StaffMember, Table } from '@/types';

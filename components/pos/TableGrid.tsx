@@ -2,8 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo, useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
+import { TableStatusBadge } from '@/components/ui/Badge';
 import { tableStatusConfig } from '@/constants/status';
-import { colors, radius, shadows } from '@/constants/theme';
+import { radius, shadow, space, theme } from '@/constants/theme';
 import { formatCurrency } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
 import type { Order, Table, TableStatus } from '@/types';
@@ -23,31 +24,16 @@ const KITCHEN_INDICATOR_CONFIG: Record<
   Exclude<KitchenIndicator, 'none'>,
   { icon: keyof typeof Ionicons.glyphMap; color: string; bg: string; label: string }
 > = {
-  draft: {
-    icon: 'create-outline',
-    color: colors.coffee,
-    bg: colors.coffeeMuted,
-    label: 'Sin enviar',
-  },
-  preparing: {
-    icon: 'flame',
-    color: colors.info,
-    bg: colors.infoBg,
-    label: 'En cocina',
-  },
-  ready: {
-    icon: 'checkmark-circle',
-    color: colors.success,
-    bg: colors.successBg,
-    label: 'Listo',
-  },
-  bill: {
-    icon: 'receipt-outline',
-    color: colors.warning,
-    bg: colors.warningBg,
-    label: 'Cuenta',
-  },
+  draft: { icon: 'create-outline', color: theme.mut, bg: theme.surface2, label: 'Sin enviar' },
+  preparing: { icon: 'flame', color: theme.a4.ink, bg: theme.a4.soft, label: 'En cocina' },
+  ready: { icon: 'checkmark-circle', color: theme.a2.ink, bg: theme.a2.soft, label: 'Listo' },
+  bill: { icon: 'receipt-outline', color: theme.a3.ink, bg: theme.a3.soft, label: 'Cuenta' },
 };
+
+function minutesSince(iso?: string): number | null {
+  if (!iso) return null;
+  return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60000));
+}
 
 interface TableGridProps {
   tables: Table[];
@@ -64,15 +50,17 @@ const ZONE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   VIP: 'diamond-outline',
 };
 
-const GRID_GAP = 10;
-const SCREEN_PAD = 16;
+const CARD_MIN_WIDTH = 220;
+const CARD_MIN_HEIGHT = 132;
+const GRID_GAP = space.md;
+const SCREEN_PAD = space.lg;
 
 function useGridLayout() {
   const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : width >= 600 ? 3 : 2;
   const innerWidth = width - SCREEN_PAD * 2;
-  const cardSize = Math.floor((innerWidth - GRID_GAP * (cols - 1)) / cols);
-  return { cardSize };
+  const cols = Math.max(1, Math.floor((innerWidth + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP)));
+  const cardWidth = Math.floor((innerWidth - GRID_GAP * (cols - 1)) / cols);
+  return { cardWidth };
 }
 
 function getInitials(name: string): string {
@@ -81,13 +69,13 @@ function getInitials(name: string): string {
 
 const TableCard = memo(function TableCard({
   table,
-  size,
+  width,
   isMine,
   onPress,
   onAssign,
 }: {
   table: Table;
-  size: number;
+  width: number;
   isMine?: boolean;
   onPress?: () => void;
   onAssign?: () => void;
@@ -103,80 +91,68 @@ const TableCard = memo(function TableCard({
       : undefined,
   );
   const config = tableStatusConfig[table.status];
-  const itemCount = order?.items.reduce((s, i) => s + i.quantity, 0) ?? 0;
   const kitchen = getKitchenIndicator(order, table);
   const kitchenConfig = kitchen !== 'none' ? KITCHEN_INDICATOR_CONFIG[kitchen] : null;
   const readyCount = order?.items.filter((i) => i.kitchen_status === 'ready').length ?? 0;
   const kitchenProgress =
-    kitchen === 'preparing' && order
-      ? `${readyCount}/${order.items.length}`
-      : null;
+    kitchen === 'preparing' && order ? `${readyCount}/${order.items.length}` : null;
+  const minutes = table.status !== 'free' ? minutesSince(order?.created_at) : null;
 
   return (
-    <View style={[styles.cardWrap, { width: size, height: size }]}>
+    <View style={[styles.cardWrap, { width }]}>
       <Pressable
         onPress={onPress}
         style={({ pressed }) => [
           styles.card,
-          { borderColor: config.border },
+          { minHeight: CARD_MIN_HEIGHT },
           isMine && styles.cardMine,
-          kitchen === 'preparing' && styles.cardPreparing,
-          kitchen === 'ready' && styles.cardReady,
           pressed && styles.pressed,
         ]}
       >
-          <View style={[styles.statusStrip, { backgroundColor: config.dot }]} />
+        <View style={[styles.statusStrip, { backgroundColor: config.dot }]} />
 
-          <View style={styles.cardTop}>
-            {waiter ? (
-              <View style={[styles.waiterBadge, { backgroundColor: waiter.color }]}>
-                <Text style={styles.waiterInitials}>{getInitials(waiter.name)}</Text>
+        <View style={styles.body}>
+          <View style={styles.headRow}>
+            <View style={styles.headLeft}>
+              <Text style={styles.number}>{table.number}</Text>
+              <View style={styles.capacityRow}>
+                <Ionicons name="people-outline" size={12} color={theme.mut} />
+                <Text style={styles.capacityText}>{table.capacity}</Text>
               </View>
-            ) : itemCount > 0 ? (
-              <View style={[styles.chip, { backgroundColor: config.bg }]}>
-                <Ionicons name="restaurant-outline" size={10} color={config.color} />
-                <Text style={[styles.chipText, { color: config.color }]}>{itemCount}</Text>
-              </View>
-            ) : (
-              <View />
-            )}
-
-            {kitchenConfig ? (
-              <View style={[styles.kitchenBadge, { backgroundColor: kitchenConfig.bg }]}>
-                <Ionicons name={kitchenConfig.icon} size={11} color={kitchenConfig.color} />
-                {kitchenProgress ? (
-                  <Text style={[styles.kitchenProgress, { color: kitchenConfig.color }]}>
-                    {kitchenProgress}
-                  </Text>
-                ) : null}
-              </View>
-            ) : null}
-          </View>
-
-          <View style={styles.center}>
-            <Text style={[styles.number, { color: config.color }]}>{table.number}</Text>
-          </View>
-
-          <View style={styles.cardBottom}>
-            <View style={styles.meta}>
-              <Ionicons name="people-outline" size={13} color={colors.textMuted} />
-              <Text style={styles.metaText}>{table.capacity}</Text>
             </View>
-            {kitchenConfig ? (
+            <TableStatusBadge status={table.status} size="sm" />
+          </View>
+
+          {kitchenConfig ? (
+            <View style={[styles.kitchenBadge, { backgroundColor: kitchenConfig.bg }]}>
+              <Ionicons name={kitchenConfig.icon} size={11} color={kitchenConfig.color} />
               <Text style={[styles.kitchenLabel, { color: kitchenConfig.color }]} numberOfLines={1}>
-                {kitchenConfig.label}
+                {kitchenProgress ? `${kitchenConfig.label} · ${kitchenProgress}` : kitchenConfig.label}
               </Text>
-            ) : order && order.total > 0 ? (
-              <Text style={styles.total} numberOfLines={1}>
+            </View>
+          ) : null}
+
+          <View style={styles.footer}>
+            {waiter ? (
+              <View style={[styles.waiterDot, { backgroundColor: waiter.color }]} />
+            ) : null}
+            <Text style={styles.footerMeta} numberOfLines={1}>
+              {table.status === 'free' || table.status === 'reserved'
+                ? table.zone ?? '—'
+                : `${waiter?.name ?? 'Sin mesero'}${minutes !== null ? ` · ${minutes} min` : ''}`}
+            </Text>
+            {order && order.total > 0 ? (
+              <Text style={styles.footerAmount} numberOfLines={1}>
                 {formatCurrency(order.total)}
               </Text>
             ) : null}
           </View>
-        </Pressable>
+        </View>
+      </Pressable>
 
       {onAssign ? (
         <Pressable style={styles.assignBtn} onPress={onAssign} hitSlop={6}>
-          <Ionicons name="person-add" size={14} color={colors.primary} />
+          <Ionicons name="person-add" size={14} color={theme.cta} />
         </Pressable>
       ) : null}
     </View>
@@ -184,7 +160,7 @@ const TableCard = memo(function TableCard({
 });
 
 export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress, onAssignTable }: TableGridProps) {
-  const { cardSize } = useGridLayout();
+  const { cardWidth } = useGridLayout();
 
   const filtered = useMemo(
     () => (filter === 'all' ? tables : tables.filter((t) => t.status === filter)),
@@ -207,7 +183,7 @@ export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress,
   if (filtered.length === 0) {
     return (
       <View style={styles.empty}>
-        <Ionicons name="filter-outline" size={32} color={colors.textMuted} />
+        <Ionicons name="filter-outline" size={32} color={theme.mut} />
         <Text style={styles.emptyText}>Sin mesas</Text>
       </View>
     );
@@ -223,8 +199,8 @@ export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress,
               <View style={styles.sectionIcon}>
                 <Ionicons
                   name={ZONE_ICONS[zone] ?? 'location-outline'}
-                  size={16}
-                  color={colors.primary}
+                  size={14}
+                  color={theme.mut}
                 />
               </View>
               <Text style={styles.sectionTitle}>{zone}</Text>
@@ -237,7 +213,7 @@ export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress,
                 <TableCard
                   key={table.id}
                   table={table}
-                  size={cardSize}
+                  width={cardWidth}
                   isMine={!!staffMemberId && table.assigned_waiter_id === staffMemberId}
                   onPress={onTablePress ? () => handlePress(table.id) : undefined}
                   onAssign={onAssignTable ? () => handleAssign(table.id) : undefined}
@@ -252,37 +228,37 @@ export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress,
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 24 },
-  section: { gap: 12 },
+  container: { gap: space.xl },
+  section: { gap: space.md },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: space.sm,
   },
   sectionIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.full,
-    backgroundColor: colors.primaryMuted,
+    width: 24,
+    height: 24,
+    borderRadius: radius.pill,
+    backgroundColor: theme.surface2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
-    color: colors.textSecondary,
+    color: theme.mut,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   sectionLine: {
     flex: 1,
     height: 1,
-    backgroundColor: colors.borderLight,
+    backgroundColor: theme.line,
   },
   sectionCount: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.textMuted,
+    color: theme.mut,
     minWidth: 16,
     textAlign: 'right',
   },
@@ -293,87 +269,65 @@ const styles = StyleSheet.create({
   },
   cardWrap: { position: 'relative' },
   card: {
-    width: '100%',
-    height: '100%',
+    flexDirection: 'row',
     borderRadius: radius.lg,
-    borderWidth: 1.5,
     overflow: 'hidden',
-    backgroundColor: colors.surface,
-    ...shadows.sm,
+    backgroundColor: theme.surface,
+    borderWidth: 1,
+    borderColor: theme.line,
+    ...shadow.sm,
   },
   pressed: { opacity: 0.92 },
-  cardMine: { borderWidth: 2, borderColor: colors.primary },
-  cardPreparing: { borderColor: colors.info },
-  cardReady: { borderColor: colors.success },
+  cardMine: { borderWidth: 2, borderColor: theme.cta },
+  statusStrip: { width: 4 },
+  body: { flex: 1, padding: space.sm + 2, gap: space.xs },
+  headRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  headLeft: { gap: 2 },
+  number: { fontSize: 26, fontWeight: '600', color: theme.text, letterSpacing: -0.5, lineHeight: 30 },
+  capacityRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  capacityText: { fontSize: 11, fontWeight: '600', color: theme.mut },
+  kitchenBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    maxWidth: '100%',
+  },
+  kitchenLabel: { fontSize: 10, fontWeight: '700' },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 'auto',
+    paddingTop: space.xs,
+    borderTopWidth: 1,
+    borderTopColor: theme.line,
+  },
+  waiterDot: { width: 7, height: 7, borderRadius: 4 },
+  footerMeta: { flex: 1, fontSize: 11, fontWeight: '600', color: theme.mut },
+  footerAmount: { fontSize: 12, fontWeight: '600', color: theme.text, fontVariant: ['tabular-nums'] },
   assignBtn: {
     position: 'absolute',
     top: 6,
     right: 6,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.surface,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: theme.surface,
     borderWidth: 1,
-    borderColor: colors.primaryLight,
+    borderColor: theme.line,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
-    ...shadows.sm,
+    ...shadow.sm,
   },
-  statusStrip: { height: 3, width: '100%' },
-  cardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    minHeight: 24,
-  },
-  kitchenBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: radius.full,
-  },
-  kitchenProgress: { fontSize: 9, fontWeight: '800' },
-  kitchenLabel: { fontSize: 10, fontWeight: '700', maxWidth: '58%' },
-  waiterBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  waiterInitials: { fontSize: 8, fontWeight: '800', color: '#FFF' },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: radius.full,
-  },
-  chipText: { fontSize: 10, fontWeight: '800' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  number: { fontSize: 28, fontWeight: '800', lineHeight: 32 },
-  cardBottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    paddingBottom: 8,
-    paddingTop: 2,
-  },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  metaText: { fontSize: 11, fontWeight: '600', color: colors.textMuted },
-  total: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: colors.primary,
-    maxWidth: '60%',
-  },
-  empty: { alignItems: 'center', paddingVertical: 40, gap: 8 },
-  emptyText: { fontSize: 14, color: colors.textMuted },
+  empty: { alignItems: 'center', paddingVertical: 40, gap: space.sm },
+  emptyText: { fontSize: 14, color: theme.mut },
 });

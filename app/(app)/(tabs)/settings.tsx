@@ -9,7 +9,7 @@ import { AppHeader } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { isAdminRole, ROLE_LABELS } from '@/lib/roles';
-import { colors, radius, shadows, typography } from '@/constants/theme';
+import { colors, radius, shadows, typography } from '@/constants/legacyTheme';
 import { useSessionStore } from '@/stores/sessionStore';
 
 export default function SettingsScreen() {

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 
-import { colors, radius, typography } from '@/constants/theme';
+import { colors, radius, typography } from '@/constants/legacyTheme';
 
 interface InputProps extends TextInputProps {
   label?: string;
