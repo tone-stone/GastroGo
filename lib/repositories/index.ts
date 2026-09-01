@@ -1,11 +1,11 @@
 import { requireSupabase } from '@/lib/api/client';
 import { fromSupabaseError } from '@/lib/api/errors';
-import { mapAppUser, mapCategory, mapMenuItem, mapOrderWithItems, mapStaff, mapTable, toDbOrder } from '@/lib/api/mappers';
+import { mapAppUser, mapCategory, mapMenuItem, mapOrderWithItems, mapShiftWithMovements, mapStaff, mapTable, toDbOrder, toDbShift } from '@/lib/api/mappers';
 import type { CrudRepository, RestaurantScope } from '@/lib/api/types';
 import { demoState } from '@/lib/data/demo-state';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import type { DbProfile } from '@/types/database';
-import type { AppUser, MenuCategory, MenuItem, StaffMember, Table, UserRole } from '@/types';
+import type { AppUser, MenuCategory, MenuItem, Shift, StaffMember, Table, UserRole } from '@/types';
 
 function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -546,4 +546,77 @@ const supabaseOrdersRepo: OrdersRepository = {
 
 export function getOrdersRepository(): OrdersRepository {
   return isSupabaseConfigured ? supabaseOrdersRepo : demoOrdersRepo;
+}
+
+// ─── Turnos (corte de caja) ───────────────────────────────────────────────────
+
+export interface ShiftsRepository {
+  list(scope: RestaurantScope): Promise<Shift[]>;
+  getActiveByRestaurant(restaurantId: string): Promise<Shift | null>;
+  upsert(shift: Shift): Promise<void>;
+}
+
+const demoShiftsRepo: ShiftsRepository = {
+  async list({ restaurantId }) {
+    return demoState.shifts.filter((s) => s.restaurant_id === restaurantId);
+  },
+  async getActiveByRestaurant(restaurantId) {
+    return demoState.shifts.find((s) => s.restaurant_id === restaurantId && s.status === 'open') ?? null;
+  },
+  async upsert(shift) {
+    const idx = demoState.shifts.findIndex((s) => s.id === shift.id);
+    if (idx >= 0) demoState.shifts[idx] = shift;
+    else demoState.shifts.push(shift);
+  },
+};
+
+const supabaseShiftsRepo: ShiftsRepository = {
+  async list({ restaurantId }) {
+    const client = requireSupabase();
+    const { data, error } = await client
+      .from('shifts')
+      .select('*, cash_movements(*)')
+      .eq('restaurant_id', restaurantId)
+      .order('opened_at', { ascending: false });
+    if (error) throw fromSupabaseError(error);
+    return (data ?? []).map(mapShiftWithMovements);
+  },
+  async getActiveByRestaurant(restaurantId) {
+    const client = requireSupabase();
+    const { data, error } = await client
+      .from('shifts')
+      .select('*, cash_movements(*)')
+      .eq('restaurant_id', restaurantId)
+      .eq('status', 'open')
+      .maybeSingle();
+    if (error) throw fromSupabaseError(error);
+    return data ? mapShiftWithMovements(data) : null;
+  },
+  async upsert(shift) {
+    const client = requireSupabase();
+    const { withdrawals } = shift;
+    const shiftRow = toDbShift(shift);
+
+    const { error: shiftError } = await client.from('shifts').upsert(shiftRow);
+    if (shiftError) throw fromSupabaseError(shiftError);
+
+    const { error: deleteError } = await client.from('cash_movements').delete().eq('shift_id', shift.id);
+    if (deleteError) throw fromSupabaseError(deleteError);
+
+    if (withdrawals.length > 0) {
+      const rows = withdrawals.map((w) => ({
+        id: w.id,
+        shift_id: shift.id,
+        amount: w.amount,
+        reason: w.reason,
+        created_at: w.created_at,
+      }));
+      const { error: movementsError } = await client.from('cash_movements').insert(rows);
+      if (movementsError) throw fromSupabaseError(movementsError);
+    }
+  },
+};
+
+export function getShiftsRepository(): ShiftsRepository {
+  return isSupabaseConfigured ? supabaseShiftsRepo : demoShiftsRepo;
 }

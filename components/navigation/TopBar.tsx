@@ -16,6 +16,7 @@ const ROUTE_TITLES: { match: (p: string) => boolean; title: string; subtitle: st
   { match: (p) => p.startsWith('/table/'), title: 'Comanda', subtitle: 'Menú, resumen y canal activo' },
   { match: (p) => p.startsWith('/kitchen'), title: 'Cocina', subtitle: 'Comandas en preparación' },
   { match: (p) => p === '/orders', title: 'Órdenes', subtitle: 'Historial y seguimiento' },
+  { match: (p) => p.startsWith('/corte'), title: 'Corte de caja', subtitle: 'Cierre de turno y efectivo' },
   { match: (p) => p === '/admin/users', title: 'Usuarios', subtitle: 'Personal con acceso al sistema' },
   { match: (p) => p === '/admin/staff', title: 'Meseros y staff', subtitle: 'Equipo en turno' },
   { match: (p) => p === '/admin/tables', title: 'Mesas', subtitle: 'Zonas y capacidad' },

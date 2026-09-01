@@ -52,6 +52,16 @@ export default function AppLayout() {
         />
         <Stack.Screen name="admin" options={{ headerShown: false }} />
         <Stack.Screen name="kitchen" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="corte"
+          options={{
+            headerShown: !isWide,
+            title: 'Corte de caja',
+            ...stackHeaderOptions,
+            headerLeft: () => <BackButton fallbackHref="/(app)/(tabs)" />,
+            headerRight: () => <UserMenu compact />,
+          }}
+        />
       </Stack>
     </AppShell>
   );

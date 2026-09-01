@@ -6,6 +6,7 @@ export type DbKitchenStatus = 'pending' | 'ready';
 export type DbOrderChannel = 'dine_in' | 'takeaway' | 'didi' | 'uber';
 export type DbDiscountType = 'percent' | 'fixed' | 'comp';
 export type DbPackaging = 'bag' | 'box' | 'no_cutlery';
+export type DbShiftStatus = 'open' | 'closed';
 
 export interface DbOrganization {
   id: string;
@@ -122,6 +123,36 @@ export interface DbOrderWithItems extends DbOrder {
   order_items: DbOrderItem[];
 }
 
+export interface DbShift {
+  id: string;
+  restaurant_id: string;
+  opened_at: string;
+  opened_by: string | null;
+  opening_float: number;
+  status: DbShiftStatus;
+  closed_at: string | null;
+  closed_by: string | null;
+  counted_bills: Record<string, number> | null;
+  counted_total: number | null;
+  cash_expected: number | null;
+  difference: number | null;
+  sales_total: number | null;
+  sales_count: number | null;
+  tips_total: number | null;
+}
+
+export interface DbCashMovement {
+  id: string;
+  shift_id: string;
+  amount: number;
+  reason: string;
+  created_at: string;
+}
+
+export interface DbShiftWithMovements extends DbShift {
+  cash_movements: DbCashMovement[];
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -135,6 +166,8 @@ export interface Database {
       staff_members: { Row: DbStaffMember; Insert: Omit<DbStaffMember, 'id' | 'created_at'>; Update: Partial<DbStaffMember> };
       orders: { Row: DbOrder; Insert: Omit<DbOrder, 'id' | 'created_at'>; Update: Partial<DbOrder> };
       order_items: { Row: DbOrderItem; Insert: Omit<DbOrderItem, 'id'>; Update: Partial<DbOrderItem> };
+      shifts: { Row: DbShift; Insert: Omit<DbShift, 'id'>; Update: Partial<DbShift> };
+      cash_movements: { Row: DbCashMovement; Insert: Omit<DbCashMovement, 'id' | 'created_at'>; Update: Partial<DbCashMovement> };
     };
   };
 }

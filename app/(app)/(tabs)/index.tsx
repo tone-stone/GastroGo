@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Platform,
@@ -42,6 +43,8 @@ export default function SaleScreen() {
   const isWeb = Platform.OS === 'web';
   const isWide = width >= 768;
   const isDesktop = width >= 1100;
+  const router = useRouter();
+  const [ordersCollapsed, setOrdersCollapsed] = useState(false);
 
   const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
   const restaurants = useSessionStore((s) => s.restaurants);
@@ -159,6 +162,14 @@ export default function SaleScreen() {
     [orders, tableById],
   );
 
+  const handleLongPressOrder = useCallback(
+    (tableOrderId: string) => {
+      const tableOrder = orders.find((o) => o.id === tableOrderId);
+      if (tableOrder) router.push(`/table/${tableOrder.table_id}`);
+    },
+    [orders, router],
+  );
+
   const handleAddMenuItem = useCallback((item: MenuItem) => {
     setNotesModal({ mode: 'add', item });
   }, []);
@@ -182,13 +193,30 @@ export default function SaleScreen() {
     return (
       <Screen padded={false} scroll={false} style={styles.screenRoot}>
         <View style={styles.ordersBar}>
-          <View style={styles.ordersBarPanel}>
-            <ActiveOrdersPanel
-              compact
-              selectedOrderId={paymentTargetId !== order?.id ? paymentTargetId : undefined}
-              onSelectOrder={handleSelectTableOrder}
+          <Pressable
+            style={styles.ordersToggle}
+            onPress={() => setOrdersCollapsed((c) => !c)}
+            hitSlop={8}
+          >
+            <Ionicons
+              name={ordersCollapsed ? 'chevron-forward' : 'chevron-down'}
+              size={16}
+              color={colors.primary}
             />
-          </View>
+            <Text style={styles.ordersToggleText}>Ventas abiertas</Text>
+          </Pressable>
+          {!ordersCollapsed ? (
+            <View style={styles.ordersBarPanel}>
+              <ActiveOrdersPanel
+                compact
+                selectedOrderId={paymentTargetId !== order?.id ? paymentTargetId : undefined}
+                onSelectOrder={handleSelectTableOrder}
+                onLongPressOrder={handleLongPressOrder}
+              />
+            </View>
+          ) : (
+            <View style={styles.ordersBarSpacer} />
+          )}
           {newSaleBtn}
         </View>
 
@@ -394,12 +422,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
   },
+  ordersToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  ordersToggleText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
   ordersBarPanel: { flex: 1 },
+  ordersBarSpacer: { flex: 1 },
   tabletActionRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -429,7 +470,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   menuPanel: {
-    flex: 1.35,
+    flex: 0.95,
     backgroundColor: colors.surface,
     borderRadius: radius.xl,
     borderWidth: 1,
@@ -438,9 +479,9 @@ const styles = StyleSheet.create({
     ...shadows.md,
   },
   ticketPanel: {
-    flex: 0.75,
-    minWidth: 300,
-    maxWidth: 380,
+    flex: 0.65,
+    minWidth: 280,
+    maxWidth: 360,
     backgroundColor: colors.surface,
     borderRadius: radius.xl,
     borderWidth: 1,
@@ -450,9 +491,9 @@ const styles = StyleSheet.create({
   },
   ticketPanelBody: { flex: 1, padding: 12 },
   registerPanel: {
-    flex: 1.05,
-    minWidth: 340,
-    maxWidth: 460,
+    flex: 1.55,
+    minWidth: 380,
+    maxWidth: 620,
     backgroundColor: colors.surface,
     borderRadius: radius.xl,
     borderWidth: 1,

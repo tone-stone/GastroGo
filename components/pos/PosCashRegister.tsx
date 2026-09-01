@@ -7,14 +7,16 @@ import { ChannelTabs, type ChannelTabItem } from '@/components/pos/ChannelTabs';
 import { DiscountModal } from '@/components/pos/DiscountModal';
 import { MenuList } from '@/components/pos/MenuList';
 import { PaymentMethodStepper } from '@/components/pos/PaymentMethodStepper';
+import { ReceiptModal } from '@/components/pos/ReceiptModal';
 import { SplitBillModal } from '@/components/pos/SplitBillModal';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { CHANNEL_LABELS } from '@/constants/channels';
 import { radius, shadow, space, type Palette } from '@/constants/theme';
 import { formatCurrency, isCounterTable } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useToastStore } from '@/stores/toastStore';
-import type { Order, OrderChannel, PaymentMethod } from '@/types';
+import type { Order, PaymentMethod } from '@/types';
 
 const TIP_OPTIONS = [0, 10, 15, 20];
 const CASH_SHORTCUTS = [200, 500, 1000];
@@ -33,12 +35,6 @@ const NUMPAD = [
   ['C', '0', '⌫'],
 ] as const;
 
-const CHANNEL_LABELS: Record<OrderChannel, string> = {
-  dine_in: 'Mostrador',
-  takeaway: 'Para llevar',
-  didi: 'DiDi Food',
-  uber: 'Uber Eats',
-};
 
 interface PosCashRegisterProps {
   staffMemberId?: string | null;
@@ -69,6 +65,8 @@ export function PosCashRegister({
 
   const user = useSessionStore((s) => s.user);
   const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
+  const restaurants = useSessionStore((s) => s.restaurants);
+  const restaurantName = restaurants.find((r) => r.id === activeRestaurantId)?.name;
   const orders = usePosStore((s) => s.orders);
   const tables = usePosStore((s) => s.tables);
   const staff = usePosStore((s) => s.staff);
@@ -148,6 +146,7 @@ export function PosCashRegister({
   const [split, setSplit] = useState<{ parts: number[]; paid: boolean[] } | null>(null);
   const [activePartIdx, setActivePartIdx] = useState(0);
   const [quickCategoryId, setQuickCategoryId] = useState('');
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
 
   const lockedSaleOrder = useMemo(() => {
     if (!saleMode || !orderId) return undefined;
@@ -253,6 +252,14 @@ export function PosCashRegister({
         setLoading(false);
         setSplit(null);
         setInput('');
+        setReceiptOrder({
+          ...order,
+          tip: tipAmount,
+          status: 'paid',
+          payment_method: paymentMethod,
+          closed_at: new Date().toISOString(),
+          total: amountDue,
+        });
         if (saleMode) {
           onPaid?.(order.id);
           if (!isCounterPayment) setPaymentTargetId(orderId ?? '');
@@ -273,6 +280,14 @@ export function PosCashRegister({
     payOrder(order.id, tipAmount, paymentMethod);
     setInput('');
     setLoading(false);
+    setReceiptOrder({
+      ...order,
+      tip: tipAmount,
+      status: 'paid',
+      payment_method: paymentMethod,
+      closed_at: new Date().toISOString(),
+      total: amountDue,
+    });
     if (saleMode) {
       onPaid?.(order.id);
       if (!isCounterPayment) setPaymentTargetId(orderId ?? '');
@@ -280,7 +295,7 @@ export function PosCashRegister({
       router.push('/(app)/(tabs)/mesero');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order, split, activePartIdx, tipAmount, paymentMethod, saleMode, isCounterPayment, orderId]);
+  }, [order, split, activePartIdx, tipAmount, paymentMethod, amountDue, saleMode, isCounterPayment, orderId]);
 
   const handlePay = () => {
     if (!order || !canPay) return;
@@ -614,6 +629,15 @@ export function PosCashRegister({
           />
         </>
       ) : null}
+
+      <ReceiptModal
+        visible={!!receiptOrder}
+        order={receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+        table={receiptOrder ? getTable(receiptOrder.table_id) : undefined}
+        restaurantName={restaurantName}
+        cashierName={cashierName}
+      />
     </View>
   );
 }

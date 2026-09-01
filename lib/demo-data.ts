@@ -4,6 +4,7 @@ import type {
   MenuItem,
   Order,
   Restaurant,
+  Shift,
   StaffMember,
   Table,
   TableStatus,
@@ -138,6 +139,64 @@ export const demoOrders: Order[] = [
       { id: 'oi7', order_id: 'o3', menu_item_id: 'm2', name: 'Queso fundido', quantity: 1, unit_price: 120, kitchen_status: 'pending' },
     ],
     created_at: new Date().toISOString(),
+  },
+  {
+    id: 'o4',
+    restaurant_id: DEMO_RESTAURANT_ID,
+    table_id: COUNTER_TABLE_ID,
+    status: 'paid',
+    channel: 'dine_in',
+    subtotal: 165,
+    tax: 26.4,
+    tip: 16.5,
+    total: 207.9,
+    payment_method: 'cash',
+    items: [
+      { id: 'oi8', order_id: 'o4', menu_item_id: 'm6', name: 'Agua fresca', quantity: 1, unit_price: 45, kitchen_status: 'ready' },
+      { id: 'oi9', order_id: 'o4', menu_item_id: 'm3', name: 'Tacos al pastor', quantity: 1, unit_price: 85, kitchen_status: 'ready' },
+      { id: 'oi10', order_id: 'o4', menu_item_id: 'm8', name: 'Flan napolitano', quantity: 1, unit_price: 65, kitchen_status: 'ready' },
+    ],
+    created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    closed_at: new Date(Date.now() - 3 * 60 * 60 * 1000 + 12 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'o5',
+    restaurant_id: DEMO_RESTAURANT_ID,
+    table_id: 't1',
+    waiter_id: 'w1',
+    status: 'paid',
+    channel: 'dine_in',
+    subtotal: 480,
+    tax: 76.8,
+    tip: 48,
+    total: 604.8,
+    payment_method: 'card',
+    items: [
+      { id: 'oi11', order_id: 'o5', menu_item_id: 'm5', name: 'Arrachera', quantity: 1, unit_price: 280, kitchen_status: 'ready' },
+      { id: 'oi12', order_id: 'o5', menu_item_id: 'm7', name: 'Cerveza artesanal', quantity: 2, unit_price: 75, kitchen_status: 'ready' },
+      { id: 'oi13', order_id: 'o5', menu_item_id: 'm6', name: 'Agua fresca', quantity: 1, unit_price: 45, kitchen_status: 'ready' },
+    ],
+    created_at: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
+    closed_at: new Date(Date.now() - 90 * 60 * 1000 + 35 * 60 * 1000).toISOString(),
+  },
+];
+
+export const demoShifts: Shift[] = [
+  {
+    id: 'shift-1',
+    restaurant_id: DEMO_RESTAURANT_ID,
+    opened_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    opened_by: DEMO_USER_ID,
+    opening_float: 1500,
+    status: 'open',
+    withdrawals: [
+      {
+        id: 'cm1',
+        amount: 500,
+        reason: 'Compra de hielo y refrescos',
+        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   },
 ];
 

@@ -34,7 +34,7 @@ export function NavRail() {
     { key: 'cocina', label: 'Cocina', icon: 'flame-outline', href: '/kitchen', match: (p) => p.startsWith('/kitchen') },
     { key: 'ordenes', label: 'Órdenes', icon: 'document-text-outline', href: '/(app)/(tabs)/orders', match: (p) => p === '/orders' },
     { key: 'insumos', label: 'Insumos', icon: 'cube-outline', comingSoon: true },
-    { key: 'corte', label: 'Corte', icon: 'wallet-outline', comingSoon: true },
+    { key: 'corte', label: 'Corte', icon: 'wallet-outline', href: '/corte', match: (p) => p.startsWith('/corte') },
     ...(showAdmin
       ? [{ key: 'admin', label: 'Admin', icon: 'shield-outline' as const, href: '/admin', match: (p: string) => p.startsWith('/admin') }]
       : []),

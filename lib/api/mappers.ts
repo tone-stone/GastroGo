@@ -1,4 +1,5 @@
 import type {
+  DbCashMovement,
   DbMenuCategory,
   DbMenuItem,
   DbOrder,
@@ -6,10 +7,12 @@ import type {
   DbOrderWithItems,
   DbProfile,
   DbRestaurantMember,
+  DbShift,
+  DbShiftWithMovements,
   DbStaffMember,
   DbTable,
 } from '@/types/database';
-import type { AppUser, MenuCategory, MenuItem, Order, OrderItem, StaffMember, Table } from '@/types';
+import type { AppUser, CashMovement, MenuCategory, MenuItem, Order, OrderItem, Shift, StaffMember, Table } from '@/types';
 
 export function mapTable(row: DbTable): Table {
   return {
@@ -159,5 +162,78 @@ export function toDbOrderItem(item: OrderItem): Omit<DbOrderItem, 'id'> & { id?:
     notes: item.notes ?? null,
     kitchen_status: item.kitchen_status ?? null,
     ready_at: item.ready_at ?? null,
+  };
+}
+
+export function mapCashMovement(row: DbCashMovement): CashMovement {
+  return {
+    id: row.id,
+    amount: Number(row.amount),
+    reason: row.reason,
+    created_at: row.created_at,
+  };
+}
+
+function billsFromDb(bills: Record<string, number> | null): Record<number, number> | undefined {
+  if (!bills) return undefined;
+  return Object.fromEntries(Object.entries(bills).map(([k, v]) => [Number(k), v]));
+}
+
+function billsToDb(bills?: Record<number, number>): Record<string, number> | null {
+  if (!bills) return null;
+  return Object.fromEntries(Object.entries(bills).map(([k, v]) => [k, v]));
+}
+
+export function mapShift(row: DbShift, movements: DbCashMovement[]): Shift {
+  return {
+    id: row.id,
+    restaurant_id: row.restaurant_id,
+    opened_at: row.opened_at,
+    opened_by: row.opened_by ?? undefined,
+    opening_float: Number(row.opening_float),
+    withdrawals: movements.map(mapCashMovement),
+    status: row.status,
+    closed_at: row.closed_at ?? undefined,
+    closed_by: row.closed_by ?? undefined,
+    counted_bills: billsFromDb(row.counted_bills),
+    counted_total: row.counted_total !== null ? Number(row.counted_total) : undefined,
+    cash_expected: row.cash_expected !== null ? Number(row.cash_expected) : undefined,
+    difference: row.difference !== null ? Number(row.difference) : undefined,
+    sales_total: row.sales_total !== null ? Number(row.sales_total) : undefined,
+    sales_count: row.sales_count ?? undefined,
+    tips_total: row.tips_total !== null ? Number(row.tips_total) : undefined,
+  };
+}
+
+export function mapShiftWithMovements(row: DbShiftWithMovements): Shift {
+  return mapShift(row, row.cash_movements ?? []);
+}
+
+export function toDbShift(shift: Shift): Omit<DbShift, 'id'> & { id?: string } {
+  return {
+    id: shift.id,
+    restaurant_id: shift.restaurant_id,
+    opened_at: shift.opened_at,
+    opened_by: shift.opened_by ?? null,
+    opening_float: shift.opening_float,
+    status: shift.status,
+    closed_at: shift.closed_at ?? null,
+    closed_by: shift.closed_by ?? null,
+    counted_bills: billsToDb(shift.counted_bills),
+    counted_total: shift.counted_total ?? null,
+    cash_expected: shift.cash_expected ?? null,
+    difference: shift.difference ?? null,
+    sales_total: shift.sales_total ?? null,
+    sales_count: shift.sales_count ?? null,
+    tips_total: shift.tips_total ?? null,
+  };
+}
+
+export function toDbCashMovement(movement: CashMovement, shiftId: string): Omit<DbCashMovement, 'id' | 'created_at'> & { id?: string } {
+  return {
+    id: movement.id,
+    shift_id: shiftId,
+    amount: movement.amount,
+    reason: movement.reason,
   };
 }

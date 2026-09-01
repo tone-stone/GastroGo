@@ -2,11 +2,12 @@ import {
   demoCategories,
   demoMenuItems,
   demoOrders,
+  demoShifts,
   demoStaff,
   demoTables,
   demoUsers,
 } from '@/lib/demo-data';
-import type { AppUser, MenuCategory, MenuItem, Order, StaffMember, Table } from '@/types';
+import type { AppUser, MenuCategory, MenuItem, Order, Shift, StaffMember, Table } from '@/types';
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
@@ -20,6 +21,7 @@ export const demoState = {
   orders: clone(demoOrders) as Order[],
   staff: clone(demoStaff) as StaffMember[],
   users: clone(demoUsers) as AppUser[],
+  shifts: clone(demoShifts) as Shift[],
 };
 
 export function resetDemoState() {
@@ -29,6 +31,7 @@ export function resetDemoState() {
   demoState.orders = clone(demoOrders);
   demoState.staff = clone(demoStaff);
   demoState.users = clone(demoUsers);
+  demoState.shifts = clone(demoShifts);
 }
 
 export function getDemoSnapshot() {
@@ -39,4 +42,8 @@ export function getDemoSnapshot() {
     orders: clone(demoState.orders),
     staff: clone(demoState.staff),
   };
+}
+
+export function getDemoShiftsSnapshot(): Shift[] {
+  return clone(demoState.shifts);
 }

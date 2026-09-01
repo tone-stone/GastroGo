@@ -138,3 +138,31 @@ export interface AppUser {
   is_active: boolean;
   created_at: string;
 }
+
+export type ShiftStatus = 'open' | 'closed';
+
+export interface CashMovement {
+  id: string;
+  amount: number;
+  reason: string;
+  created_at: string;
+}
+
+export interface Shift {
+  id: string;
+  restaurant_id: string;
+  opened_at: string;
+  opened_by?: string;
+  opening_float: number;
+  withdrawals: CashMovement[];
+  status: ShiftStatus;
+  closed_at?: string;
+  closed_by?: string;
+  counted_bills?: Record<number, number>;
+  counted_total?: number;
+  cash_expected?: number;
+  difference?: number;
+  sales_total?: number;
+  sales_count?: number;
+  tips_total?: number;
+}

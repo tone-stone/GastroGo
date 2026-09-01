@@ -23,12 +23,14 @@ const ActiveOrderCard = memo(function ActiveOrderCard({
   selected,
   compact,
   onSelectOrder,
+  onLongPressOrder,
 }: {
   order: Order;
   table?: Table;
   selected: boolean;
   compact: boolean;
   onSelectOrder?: (orderId: string) => void;
+  onLongPressOrder?: (orderId: string) => void;
 }) {
   const progress = getKitchenProgress(order);
   const isBill = table?.status === 'bill_requested';
@@ -43,6 +45,8 @@ const ActiveOrderCard = memo(function ActiveOrderCard({
         selected && styles.cardSelected,
       ]}
       onPress={() => onSelectOrder?.(order.id)}
+      onLongPress={onLongPressOrder ? () => onLongPressOrder(order.id) : undefined}
+      delayLongPress={350}
       disabled={!onSelectOrder}
     >
       <View style={styles.cardTop}>
@@ -51,16 +55,18 @@ const ActiveOrderCard = memo(function ActiveOrderCard({
         </Text>
         <OrderStatusBadge status={order.status} size="sm" />
       </View>
-      <Text style={styles.zone} numberOfLines={1}>
-        {table?.zone ?? 'Mesa'}
-      </Text>
+      {!compact ? (
+        <Text style={styles.zone} numberOfLines={1}>
+          {table?.zone ?? 'Mesa'}
+        </Text>
+      ) : null}
       <View style={styles.progressRow}>
         <Ionicons
           name={allReady ? 'checkmark-circle' : 'flame-outline'}
           size={13}
           color={allReady ? colors.success : colors.info}
         />
-        <Text style={[styles.progressText, allReady && styles.progressReady]}>
+        <Text style={[styles.progressText, allReady && styles.progressReady]} numberOfLines={1}>
           {progress.label}
         </Text>
       </View>
@@ -79,12 +85,14 @@ const ActiveOrderCard = memo(function ActiveOrderCard({
 interface ActiveOrdersPanelProps {
   selectedOrderId?: string;
   onSelectOrder?: (orderId: string) => void;
+  onLongPressOrder?: (orderId: string) => void;
   compact?: boolean;
 }
 
 export function ActiveOrdersPanel({
   selectedOrderId,
   onSelectOrder,
+  onLongPressOrder,
   compact = false,
 }: ActiveOrdersPanelProps) {
   const orders = usePosStore((s) => s.orders);
@@ -147,6 +155,7 @@ export function ActiveOrdersPanel({
             selected={selectedOrderId === order.id}
             compact={compact}
             onSelectOrder={onSelectOrder}
+            onLongPressOrder={onLongPressOrder}
           />
         ))}
       </ScrollView>
@@ -187,7 +196,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     ...shadows.sm,
   },
-  cardCompact: { width: 120 },
+  cardCompact: { width: 112, padding: 7, gap: 2 },
   cardBill: { borderColor: colors.gold, backgroundColor: colors.goldMuted },
   cardSelected: { borderColor: colors.primary, backgroundColor: colors.primaryMuted },
   cardTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
