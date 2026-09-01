@@ -18,10 +18,18 @@ export interface RestaurantSnapshot {
   staff: StaffMember[];
 }
 
+// El modo demo se reinicia una sola vez por sesión de la app — si `resetDemoState()`
+// corriera en cada `loadRestaurantData` (se llama al montar Venta y Mesas), cualquier
+// navegación entre pantallas borraría las órdenes/mesas editadas durante la demo.
+let demoStateInitialized = false;
+
 /** Carga todos los datos CRUD de un restaurante */
 export async function fetchRestaurantSnapshot(restaurantId: string): Promise<RestaurantSnapshot> {
   if (!isSupabaseConfigured) {
-    resetDemoState();
+    if (!demoStateInitialized) {
+      resetDemoState();
+      demoStateInitialized = true;
+    }
     return getDemoSnapshot();
   }
 

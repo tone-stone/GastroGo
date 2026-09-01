@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ServiceFlowSteps } from '@/components/pos/ServiceFlowSteps';
 import { Button } from '@/components/ui/Button';
-import { tableStatusConfig } from '@/constants/status';
+import { useTableStatusConfig } from '@/constants/status';
 import { colors, radius, shadows } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -29,6 +29,7 @@ export function AttendCustomerModal({ visible, onClose, initialTableId }: Attend
   const router = useRouter();
   const { staffMemberId, activeRestaurantId } = useSessionStore();
   const { tables, startTableService, getStaff } = usePosStore();
+  const tableStatusConfig = useTableStatusConfig();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedTableId, setSelectedTableId] = useState<string>('');
@@ -97,6 +98,7 @@ export function AttendCustomerModal({ visible, onClose, initialTableId }: Attend
               ) : (
                 <ScrollView
                   horizontal
+                  style={styles.tableRowScroll}
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.tableRow}
                 >
@@ -216,6 +218,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: 12,
   },
+  tableRowScroll: { flexGrow: 0, flexShrink: 0 },
   tableRow: { gap: 10, paddingBottom: 20 },
   tableCard: {
     width: 88,

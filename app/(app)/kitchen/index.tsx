@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Platform, Pressable, StyleSheet, Text, View, type ListRenderItem } from 'react-native';
+import { FlatList, Platform, Pressable, StyleSheet, Text, View, useWindowDimensions, type ListRenderItem } from 'react-native';
 
 import { KitchenItemTicket } from '@/components/kitchen/KitchenItemTicket';
 import { useSignOut } from '@/components/navigation/NavButtons';
@@ -24,7 +23,8 @@ interface KitchenTicketEntry {
 
 export default function KitchenDashboardScreen() {
   const confirmSignOut = useSignOut();
-  const loginMode = useSessionStore((s) => s.loginMode);
+  const { width } = useWindowDimensions();
+  const isWide = width >= 768;
   const user = useSessionStore((s) => s.user);
   const restaurants = useSessionStore((s) => s.restaurants);
   const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
@@ -97,29 +97,27 @@ export default function KitchenDashboardScreen() {
 
   const keyExtractor = useCallback((entry: KitchenTicketEntry) => entry.item.id, []);
 
-  if (loginMode !== 'kitchen') {
-    return <Redirect href="/(auth)/login" />;
-  }
-
   return (
     <Screen padded={false}>
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.logo}>
-            <Ionicons name="flame" size={22} color="#FFF" />
+      {!isWide ? (
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <View style={styles.logo}>
+              <Ionicons name="flame" size={22} color="#FFF" />
+            </View>
+            <View>
+              <Text style={styles.title}>Cocina</Text>
+              <Text style={styles.subtitle}>{restaurant?.name ?? 'GastroGo'}</Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.title}>Cocina</Text>
-            <Text style={styles.subtitle}>{restaurant?.name ?? 'GastroGo'}</Text>
+          <View style={styles.headerRight}>
+            <LiveClock />
+            <Pressable style={styles.signOutBtn} onPress={confirmSignOut} hitSlop={8}>
+              <Ionicons name="log-out-outline" size={20} color={colors.textSecondary} />
+            </Pressable>
           </View>
         </View>
-        <View style={styles.headerRight}>
-          <LiveClock />
-          <Pressable style={styles.signOutBtn} onPress={confirmSignOut} hitSlop={8}>
-            <Ionicons name="log-out-outline" size={20} color={colors.textSecondary} />
-          </Pressable>
-        </View>
-      </View>
+      ) : null}
 
       <View style={styles.statsBar}>
         <View style={styles.stat}>

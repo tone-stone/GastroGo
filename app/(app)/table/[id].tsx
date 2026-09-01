@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { TableStatusBadge } from '@/components/ui/Badge';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveStepFromOrder } from '@/constants/serviceFlow';
-import { tableStatusConfig } from '@/constants/status';
+import { useTableStatusConfig } from '@/constants/status';
 import { colors, headerStyle, radius } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -42,6 +42,7 @@ export default function TableOrderScreen() {
   const updateItemQuantity = usePosStore((s) => s.updateItemQuantity);
   const sendToKitchen = usePosStore((s) => s.sendToKitchen);
   const requestBill = usePosStore((s) => s.requestBill);
+  const tableStatusConfig = useTableStatusConfig();
 
   const table = id ? tables.find((t) => t.id === id) : undefined;
   const order = id

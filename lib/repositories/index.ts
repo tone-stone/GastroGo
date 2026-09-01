@@ -1,6 +1,6 @@
 import { requireSupabase } from '@/lib/api/client';
 import { fromSupabaseError } from '@/lib/api/errors';
-import { mapAppUser, mapCategory, mapMenuItem, mapOrderWithItems, mapStaff, mapTable } from '@/lib/api/mappers';
+import { mapAppUser, mapCategory, mapMenuItem, mapOrderWithItems, mapStaff, mapTable, toDbOrder } from '@/lib/api/mappers';
 import type { CrudRepository, RestaurantScope } from '@/lib/api/types';
 import { demoState } from '@/lib/data/demo-state';
 import { isSupabaseConfigured } from '@/lib/supabase';
@@ -512,21 +512,8 @@ const supabaseOrdersRepo: OrdersRepository = {
   },
   async upsert(order) {
     const client = requireSupabase();
-    const { items, ...header } = order;
-    const orderRow = {
-      id: header.id,
-      restaurant_id: header.restaurant_id,
-      table_id: header.table_id,
-      waiter_id: header.waiter_id ?? null,
-      status: header.status,
-      subtotal: header.subtotal,
-      tax: header.tax,
-      tip: header.tip,
-      total: header.total,
-      payment_method: header.payment_method ?? null,
-      kitchen_sent_at: header.kitchen_sent_at ?? null,
-      closed_at: header.closed_at ?? null,
-    };
+    const { items } = order;
+    const orderRow = toDbOrder(order);
 
     const { error: orderError } = await client.from('orders').upsert(orderRow);
     if (orderError) throw fromSupabaseError(orderError);

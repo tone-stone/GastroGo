@@ -5,7 +5,7 @@ import { AdminListRow } from '@/components/admin/AdminListRow';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Screen } from '@/components/ui/Screen';
-import { tableStatusConfig } from '@/constants/status';
+import { useTableStatusConfig } from '@/constants/status';
 import { colors, radius } from '@/constants/legacyTheme';
 import { TABLE_ZONES } from '@/lib/roles';
 import { usePosStore } from '@/stores/posStore';
@@ -14,6 +14,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 export default function AdminTablesScreen() {
   const { activeRestaurantId } = useSessionStore();
   const { tables, createTable, deleteTable } = usePosStore();
+  const tableStatusConfig = useTableStatusConfig();
 
   const [showForm, setShowForm] = useState(false);
   const [number, setNumber] = useState('');

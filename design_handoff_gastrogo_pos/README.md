@@ -217,3 +217,10 @@ Ninguna imagen. Iconografía Phosphor Icons (regular y fill); en React Native us
 - `support.js` — runtime que necesita el prototipo para abrirse en el navegador. Colócalo junto al HTML.
 - `theme.ts.txt` — las tres paletas como objetos listos para `constants/theme.ts`.
 - `github.md` — repo, rama y mapa de pantallas.
+
+## Capturas
+La carpeta `capturas/` tiene las 24 pantallas y estados del prototipo, en orden de flujo:
+
+01 Mesas · plano por zona — 03 Mesas · cola de servicio — 04 Comanda en mesa — 05 Comanda para llevar — 06 Comanda DiDi (integración, artículos bloqueados) — 07 Hoja de modificadores — 08 Caja en efectivo — 09 Caja con terminal — 10 Dividir cuenta — 11 Descuento — 12 Cocina — 13 Órdenes — 14 Detalle de orden — 15 Cancelar orden — 16 Transferir mesa — 17 Inventario · existencias — 18 Inventario · movimientos — 19 Inventario · conteo físico — 20 Corte de caja — 21 Admin — 22 Admin · editar platillo — 23 Notas de implementación — 24 Vistas móviles.
+
+Las capturas son referencia visual; el HTML es la fuente de verdad para medidas y estados interactivos.

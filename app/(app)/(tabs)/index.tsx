@@ -16,7 +16,6 @@ import { MenuList } from '@/components/pos/MenuList';
 import { OrderSummary } from '@/components/pos/OrderSummary';
 import { PosCashRegister } from '@/components/pos/PosCashRegister';
 import { ServiceFlowSteps } from '@/components/pos/ServiceFlowSteps';
-import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveStepFromOrder } from '@/constants/serviceFlow';
 import { colors, radius, shadows } from '@/constants/legacyTheme';
@@ -46,7 +45,6 @@ export default function SaleScreen() {
 
   const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
   const restaurants = useSessionStore((s) => s.restaurants);
-  const user = useSessionStore((s) => s.user);
 
   const categories = usePosStore((s) => s.categories);
   const menuItemsAll = usePosStore((s) => s.menuItems);
@@ -165,46 +163,11 @@ export default function SaleScreen() {
     setNotesModal({ mode: 'add', item });
   }, []);
 
-  const toolbar = (
-    <View style={[styles.toolbar, isDesktop && styles.toolbarDesktop]}>
-      <View style={styles.toolbarLeft}>
-        <View style={styles.toolbarIcon}>
-          <Ionicons name="cash" size={20} color="#FFF" />
-        </View>
-        <View>
-          <Text style={styles.toolbarTitle}>Punto de venta</Text>
-          <Text style={styles.toolbarSub} numberOfLines={1}>
-            {restaurant?.name ?? 'GastroGo'} · Mostrador
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.toolbarStats}>
-        <View style={styles.statChip}>
-          <Ionicons name="basket-outline" size={16} color={colors.primary} />
-          <Text style={styles.statValue}>{itemCount}</Text>
-          <Text style={styles.statLabel}>artículos</Text>
-        </View>
-        <View style={[styles.statChip, styles.statChipTotal]}>
-          <Text style={styles.statLabel}>Total</Text>
-          <Text style={styles.statTotal}>{formatCurrency(order?.total ?? 0)}</Text>
-        </View>
-      </View>
-
-      <View style={styles.toolbarRight}>
-        {user ? (
-          <View style={styles.cashierChip}>
-            <Ionicons name="person-circle-outline" size={18} color={colors.primary} />
-            <Text style={styles.cashierName} numberOfLines={1}>{user.full_name}</Text>
-          </View>
-        ) : null}
-        <Pressable style={styles.newSaleBtn} onPress={handleNewSale}>
-          <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
-          <Text style={styles.newSaleText}>Nueva venta</Text>
-        </Pressable>
-        <LiveClock />
-      </View>
-    </View>
+  const newSaleBtn = (
+    <Pressable style={styles.newSaleBtn} onPress={handleNewSale}>
+      <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
+      <Text style={styles.newSaleText}>Nueva venta</Text>
+    </Pressable>
   );
 
   if (!order) {
@@ -218,17 +181,18 @@ export default function SaleScreen() {
   if (isDesktop) {
     return (
       <Screen padded={false} scroll={false} style={styles.screenRoot}>
-        {toolbar}
-
         <View style={styles.ordersBar}>
-          <ActiveOrdersPanel
-            compact
-            selectedOrderId={paymentTargetId !== order?.id ? paymentTargetId : undefined}
-            onSelectOrder={handleSelectTableOrder}
-          />
+          <View style={styles.ordersBarPanel}>
+            <ActiveOrdersPanel
+              compact
+              selectedOrderId={paymentTargetId !== order?.id ? paymentTargetId : undefined}
+              onSelectOrder={handleSelectTableOrder}
+            />
+          </View>
+          {newSaleBtn}
         </View>
 
-        <View style={[styles.desktopBody, { minHeight: height - 180 }]}>
+        <View style={styles.desktopBody}>
           <View style={styles.registerPanel}>
             <ScrollView
               style={styles.registerScroll}
@@ -305,7 +269,7 @@ export default function SaleScreen() {
 
   return (
     <Screen padded={false} scroll={!isWide} style={isWeb ? styles.screenRoot : undefined}>
-      {isWide ? toolbar : (
+      {!isWide ? (
         <View style={styles.mobileHero}>
           <View style={styles.mobileHeroTop}>
             <View>
@@ -317,12 +281,11 @@ export default function SaleScreen() {
               <Text style={styles.mobileStatLabel}>{itemCount} artículos</Text>
             </View>
           </View>
-          <Pressable style={styles.newSaleBtn} onPress={handleNewSale}>
-            <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
-            <Text style={styles.newSaleText}>Nueva venta</Text>
-          </Pressable>
+          {newSaleBtn}
         </View>
-      )}
+      ) : null}
+
+      {isWide ? <View style={styles.tabletActionRow}>{newSaleBtn}</View> : null}
 
       <View style={[styles.container, isWide && styles.containerWide]}>
         {!isWide ? (
@@ -413,68 +376,6 @@ const styles = StyleSheet.create({
   screenRoot: { flex: 1, backgroundColor: colors.backgroundWarm },
   loading: { fontSize: 15, color: colors.textMuted, textAlign: 'center', marginTop: 40 },
 
-  toolbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-    ...shadows.sm,
-  },
-  toolbarDesktop: {
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    flexWrap: 'nowrap',
-  },
-  toolbarLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1, minWidth: 180 },
-  toolbarIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: radius.md,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  toolbarTitle: { fontSize: 17, fontWeight: '800', color: colors.text },
-  toolbarSub: { fontSize: 12, color: colors.textMuted, marginTop: 1 },
-  toolbarStats: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.background,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  statChipTotal: {
-    backgroundColor: colors.primaryMuted,
-    borderColor: colors.primaryLight,
-    gap: 8,
-  },
-  statValue: { fontSize: 16, fontWeight: '800', color: colors.text },
-  statLabel: { fontSize: 11, fontWeight: '600', color: colors.textMuted, textTransform: 'uppercase' },
-  statTotal: { fontSize: 18, fontWeight: '800', color: colors.primary },
-  toolbarRight: { flexDirection: 'row', alignItems: 'center', gap: 12, marginLeft: 'auto' },
-  cashierChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: radius.full,
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    maxWidth: 140,
-  },
-  cashierName: { fontSize: 12, fontWeight: '700', color: colors.text, flex: 1 },
   newSaleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -489,11 +390,21 @@ const styles = StyleSheet.create({
   newSaleText: { fontSize: 13, fontWeight: '700', color: colors.primary },
 
   ordersBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
     paddingHorizontal: 16,
     paddingVertical: 10,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
+  },
+  ordersBarPanel: { flex: 1 },
+  tabletActionRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    paddingTop: 12,
   },
   flowStrip: {
     paddingHorizontal: 12,

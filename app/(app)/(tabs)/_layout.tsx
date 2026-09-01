@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 import { MainHeader } from '@/components/navigation/MainHeader';
 import { colors, shadows } from '@/constants/legacyTheme';
@@ -42,6 +42,8 @@ function OrdersTabIcon({ focused }: { focused: boolean }) {
 export default function TabLayout() {
   const role = useSessionStore((s) => s.role);
   const loginMode = useSessionStore((s) => s.loginMode);
+  const { width } = useWindowDimensions();
+  const isWide = width >= 768;
   const showAdmin = isAdminRole(role);
   const isSale = loginMode === 'sale';
   const isWaiter = loginMode === 'waiter';
@@ -51,10 +53,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         header: () => <MainHeader />,
-        headerShown: true,
+        headerShown: !isWide,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: isWebSale ? styles.tabBarWeb : styles.tabBar,
+        tabBarStyle: isWide ? styles.tabBarHidden : isWebSale ? styles.tabBarWeb : styles.tabBar,
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -62,7 +64,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Venta',
-          href: isSale ? undefined : null,
+          // En ancho tablet/escritorio el riel de navegación puede llevar a Caja/Venta
+          // sin importar el loginMode; en móvil se mantiene el gateo original.
+          href: isWide ? undefined : isSale ? undefined : null,
           tabBarIcon: ({ focused }) => (
             <TabIcon name={focused ? 'cash' : 'cash-outline'} focused={focused} />
           ),
@@ -72,7 +76,7 @@ export default function TabLayout() {
         name="mesero"
         options={{
           title: 'Mesas',
-          href: isWaiter ? undefined : null,
+          href: isWide ? undefined : isWaiter ? undefined : null,
           tabBarIcon: ({ focused }) => (
             <TabIcon name={focused ? 'grid' : 'grid-outline'} focused={focused} />
           ),
@@ -109,6 +113,7 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
+  tabBarHidden: { display: 'none' },
   tabBar: {
     backgroundColor: colors.surface,
     borderTopColor: colors.borderLight,

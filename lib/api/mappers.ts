@@ -76,14 +76,29 @@ export function mapOrder(row: DbOrder, items: DbOrderItem[]): Order {
     table_id: row.table_id,
     waiter_id: row.waiter_id ?? undefined,
     status: row.status,
+    channel: row.channel,
     subtotal: Number(row.subtotal),
     tax: Number(row.tax),
     tip: Number(row.tip),
+    discount: row.discount_type
+      ? {
+          type: row.discount_type,
+          value: Number(row.discount_value ?? 0),
+          amount: Number(row.discount_amount),
+          reason: row.discount_reason ?? '',
+          authorizedBy: row.discount_authorized_by ?? undefined,
+        }
+      : undefined,
     total: Number(row.total),
     payment_method: row.payment_method ?? undefined,
     kitchen_sent_at: row.kitchen_sent_at ?? undefined,
     created_at: row.created_at,
     closed_at: row.closed_at ?? undefined,
+    external_ref: row.external_ref ?? undefined,
+    pickup_name: row.pickup_name ?? undefined,
+    pickup_time: row.pickup_time ?? undefined,
+    packaging: row.packaging ?? undefined,
+    prep_minutes: row.prep_minutes ?? undefined,
     items: items.map(mapOrderItem),
   };
 }
@@ -112,6 +127,7 @@ export function toDbOrder(order: Order): Omit<DbOrder, 'id' | 'created_at'> & { 
     table_id: order.table_id,
     waiter_id: order.waiter_id ?? null,
     status: order.status,
+    channel: order.channel,
     subtotal: order.subtotal,
     tax: order.tax,
     tip: order.tip,
@@ -119,6 +135,16 @@ export function toDbOrder(order: Order): Omit<DbOrder, 'id' | 'created_at'> & { 
     payment_method: order.payment_method ?? null,
     kitchen_sent_at: order.kitchen_sent_at ?? null,
     closed_at: order.closed_at ?? null,
+    external_ref: order.external_ref ?? null,
+    pickup_name: order.pickup_name ?? null,
+    pickup_time: order.pickup_time ?? null,
+    packaging: order.packaging ?? null,
+    prep_minutes: order.prep_minutes ?? null,
+    discount_type: order.discount?.type ?? null,
+    discount_value: order.discount?.value ?? null,
+    discount_amount: order.discount?.amount ?? 0,
+    discount_reason: order.discount?.reason ?? null,
+    discount_authorized_by: order.discount?.authorizedBy ?? null,
   };
 }
 

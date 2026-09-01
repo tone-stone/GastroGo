@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { useWindowDimensions } from 'react-native';
 
 import { BackButton } from '@/components/navigation/NavButtons';
 import { UserMenu } from '@/components/navigation/UserMenu';
@@ -13,10 +14,15 @@ const stackHeaderOptions = {
 };
 
 export default function AdminLayout() {
+  const { width } = useWindowDimensions();
+  const isWide = width >= 768;
+
   return (
     <Stack
       screenOptions={{
         contentStyle: { backgroundColor: colors.background },
+        // La barra superior del AppShell reemplaza este header en ancho tablet/escritorio.
+        headerShown: !isWide,
         ...stackHeaderOptions,
         headerLeft: () => <BackButton fallbackHref="/(app)/(tabs)/admin" />,
         headerRight: () => <UserMenu compact />,

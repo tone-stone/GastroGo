@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { orderStatusConfig, tableStatusConfig } from '@/constants/status';
+import { orderStatusConfig, useTableStatusConfig } from '@/constants/status';
 import { colors, radius } from '@/constants/legacyTheme';
 import type { OrderStatus, TableStatus } from '@/types';
 
@@ -23,6 +23,7 @@ function StatusBadge({ label, bg, color, dot, size = 'md' }: StatusBadgeProps) {
 }
 
 export function TableStatusBadge({ status, size }: { status: TableStatus; size?: 'sm' | 'md' }) {
+  const tableStatusConfig = useTableStatusConfig();
   const config = tableStatusConfig[status];
   return (
     <StatusBadge

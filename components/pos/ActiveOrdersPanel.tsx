@@ -135,6 +135,7 @@ export function ActiveOrdersPanel({
 
       <ScrollView
         horizontal={compact}
+        style={compact ? styles.listScrollCompact : undefined}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[styles.list, compact && styles.listCompact]}
       >
@@ -175,6 +176,7 @@ const styles = StyleSheet.create({
   billBadgeText: { fontSize: 10, fontWeight: '800', color: colors.coffee },
   list: { gap: 8 },
   listCompact: { paddingVertical: 2 },
+  listScrollCompact: { flexGrow: 0, flexShrink: 0 },
   card: {
     width: 132,
     backgroundColor: colors.background,

@@ -4,7 +4,7 @@ import {
   COUNTER_TABLE_ID,
   isCounterTable,
 } from '@/lib/demo-data';
-import { demoState } from '@/lib/data/demo-state';
+import { demoState, getDemoSnapshot, resetDemoState } from '@/lib/data/demo-state';
 import { fetchRestaurantSnapshot, persistOrder, persistTable } from '@/lib/data/restaurant-data';
 import {
   getMenuCategoriesRepository,
@@ -13,7 +13,7 @@ import {
   getTablesRepository,
 } from '@/lib/repositories';
 import { isSupabaseConfigured } from '@/lib/supabase';
-import type { MenuCategory, MenuItem, Order, OrderItem, StaffMember, Table, TableStatus } from '@/types';
+import type { MenuCategory, MenuItem, Order, OrderChannel, OrderDiscount, OrderItem, StaffMember, Table, TableStatus } from '@/types';
 
 interface PosState {
   tables: Table[];
@@ -27,6 +27,7 @@ interface PosState {
   getOrderByTable: (tableId: string) => Order | undefined;
   getActiveSaleOrder: () => Order | undefined;
   startSaleOrder: (restaurantId: string, cashierId?: string) => Order;
+  startChannelOrder: (restaurantId: string, channel: OrderChannel, staffId?: string) => Order;
   resetSaleOrder: () => void;
   cancelOrder: (orderId: string) => void;
   getMenuByCategory: (categoryId: string) => MenuItem[];
@@ -40,6 +41,8 @@ interface PosState {
   getKitchenOrders: () => Order[];
   requestBill: (tableId: string) => void;
   payOrder: (orderId: string, tip: number, paymentMethod: Order['payment_method']) => void;
+  applyDiscount: (orderId: string, discount: OrderDiscount) => void;
+  removeDiscount: (orderId: string) => void;
   assignTable: (tableId: string, waiterId: string | null, status?: TableStatus) => void;
   startTableService: (tableId: string, waiterId: string, restaurantId: string) => Order;
   getMyTables: (waiterId: string) => Table[];
@@ -64,8 +67,11 @@ interface PosState {
 
 function recalculateOrder(order: Order): Order {
   const subtotal = order.items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
-  const tax = Math.round(subtotal * 0.16 * 100) / 100;
-  const total = subtotal + tax + order.tip;
+  // El descuento se resta antes de IVA y propina (ver design_handoff_gastrogo_pos/README.md, "Descuentos").
+  const discountAmount = order.discount?.amount ?? 0;
+  const taxable = Math.max(0, subtotal - discountAmount);
+  const tax = Math.round(taxable * 0.16 * 100) / 100;
+  const total = taxable + tax + order.tip;
   return { ...order, subtotal, tax, total };
 }
 
@@ -99,6 +105,11 @@ function syncTablePersistence(table: Table) {
   }
 }
 
+// Se llama al montar Venta y Mesas — sin este guard, cada visita volvería a resetear
+// `activeSaleOrderId` y pisaría el pedido recién creado.
+let loadedRestaurantId: string | null = null;
+let demoStateReset = false;
+
 export const usePosStore = create<PosState>((set, get) => ({
   tables: demoState.tables,
   categories: demoState.categories,
@@ -108,6 +119,31 @@ export const usePosStore = create<PosState>((set, get) => ({
   activeSaleOrderId: null,
 
   loadRestaurantData: async (restaurantId) => {
+    if (loadedRestaurantId === restaurantId) return;
+    loadedRestaurantId = restaurantId;
+
+    // Camino demo: sin I/O real. Se aplica de inmediato (sin `await`) para que este
+    // `set()` quede confirmado antes de que cualquier otro efecto síncrono del mismo
+    // montaje (p. ej. crear el pedido de venta) pueda correr — de lo contrario ese
+    // pedido recién creado queda expuesto un instante y un snapshot demorado por el
+    // `await` innecesario lo pisa al aplicarse después.
+    if (!isSupabaseConfigured) {
+      if (!demoStateReset) {
+        resetDemoState();
+        demoStateReset = true;
+      }
+      const snapshot = getDemoSnapshot();
+      set({
+        tables: snapshot.tables,
+        categories: snapshot.categories,
+        menuItems: snapshot.menuItems,
+        orders: snapshot.orders,
+        staff: snapshot.staff,
+        activeSaleOrderId: null,
+      });
+      return;
+    }
+
     const snapshot = await fetchRestaurantSnapshot(restaurantId);
     set({
       tables: snapshot.tables,
@@ -152,6 +188,7 @@ export const usePosStore = create<PosState>((set, get) => ({
       table_id: COUNTER_TABLE_ID,
       waiter_id: cashierId,
       status: 'open',
+      channel: 'dine_in',
       subtotal: 0,
       tax: 0,
       tip: 0,
@@ -165,6 +202,41 @@ export const usePosStore = create<PosState>((set, get) => ({
       activeSaleOrderId: order.id,
     }));
 
+    if (!isSupabaseConfigured) demoState.orders.push(order);
+    else persistOrder(order);
+
+    return order;
+  },
+
+  startChannelOrder: (restaurantId, channel, staffId) => {
+    // No usa activeSaleOrderId (eso sigue siendo solo del mostrador/dine_in);
+    // reusa una orden abierta del mismo canal si ya existe para no duplicarla.
+    const existing = get().orders.find(
+      (o) =>
+        o.restaurant_id === restaurantId &&
+        o.channel === channel &&
+        o.status !== 'paid' &&
+        o.status !== 'cancelled' &&
+        isCounterTable(o.table_id),
+    );
+    if (existing) return existing;
+
+    const order: Order = recalculateOrder({
+      id: generateId('order'),
+      restaurant_id: restaurantId,
+      table_id: COUNTER_TABLE_ID,
+      waiter_id: staffId,
+      status: 'open',
+      channel,
+      subtotal: 0,
+      tax: 0,
+      tip: 0,
+      total: 0,
+      items: [],
+      created_at: new Date().toISOString(),
+    });
+
+    set((state) => ({ orders: [...state.orders, order] }));
     if (!isSupabaseConfigured) demoState.orders.push(order);
     else persistOrder(order);
 
@@ -248,6 +320,7 @@ export const usePosStore = create<PosState>((set, get) => ({
       table_id: tableId,
       waiter_id: assignedWaiter,
       status: 'open',
+      channel: 'dine_in',
       subtotal: 0,
       tax: 0,
       tip: 0,
@@ -455,6 +528,22 @@ export const usePosStore = create<PosState>((set, get) => ({
       return order && t.id === order.table_id;
     });
     if (table) syncTablePersistence(table);
+  },
+
+  applyDiscount: (orderId, discount) => {
+    set((state) => ({
+      orders: state.orders.map((o) => (o.id === orderId ? recalculateOrder({ ...o, discount }) : o)),
+    }));
+    syncOrderPersistence(get, orderId);
+  },
+
+  removeDiscount: (orderId) => {
+    set((state) => ({
+      orders: state.orders.map((o) =>
+        o.id === orderId ? recalculateOrder({ ...o, discount: undefined }) : o,
+      ),
+    }));
+    syncOrderPersistence(get, orderId);
   },
 
   createTable: (data) => {

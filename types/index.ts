@@ -6,7 +6,21 @@ export type TableStatus = 'free' | 'occupied' | 'bill_requested' | 'reserved';
 
 export type OrderStatus = 'open' | 'sent_to_kitchen' | 'ready' | 'paid' | 'cancelled';
 
-export type PaymentMethod = 'cash' | 'card' | 'transfer';
+export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'mp' | 'apple';
+
+export type OrderChannel = 'dine_in' | 'takeaway' | 'didi' | 'uber';
+
+export type DiscountType = 'percent' | 'fixed' | 'comp';
+
+export interface OrderDiscount {
+  type: DiscountType;
+  value: number;
+  amount: number;
+  reason: string;
+  authorizedBy?: string;
+}
+
+export type Packaging = 'bag' | 'box' | 'no_cutlery';
 
 export interface Organization {
   id: string;
@@ -89,15 +103,22 @@ export interface Order {
   table_id: string;
   waiter_id?: string;
   status: OrderStatus;
+  channel: OrderChannel;
   subtotal: number;
   tax: number;
   tip: number;
+  discount?: OrderDiscount;
   total: number;
   payment_method?: PaymentMethod;
   items: OrderItem[];
   created_at: string;
   kitchen_sent_at?: string;
   closed_at?: string;
+  external_ref?: string;
+  pickup_name?: string;
+  pickup_time?: string;
+  packaging?: Packaging;
+  prep_minutes?: number;
 }
 
 export interface Session {

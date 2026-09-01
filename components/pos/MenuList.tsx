@@ -11,8 +11,10 @@ import {
   type ListRenderItem,
 } from 'react-native';
 
+import { useTheme } from '@/components/theme/ThemeProvider';
 import { formatCurrency } from '@/lib/demo-data';
 import { colors, radius, shadows } from '@/constants/legacyTheme';
+import { radius as newRadius, space, type Palette } from '@/constants/theme';
 import type { MenuCategory, MenuItem } from '@/types';
 
 interface MenuListProps {
@@ -21,11 +23,37 @@ interface MenuListProps {
   selectedCategoryId: string;
   onSelectCategory: (id: string) => void;
   onAddItem: (item: MenuItem) => void;
-  layout?: 'list' | 'grid';
+  /** 'quick' es la venta rápida embebida en Caja (tokens nuevos, sin descripción ni botón +). */
+  layout?: 'list' | 'grid' | 'quick';
   columns?: number;
   /** Cuando true, la lista virtualiza el menú (recomendado si el padre tiene altura acotada). */
   scrollable?: boolean;
 }
+
+const MenuQuickItem = memo(function MenuQuickItem({
+  item,
+  onAddItem,
+  styles,
+  theme,
+}: {
+  item: MenuItem;
+  onAddItem: (item: MenuItem) => void;
+  styles: ReturnType<typeof makeQuickStyles>;
+  theme: Palette;
+}) {
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.quickCard, pressed && styles.quickCardPressed]}
+      onPress={() => onAddItem(item)}
+    >
+      <View style={styles.quickIcon}>
+        <Ionicons name="fast-food-outline" size={16} color={theme.mut} />
+      </View>
+      <Text style={styles.quickName} numberOfLines={1}>{item.name}</Text>
+      <Text style={styles.quickPrice}>{formatCurrency(item.price)}</Text>
+    </Pressable>
+  );
+});
 
 const categoryIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
   Entradas: 'leaf-outline',
@@ -106,12 +134,54 @@ export function MenuList({
   columns = 2,
   scrollable = false,
 }: MenuListProps) {
+  const { palette: theme } = useTheme();
+  const quickStyles = useMemo(() => makeQuickStyles(theme), [theme]);
   const sortedCategories = useMemo(
     () => [...categories].sort((a, b) => a.sort_order - b.sort_order),
     [categories],
   );
   const isGrid = layout === 'grid';
   const numColumns = isGrid ? columns : 1;
+
+  if (layout === 'quick') {
+    return (
+      <View style={quickStyles.container}>
+        <ScrollView
+          horizontal
+          style={quickStyles.tabsScroll}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={quickStyles.tabs}
+        >
+          {sortedCategories.map((cat) => {
+            const active = selectedCategoryId === cat.id;
+            const icon = categoryIcons[cat.name] ?? 'fast-food-outline';
+            return (
+              <Pressable
+                key={cat.id}
+                style={[quickStyles.tab, active && quickStyles.tabActive]}
+                onPress={() => onSelectCategory(cat.id)}
+              >
+                <Ionicons name={icon} size={14} color={active ? theme.a2.on : theme.mut} />
+                <Text style={[quickStyles.tabText, active && quickStyles.tabTextActive]}>{cat.name}</Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {items.length === 0 ? (
+          <Text style={quickStyles.empty}>No hay platillos en esta categoría</Text>
+        ) : (
+          <View style={quickStyles.grid}>
+            {items.map((item) => (
+              <View key={item.id} style={[quickStyles.gridCell, { width: `${100 / columns}%` }]}>
+                <MenuQuickItem item={item} onAddItem={onAddItem} styles={quickStyles} theme={theme} />
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+    );
+  }
 
   const renderItem: ListRenderItem<MenuItem> = useCallback(
     ({ item }) =>
@@ -128,7 +198,12 @@ export function MenuList({
   const keyExtractor = useCallback((item: MenuItem) => item.id, []);
 
   const categoryTabs = (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+    <ScrollView
+      horizontal
+      style={styles.tabsScroll}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.tabs}
+    >
       {sortedCategories.map((cat) => {
         const active = selectedCategoryId === cat.id;
         const icon = categoryIcons[cat.name] ?? 'fast-food-outline';
@@ -207,6 +282,7 @@ export function MenuList({
 const styles = StyleSheet.create({
   container: { flex: 1, gap: 14 },
   listFlex: { flex: 1 },
+  tabsScroll: { flexGrow: 0, flexShrink: 0 },
   tabs: { gap: 8, paddingBottom: 4 },
   tab: {
     flexDirection: 'row',
@@ -291,3 +367,47 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+function makeQuickStyles(theme: Palette) {
+  return StyleSheet.create({
+    container: { gap: space.sm + 2 },
+    tabsScroll: { flexGrow: 0, flexShrink: 0 },
+    tabs: { gap: space.xs, paddingBottom: 2 },
+    tab: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      paddingHorizontal: space.sm + 2,
+      paddingVertical: 8,
+      borderRadius: newRadius.pill,
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.line,
+    },
+    tabActive: { backgroundColor: theme.a2.solid, borderColor: theme.a2.solid },
+    tabText: { fontSize: 12, fontWeight: '600', color: theme.mut },
+    tabTextActive: { color: theme.a2.on },
+    empty: { fontSize: 13, color: theme.mut, textAlign: 'center', paddingVertical: space.lg },
+    grid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -space.xs },
+    gridCell: { padding: space.xs },
+    quickCard: {
+      backgroundColor: theme.surface,
+      borderRadius: newRadius.lg,
+      borderWidth: 1,
+      borderColor: theme.line,
+      padding: space.sm + 2,
+      gap: 4,
+    },
+    quickCardPressed: { backgroundColor: theme.surface2 },
+    quickIcon: {
+      width: 30,
+      height: 30,
+      borderRadius: newRadius.sm,
+      backgroundColor: theme.surface2,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    quickName: { fontSize: 13, fontWeight: '600', color: theme.text },
+    quickPrice: { fontSize: 12, fontWeight: '700', color: theme.a2.ink, fontVariant: ['tabular-nums'] },
+  });
+}

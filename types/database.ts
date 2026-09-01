@@ -1,8 +1,11 @@
 export type DbUserRole = 'owner' | 'manager' | 'cashier' | 'waiter' | 'kitchen';
 export type DbTableStatus = 'free' | 'occupied' | 'bill_requested' | 'reserved';
 export type DbOrderStatus = 'open' | 'sent_to_kitchen' | 'ready' | 'paid' | 'cancelled';
-export type DbPaymentMethod = 'cash' | 'card' | 'transfer';
+export type DbPaymentMethod = 'cash' | 'card' | 'transfer' | 'mp' | 'apple';
 export type DbKitchenStatus = 'pending' | 'ready';
+export type DbOrderChannel = 'dine_in' | 'takeaway' | 'didi' | 'uber';
+export type DbDiscountType = 'percent' | 'fixed' | 'comp';
+export type DbPackaging = 'bag' | 'box' | 'no_cutlery';
 
 export interface DbOrganization {
   id: string;
@@ -81,6 +84,7 @@ export interface DbOrder {
   table_id: string;
   waiter_id: string | null;
   status: DbOrderStatus;
+  channel: DbOrderChannel;
   subtotal: number;
   tax: number;
   tip: number;
@@ -89,6 +93,16 @@ export interface DbOrder {
   kitchen_sent_at: string | null;
   created_at: string;
   closed_at: string | null;
+  external_ref: string | null;
+  pickup_name: string | null;
+  pickup_time: string | null;
+  packaging: DbPackaging | null;
+  prep_minutes: number | null;
+  discount_type: DbDiscountType | null;
+  discount_value: number | null;
+  discount_amount: number;
+  discount_reason: string | null;
+  discount_authorized_by: string | null;
 }
 
 export interface DbOrderItem {

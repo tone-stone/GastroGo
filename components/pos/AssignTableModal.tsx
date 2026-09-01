@@ -11,7 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/Button';
-import { tableStatusConfig } from '@/constants/status';
+import { useTableStatusConfig } from '@/constants/status';
 import { colors, radius, shadows } from '@/constants/legacyTheme';
 import { usePosStore } from '@/stores/posStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -38,6 +38,7 @@ export function AssignTableModal({ visible, onClose, initialTableId }: AssignTab
   const insets = useSafeAreaInsets();
   const { user } = useSessionStore();
   const { tables, staff, assignTable, getStaff, getOrderByTable } = usePosStore();
+  const tableStatusConfig = useTableStatusConfig();
 
   const [selectedTableId, setSelectedTableId] = useState(initialTableId ?? tables[0]?.id ?? '');
   const [selectedWaiterId, setSelectedWaiterId] = useState<string | null>(null);
@@ -98,7 +99,12 @@ export function AssignTableModal({ visible, onClose, initialTableId }: AssignTab
           </View>
 
           <Text style={styles.sectionLabel}>Mesa</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tableRow}>
+          <ScrollView
+            horizontal
+            style={styles.tableRowScroll}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tableRow}
+          >
             {tables.map((table) => {
               const active = table.id === selectedTableId;
               const config = tableStatusConfig[table.status];
@@ -238,6 +244,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 4,
   },
+  tableRowScroll: { flexGrow: 0, flexShrink: 0 },
   tableRow: { gap: 8, paddingBottom: 16 },
   tableBtn: {
     width: 52,

@@ -8,11 +8,12 @@ import { AssignTableModal } from '@/components/pos/AssignTableModal';
 import { AttendCustomerModal } from '@/components/pos/AttendCustomerModal';
 import { ServiceFlowSteps } from '@/components/pos/ServiceFlowSteps';
 import { TableGrid } from '@/components/pos/TableGrid';
+import { useTheme } from '@/components/theme/ThemeProvider';
 import { Button } from '@/components/ui/Button';
 import { LiveClock } from '@/components/ui/AppHeader';
 import { Screen } from '@/components/ui/Screen';
-import { tableStatusConfig } from '@/constants/status';
-import { radius, shadow, space, theme } from '@/constants/theme';
+import { useTableStatusConfig } from '@/constants/status';
+import { radius, shadow, space, type Palette } from '@/constants/theme';
 import { COUNTER_TABLE_ID } from '@/lib/demo-data';
 import { isAdminRole } from '@/lib/roles';
 import { usePosStore } from '@/stores/posStore';
@@ -20,6 +21,9 @@ import { useSessionStore } from '@/stores/sessionStore';
 
 export default function WaiterScreen() {
   const router = useRouter();
+  const { palette: theme } = useTheme();
+  const tableStatusConfig = useTableStatusConfig();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const activeRestaurantId = useSessionStore((s) => s.activeRestaurantId);
   const restaurants = useSessionStore((s) => s.restaurants);
   const staffMemberId = useSessionStore((s) => s.staffMemberId);
@@ -175,7 +179,12 @@ export default function WaiterScreen() {
       {freeTables.length > 0 ? (
         <View style={styles.quickSection}>
           <Text style={styles.sectionTitle}>Mesas disponibles — toca para sentar</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickRow}>
+          <ScrollView
+            horizontal
+            style={styles.quickRowScroll}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickRow}
+          >
             {freeTables.map((table) => {
               const config = tableStatusConfig[table.status];
               return (
@@ -275,7 +284,8 @@ export default function WaiterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(theme: Palette) {
+  return StyleSheet.create({
   hero: {
     backgroundColor: theme.surface,
     borderRadius: radius.panel,
@@ -364,6 +374,7 @@ const styles = StyleSheet.create({
   },
   waiterName: { fontSize: 16, fontWeight: '600', color: theme.text, marginTop: 1 },
   quickSection: { marginBottom: space.lg, gap: space.sm + 2 },
+  quickRowScroll: { flexGrow: 0, flexShrink: 0 },
   quickRow: { gap: space.sm + 2, paddingVertical: 2 },
   quickCard: {
     width: 80,
@@ -437,4 +448,5 @@ const styles = StyleSheet.create({
   assignBarText: { flex: 1 },
   assignBarTitle: { fontSize: 15, fontWeight: '600', color: theme.text },
   assignBarSub: { fontSize: 12, color: theme.mut, marginTop: 1 },
-});
+  });
+}

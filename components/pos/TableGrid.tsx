@@ -3,8 +3,9 @@ import { memo, useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 import { TableStatusBadge } from '@/components/ui/Badge';
-import { tableStatusConfig } from '@/constants/status';
-import { radius, shadow, space, theme } from '@/constants/theme';
+import { useTheme } from '@/components/theme/ThemeProvider';
+import { useTableStatusConfig } from '@/constants/status';
+import { radius, shadow, space, type Palette } from '@/constants/theme';
 import { formatCurrency } from '@/lib/demo-data';
 import { usePosStore } from '@/stores/posStore';
 import type { Order, Table, TableStatus } from '@/types';
@@ -20,15 +21,17 @@ function getKitchenIndicator(order: Order | undefined, table: Table): KitchenInd
   return 'preparing';
 }
 
-const KITCHEN_INDICATOR_CONFIG: Record<
+function makeKitchenIndicatorConfig(theme: Palette): Record<
   Exclude<KitchenIndicator, 'none'>,
   { icon: keyof typeof Ionicons.glyphMap; color: string; bg: string; label: string }
-> = {
-  draft: { icon: 'create-outline', color: theme.mut, bg: theme.surface2, label: 'Sin enviar' },
-  preparing: { icon: 'flame', color: theme.a4.ink, bg: theme.a4.soft, label: 'En cocina' },
-  ready: { icon: 'checkmark-circle', color: theme.a2.ink, bg: theme.a2.soft, label: 'Listo' },
-  bill: { icon: 'receipt-outline', color: theme.a3.ink, bg: theme.a3.soft, label: 'Cuenta' },
-};
+> {
+  return {
+    draft: { icon: 'create-outline', color: theme.mut, bg: theme.surface2, label: 'Sin enviar' },
+    preparing: { icon: 'flame', color: theme.a4.ink, bg: theme.a4.soft, label: 'En cocina' },
+    ready: { icon: 'checkmark-circle', color: theme.a2.ink, bg: theme.a2.soft, label: 'Listo' },
+    bill: { icon: 'receipt-outline', color: theme.a3.ink, bg: theme.a3.soft, label: 'Cuenta' },
+  };
+}
 
 function minutesSince(iso?: string): number | null {
   if (!iso) return null;
@@ -52,19 +55,13 @@ const ZONE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
 
 const CARD_MIN_WIDTH = 220;
 const CARD_MIN_HEIGHT = 132;
-const GRID_GAP = space.md;
-const SCREEN_PAD = space.lg;
 
-function useGridLayout() {
+function useGridLayout(gap: number, screenPad: number) {
   const { width } = useWindowDimensions();
-  const innerWidth = width - SCREEN_PAD * 2;
-  const cols = Math.max(1, Math.floor((innerWidth + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP)));
-  const cardWidth = Math.floor((innerWidth - GRID_GAP * (cols - 1)) / cols);
+  const innerWidth = width - screenPad * 2;
+  const cols = Math.max(1, Math.floor((innerWidth + gap) / (CARD_MIN_WIDTH + gap)));
+  const cardWidth = Math.floor((innerWidth - gap * (cols - 1)) / cols);
   return { cardWidth };
-}
-
-function getInitials(name: string): string {
-  return name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 }
 
 const TableCard = memo(function TableCard({
@@ -80,6 +77,11 @@ const TableCard = memo(function TableCard({
   onPress?: () => void;
   onAssign?: () => void;
 }) {
+  const { palette: theme } = useTheme();
+  const tableStatusConfig = useTableStatusConfig();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const kitchenIndicatorConfig = useMemo(() => makeKitchenIndicatorConfig(theme), [theme]);
+
   const order = usePosStore((s) =>
     s.orders.find(
       (o) => o.table_id === table.id && o.status !== 'paid' && o.status !== 'cancelled',
@@ -92,7 +94,7 @@ const TableCard = memo(function TableCard({
   );
   const config = tableStatusConfig[table.status];
   const kitchen = getKitchenIndicator(order, table);
-  const kitchenConfig = kitchen !== 'none' ? KITCHEN_INDICATOR_CONFIG[kitchen] : null;
+  const kitchenConfig = kitchen !== 'none' ? kitchenIndicatorConfig[kitchen] : null;
   const readyCount = order?.items.filter((i) => i.kitchen_status === 'ready').length ?? 0;
   const kitchenProgress =
     kitchen === 'preparing' && order ? `${readyCount}/${order.items.length}` : null;
@@ -160,7 +162,9 @@ const TableCard = memo(function TableCard({
 });
 
 export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress, onAssignTable }: TableGridProps) {
-  const { cardWidth } = useGridLayout();
+  const { palette: theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { cardWidth } = useGridLayout(space.md, space.lg);
 
   const filtered = useMemo(
     () => (filter === 'all' ? tables : tables.filter((t) => t.status === filter)),
@@ -227,107 +231,109 @@ export function TableGrid({ tables, filter = 'all', staffMemberId, onTablePress,
   );
 }
 
-const styles = StyleSheet.create({
-  container: { gap: space.xl },
-  section: { gap: space.md },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.sm,
-  },
-  sectionIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.pill,
-    backgroundColor: theme.surface2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: theme.mut,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-  sectionLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: theme.line,
-  },
-  sectionCount: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: theme.mut,
-    minWidth: 16,
-    textAlign: 'right',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: GRID_GAP,
-  },
-  cardWrap: { position: 'relative' },
-  card: {
-    flexDirection: 'row',
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.line,
-    ...shadow.sm,
-  },
-  pressed: { opacity: 0.92 },
-  cardMine: { borderWidth: 2, borderColor: theme.cta },
-  statusStrip: { width: 4 },
-  body: { flex: 1, padding: space.sm + 2, gap: space.xs },
-  headRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-  },
-  headLeft: { gap: 2 },
-  number: { fontSize: 26, fontWeight: '600', color: theme.text, letterSpacing: -0.5, lineHeight: 30 },
-  capacityRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  capacityText: { fontSize: 11, fontWeight: '600', color: theme.mut },
-  kitchenBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: radius.pill,
-    maxWidth: '100%',
-  },
-  kitchenLabel: { fontSize: 10, fontWeight: '700' },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 'auto',
-    paddingTop: space.xs,
-    borderTopWidth: 1,
-    borderTopColor: theme.line,
-  },
-  waiterDot: { width: 7, height: 7, borderRadius: 4 },
-  footerMeta: { flex: 1, fontSize: 11, fontWeight: '600', color: theme.mut },
-  footerAmount: { fontSize: 12, fontWeight: '600', color: theme.text, fontVariant: ['tabular-nums'] },
-  assignBtn: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.line,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-    ...shadow.sm,
-  },
-  empty: { alignItems: 'center', paddingVertical: 40, gap: space.sm },
-  emptyText: { fontSize: 14, color: theme.mut },
-});
+function makeStyles(theme: Palette) {
+  return StyleSheet.create({
+    container: { gap: space.xl },
+    section: { gap: space.md },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space.sm,
+    },
+    sectionIcon: {
+      width: 24,
+      height: 24,
+      borderRadius: radius.pill,
+      backgroundColor: theme.surface2,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    sectionTitle: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.mut,
+      textTransform: 'uppercase',
+      letterSpacing: 0.8,
+    },
+    sectionLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.line,
+    },
+    sectionCount: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.mut,
+      minWidth: 16,
+      textAlign: 'right',
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space.md,
+    },
+    cardWrap: { position: 'relative' },
+    card: {
+      flexDirection: 'row',
+      borderRadius: radius.lg,
+      overflow: 'hidden',
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.line,
+      ...shadow.sm,
+    },
+    pressed: { opacity: 0.92 },
+    cardMine: { borderWidth: 2, borderColor: theme.cta },
+    statusStrip: { width: 4 },
+    body: { flex: 1, padding: space.sm + 2, gap: space.xs },
+    headRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+    },
+    headLeft: { gap: 2 },
+    number: { fontSize: 26, fontWeight: '600', color: theme.text, letterSpacing: -0.5, lineHeight: 30 },
+    capacityRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+    capacityText: { fontSize: 11, fontWeight: '600', color: theme.mut },
+    kitchenBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      gap: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: radius.pill,
+      maxWidth: '100%',
+    },
+    kitchenLabel: { fontSize: 10, fontWeight: '700' },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginTop: 'auto',
+      paddingTop: space.xs,
+      borderTopWidth: 1,
+      borderTopColor: theme.line,
+    },
+    waiterDot: { width: 7, height: 7, borderRadius: 4 },
+    footerMeta: { flex: 1, fontSize: 11, fontWeight: '600', color: theme.mut },
+    footerAmount: { fontSize: 12, fontWeight: '600', color: theme.text, fontVariant: ['tabular-nums'] },
+    assignBtn: {
+      position: 'absolute',
+      top: 6,
+      right: 6,
+      width: 26,
+      height: 26,
+      borderRadius: 13,
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.line,
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 2,
+      ...shadow.sm,
+    },
+    empty: { alignItems: 'center', paddingVertical: 40, gap: space.sm },
+    emptyText: { fontSize: 14, color: theme.mut },
+  });
+}

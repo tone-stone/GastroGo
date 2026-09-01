@@ -7,6 +7,8 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { colors } from '@/constants/legacyTheme';
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { ToastHost } from '@/components/ui/Toast';
 import { isAdminRole } from '@/lib/roles';
 import { useSessionStore } from '@/stores/sessionStore';
 
@@ -44,7 +46,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       } else if (loginMode === 'waiter') {
         router.replace('/(app)/(tabs)/mesero');
       } else {
-        router.replace('/(app)/(tabs)/');
+        router.replace('/(app)/(tabs)');
       }
     }
   }, [user, isLoading, segments, router, loginMode, role]);
@@ -68,14 +70,17 @@ export default function RootLayout() {
   if (!loaded) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthGate>
-        <StatusBar style="dark" />
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(app)" />
-        </Stack>
-      </AuthGate>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthGate>
+          <StatusBar style="dark" />
+          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+          </Stack>
+          <ToastHost />
+        </AuthGate>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
